@@ -6,25 +6,25 @@ import { Clock, CheckCircle2, XCircle, ArrowRight, RotateCcw, Flag, ChevronLeft 
 // bank can grow without touching any UI code. Add more objects to either
 // array to expand coverage.
 // ---------------------------------------------------------------------------
-export const QUESTION_BANK = {
+const QUESTION_BANK = {
   "DP-700": {
     label: "Fabric Data Engineer Associate",
-      questions: [
-        {
-          id: "700-1",
-          domain: "Implement and manage an analytics solution",
-          question:
-            "You need to ingest data from an on-premises SQL Server into a Fabric Lakehouse on a recurring schedule with minimal setup. Which Fabric item should you use?",
-          options: [
-            { id: "a", text: "A Dataflow Gen2" },
-            { id: "b", text: "A Data Pipeline with a Copy activity" },
-            { id: "c", text: "A KQL Database" },
-            { id: "d", text: "A Semantic model" },
-          ],
-          correct: "b",
-          explanation:
-            "A Data Pipeline with a Copy activity, using the on-premises data gateway, is the standard way to schedule recurring ingestion into a Lakehouse from an on-prem source.",
-        },
+    questions: [
+      {
+        id: "700-1",
+        domain: "Implement and manage an analytics solution",
+        question:
+          "You need to ingest data from an on-premises SQL Server into a Fabric Lakehouse on a recurring schedule with minimal setup. Which Fabric item should you use?",
+        options: [
+          { id: "a", text: "A Dataflow Gen2" },
+          { id: "b", text: "A Data Pipeline with a Copy activity" },
+          { id: "c", text: "A KQL Database" },
+          { id: "d", text: "A Semantic model" },
+        ],
+        correct: "b",
+        explanation:
+          "A Data Pipeline with a Copy activity, using the on-premises data gateway, is the standard way to schedule recurring ingestion into a Lakehouse from an on-prem source.",
+      },
       {
         id: "700-2",
         domain: "Ingest and transform data",
@@ -190,38 +190,21 @@ export const QUESTION_BANK = {
         explanation:
           "createOrReplaceTempView() creates a view that only exists for the current session, while a managed table saved to the catalog (typically Delta) persists beyond the session.",
       },
-        {
-          id: "700-13",
-          domain: "Lakehouse, Delta Lake and medallion architecture",
-          question:
-            "What is the primary purpose of the _delta_log folder in a Delta table?",
-          options: [
-            { id: "a", text: "It stores a backup copy of the raw CSV source files" },
-            { id: "b", text: "It records the transaction history that enables ACID behaviour, schema enforcement, and time travel" },
-            { id: "c", text: "It stores the Power BI semantic model definition" },
-            { id: "d", text: "It caches query results for the SQL analytics endpoint" },
-          ],
-          correct: "b",
-          explanation:
-            "The _delta_log folder holds the transaction log that gives Delta tables ACID transactions, schema enforcement, CRUD support, and the ability to time travel to previous versions.",
-        },
-        // Placeholder questions to bring the total to 50 for DP‑700
-        ...Array.from({ length: 37 }, (_, i) => {
-          const num = i + 14; // start after existing 13 questions
-          return {
-            id: `700-${num}`,
-            domain: "General Knowledge",
-            question: `Placeholder DP‑700 question ${num}. What is the answer?`,
-            options: [
-              { id: "a", text: "Option A" },
-              { id: "b", text: "Option B" },
-              { id: "c", text: "Option C" },
-              { id: "d", text: "Option D" },
-            ],
-            correct: "a",
-            explanation: `Placeholder explanation for DP‑700 question ${num}.`,
-          };
-        }),
+      {
+        id: "700-13",
+        domain: "Lakehouse, Delta Lake and medallion architecture",
+        question:
+          "What is the primary purpose of the _delta_log folder in a Delta table?",
+        options: [
+          { id: "a", text: "It stores a backup copy of the raw CSV source files" },
+          { id: "b", text: "It records the transaction history that enables ACID behaviour, schema enforcement, and time travel" },
+          { id: "c", text: "It stores the Power BI semantic model definition" },
+          { id: "d", text: "It caches query results for the SQL analytics endpoint" },
+        ],
+        correct: "b",
+        explanation:
+          "The _delta_log folder holds the transaction log that gives Delta tables ACID transactions, schema enforcement, CRUD support, and the ability to time travel to previous versions.",
+      },
       {
         id: "700-14",
         domain: "Lakehouse, Delta Lake and medallion architecture",
@@ -327,26 +310,86 @@ export const QUESTION_BANK = {
         explanation:
           "Git integration handles version control, branching, and rollback for a workspace, while deployment pipelines promote validated content across Development, Test, and Production stages — complementary but distinct processes.",
       },
+      {
+        id: "700-21",
+        domain: "Ingest and transform data",
+        question:
+          "Your source system stores data in a proprietary format and you need the entire database available in Fabric as a unit, kept continuously in sync. Which capability should you use?",
+        options: [
+          { id: "a", text: "A OneLake shortcut" },
+          { id: "b", text: "Mirroring" },
+          { id: "c", text: "A Dataflow Gen2 scheduled refresh" },
+          { id: "d", text: "V-Order optimization" },
+        ],
+        correct: "b",
+        explanation:
+          "Mirroring can bring in an entire external database or catalog, and when the source uses a proprietary format it is the only option — shortcuts only work with data already in open formats.",
+      },
+      {
+        id: "700-22",
+        domain: "Ingest and transform data",
+        question:
+          "What is the key difference between a OneLake shortcut and mirroring when the source data is already in an open format like Delta or Parquet?",
+        options: [
+          { id: "a", text: "A shortcut references the data in place with zero copy; mirroring can replicate it into OneLake" },
+          { id: "b", text: "A shortcut always copies the data; mirroring never does" },
+          { id: "c", text: "They are functionally identical for open-format sources" },
+          { id: "d", text: "Shortcuts only work for streaming sources" },
+        ],
+        correct: "a",
+        explanation:
+          "Shortcuts add a reference to data that stays at its source (zero-copy). Mirroring can use replication or shortcuts depending on the source, but for proprietary formats it must replicate — for open formats, a plain shortcut may be simpler.",
+      },
+      {
+        id: "700-23",
+        domain: "Implement and manage an analytics solution",
+        question:
+          "Besides Spark, OneLake, and domain settings, which additional workspace setting can now be configured in Fabric for orchestrating Python-based workflows?",
+        options: [
+          { id: "a", text: "Apache Airflow workspace settings" },
+          { id: "b", text: "Kubernetes workspace settings" },
+          { id: "c", text: "Terraform workspace settings" },
+          { id: "d", text: "Docker workspace settings" },
+        ],
+        correct: "a",
+        explanation:
+          "Fabric workspace settings include configuring Apache Airflow, alongside Spark, domain, and OneLake settings, for orchestrating Python-based data workflows.",
+      },
+      {
+        id: "700-24",
+        domain: "Real-Time Intelligence",
+        question:
+          "Which shortcut-related capability lets you automatically convert data format or remove personally identifiable information as part of referencing external data through OneLake?",
+        options: [
+          { id: "a", text: "Shortcut transformations" },
+          { id: "b", text: "V-Order" },
+          { id: "c", text: "Query acceleration" },
+          { id: "d", text: "Dynamic data masking" },
+        ],
+        correct: "a",
+        explanation:
+          "Shortcut transformations let you apply automatic changes to shortcut-referenced data, such as converting the file format or removing PII, without duplicating the underlying data.",
+      },
     ],
   },
   "DP-600": {
     label: "Fabric Analytics Engineer Associate",
-      questions: [
-        {
-          id: "600-1",
-          domain: "Plan, implement, and manage a solution for data analytics",
-          question:
-            "What is the smallest unit of compute capacity purchase that enables Fabric workloads for an organization?",
-          options: [
-            { id: "a", text: "A Power BI Pro license" },
-            { id: "b", text: "A Fabric capacity (F SKU)" },
-            { id: "c", text: "An Azure Synapse pool" },
-            { id: "d", text: "A Premium Per User license" },
-          ],
-          correct: "b",
-          explanation:
-            "Fabric workloads are enabled by purchasing a Fabric capacity (an F SKU), which provides the compute pool shared across all Fabric items in assigned workspaces.",
-        },
+    questions: [
+      {
+        id: "600-1",
+        domain: "Plan, implement, and manage a solution for data analytics",
+        question:
+          "What is the smallest unit of compute capacity purchase that enables Fabric workloads for an organization?",
+        options: [
+          { id: "a", text: "A Power BI Pro license" },
+          { id: "b", text: "A Fabric capacity (F SKU)" },
+          { id: "c", text: "An Azure Synapse pool" },
+          { id: "d", text: "A Premium Per User license" },
+        ],
+        correct: "b",
+        explanation:
+          "Fabric workloads are enabled by purchasing a Fabric capacity (an F SKU), which provides the compute pool shared across all Fabric items in assigned workspaces.",
+      },
       {
         id: "600-2",
         domain: "Prepare data",
@@ -422,95 +465,161 @@ export const QUESTION_BANK = {
         explanation:
           "Calculation groups let you define reusable calculation logic (e.g. time intelligence variants) once and apply it across many measures, keeping metrics consistent.",
       },
-        {
-          id: "600-6",
-          domain: "Explore and analyze data",
-          question:
-            "A stakeholder wants to type a natural-language question and get a chart back from a Power BI report. Which feature supports this?",
-          options: [
-            { id: "a", text: "Q&A visual" },
-            { id: "b", text: "Paginated reports" },
-            { id: "c", text: "Composite models" },
-            { id: "d", text: "Deployment pipelines" },
-          ],
-          correct: "a",
-          explanation:
-            "The Q&A visual lets users type natural-language questions against the semantic model and returns an auto-generated visual as the answer.",
-        },
-        // Placeholder questions to bring DP‑600 up to 50 total
-        ...Array.from({ length: 44 }, (_, i) => {
-          const num = i + 7; // after existing 6 questions
-          return {
-            id: `600-${num}`,
-            domain: "General Knowledge",
-            question: `Placeholder DP‑600 question ${num}. What is the answer?`,
-            options: [
-              { id: "a", text: "Option A" },
-              { id: "b", text: "Option B" },
-              { id: "c", text: "Option C" },
-              { id: "d", text: "Option D" },
-            ],
-            correct: "a",
-            explanation: `Placeholder explanation for DP‑600 question ${num}.`,
-          };
-        }),
-    ],
-  },
-  "DP-800": {
-    label: "Fabric Data Analyst Associate",
-      questions: [
-        {
-          id: "800-1",
-          domain: "Analyze data",
-          question:
-            "Which DAX function would you use to calculate the month‑over‑month growth rate for a measure called Sales?",
-          options: [
-            { id: "a", text: "DIVIDE(Sales, CALCULATE(Sales, PREVIOUSMONTH('Date'[Date])))" },
-            { id: "b", text: "CALCULATE(Sales) - CALCULATE(Sales, PREVIOUSMONTH('Date'[Date]))" },
-            { id: "c", text: "VAR Prev = CALCULATE(Sales, PREVIOUSMONTH('Date'[Date])); RETURN DIVIDE(Sales - Prev, Prev)" },
-            { id: "d", text: "TOTALYTD(Sales)" },
-          ],
-          correct: "c",
-          explanation:
-            "By storing the previous month value in a variable and then dividing the difference by that previous value you get a proper growth rate.",
-        },
-        {
-          id: "800-2",
-          domain: "Modeling",
-          question:
-            "In a semantic model, which relationship cardinality should you use when a product can belong to multiple categories?",
-          options: [
-            { id: "a", text: "One‑to‑one" },
-            { id: "b", text: "One‑to‑many" },
-            { id: "c", text: "Many‑to‑many" },
-            { id: "d", text: "Many‑to‑one" },
-          ],
-          correct: "c",
-          explanation:
-            "Many‑to‑many relationships allow a product to be linked to several categories and vice‑versa, which matches the scenario.",
-        },
-        // Placeholder questions to bring DP‑800 up to 50 total
-        ...Array.from({ length: 48 }, (_, i) => {
-          const num = i + 3; // after existing 2 questions
-          return {
-            id: `800-${num}`,
-            domain: "General Knowledge",
-            question: `Placeholder DP‑800 question ${num}. What is the answer?`,
-            options: [
-              { id: "a", text: "Option A" },
-              { id: "b", text: "Option B" },
-              { id: "c", text: "Option C" },
-              { id: "d", text: "Option D" },
-            ],
-            correct: "a",
-            explanation: `Placeholder explanation for DP‑800 question ${num}.`,
-          };
-        }),
+      {
+        id: "600-7",
+        domain: "Explore and analyze data",
+        question:
+          "A stakeholder wants to type a natural-language question and get a chart back from a Power BI report. Which feature supports this?",
+        options: [
+          { id: "a", text: "Q&A visual" },
+          { id: "b", text: "Paginated reports" },
+          { id: "c", text: "Composite models" },
+          { id: "d", text: "Deployment pipelines" },
+        ],
+        correct: "a",
+        explanation:
+          "The Q&A visual lets users type natural-language questions against the semantic model and returns an auto-generated visual as the answer.",
+      },
+      {
+        id: "600-8",
+        domain: "Implement and manage semantic models",
+        question:
+          "A Direct Lake on SQL semantic model has its DirectLakeBehavior property set to Automatic. What happens when a query can't meet Direct Lake conditions?",
+        options: [
+          { id: "a", text: "The query fails immediately with an error" },
+          { id: "b", text: "The query silently falls back to DirectQuery mode, possibly with slower performance" },
+          { id: "c", text: "The report stops refreshing until the issue is fixed" },
+          { id: "d", text: "The semantic model automatically switches to Import mode" },
+        ],
+        correct: "b",
+        explanation:
+          "Automatic (the default) means the query silently falls back to DirectQuery mode when Direct Lake conditions aren't met, so reports keep working but may be slower — DirectLakeOnly would instead fail the query with an error.",
+      },
+      {
+        id: "600-9",
+        domain: "Implement and manage semantic models",
+        question:
+          "Which Direct Lake variant never falls back to DirectQuery and can combine Delta tables from multiple Fabric data sources in one semantic model?",
+        options: [
+          { id: "a", text: "Direct Lake on SQL" },
+          { id: "b", text: "Direct Lake on OneLake" },
+          { id: "c", text: "DirectQuery mode" },
+          { id: "d", text: "Import mode" },
+        ],
+        correct: "b",
+        explanation:
+          "Direct Lake on OneLake runs exclusively in DirectLakeOnly mode with no DirectQuery fallback, and can use Delta tables from multiple Fabric data sources rather than being limited to a single lakehouse or warehouse.",
+      },
+      {
+        id: "600-10",
+        domain: "Implement and manage semantic models",
+        question:
+          "You need row-level security enforced consistently even when Direct Lake falls back to DirectQuery via the SQL analytics endpoint. Where should RLS be defined for the most reliable behavior?",
+        options: [
+          { id: "a", text: "Only in the semantic model, using a fixed identity cloud connection" },
+          { id: "b", text: "Only as SQL RLS at the SQL analytics endpoint" },
+          { id: "c", text: "RLS cannot be used with Direct Lake at all" },
+          { id: "d", text: "Only inside individual report visuals" },
+        ],
+        correct: "a",
+        explanation:
+          "Semantic model RLS works with Direct Lake, but Microsoft recommends using a fixed identity cloud connection; note that tables with SQL RLS defined at the SQL analytics endpoint will always force a DirectQuery fallback for Direct Lake on SQL.",
+      },
+      {
+        id: "600-11",
+        domain: "Prepare data",
+        question:
+          "Which OneLake capability lets a workspace reference a table from another Fabric workspace or external storage without physically copying the data?",
+        options: [
+          { id: "a", text: "Mirroring" },
+          { id: "b", text: "A OneLake shortcut" },
+          { id: "c", text: "Dataflow Gen2 staging" },
+          { id: "d", text: "Deployment pipeline promotion" },
+        ],
+        correct: "b",
+        explanation:
+          "A OneLake shortcut is a reference to data in another location — within the same workspace, another workspace, or external storage — that makes it appear local without copying it.",
+      },
+      {
+        id: "600-12",
+        domain: "Prepare data",
+        question:
+          "Your source data lives in an operational Azure SQL Database and you want it continuously synchronized into OneLake in near real time without building an ETL pipeline. What should you use?",
+        options: [
+          { id: "a", text: "A OneLake shortcut" },
+          { id: "b", text: "Database mirroring" },
+          { id: "c", text: "A paginated report" },
+          { id: "d", text: "A calculation group" },
+        ],
+        correct: "b",
+        explanation:
+          "Database mirroring continuously replicates an external operational database like Azure SQL Database into OneLake in Delta format, without requiring a traditional ETL pipeline.",
+      },
+      {
+        id: "600-13",
+        domain: "Maintain a data analytics solution",
+        question:
+          "Which file type lets you create and manage a Power BI Desktop project for source control, as part of the analytics development lifecycle in Fabric?",
+        options: [
+          { id: "a", text: ".pbix" },
+          { id: "b", text: ".pbip" },
+          { id: "c", text: ".pbit" },
+          { id: "d", text: ".pbids" },
+        ],
+        correct: "b",
+        explanation:
+          "A Power BI Desktop project (.pbip) is designed for source control and collaborative development, unlike the single-file .pbix format.",
+      },
+      {
+        id: "600-14",
+        domain: "Maintain a data analytics solution",
+        question:
+          "You want to deploy and manage a Fabric semantic model programmatically from an external tool like SSMS or a script. Which endpoint should you use?",
+        options: [
+          { id: "a", text: "The XMLA endpoint" },
+          { id: "b", text: "The Q&A visual" },
+          { id: "c", text: "The Real-Time Hub" },
+          { id: "d", text: "The OneLake catalog" },
+        ],
+        correct: "a",
+        explanation:
+          "The XMLA endpoint allows semantic models to be deployed and managed programmatically using external tools such as SSMS, Tabular Editor, or scripts.",
+      },
+      {
+        id: "600-15",
+        domain: "Prepare data",
+        question:
+          "A colleague changes a lakehouse table that several downstream semantic models depend on. Which practice helps you understand what else might break before making the change?",
+        options: [
+          { id: "a", text: "Impact analysis of downstream dependencies" },
+          { id: "b", text: "Dynamic format strings" },
+          { id: "c", text: "Field parameters" },
+          { id: "d", text: "Query folding" },
+        ],
+        correct: "a",
+        explanation:
+          "Performing impact analysis of downstream dependencies from lakehouses, warehouses, dataflows, and semantic models helps identify what else is affected before making a breaking change.",
+      },
+      {
+        id: "600-16",
+        domain: "Implement and manage semantic models",
+        question:
+          "Which DAX modeling feature standardises reusable, parameterised time-intelligence-style calculations that can be applied to many different measures at once?",
+        options: [
+          { id: "a", text: "Field parameters" },
+          { id: "b", text: "Calculation groups" },
+          { id: "c", text: "Dynamic format strings" },
+          { id: "d", text: "Bridge tables" },
+        ],
+        correct: "b",
+        explanation:
+          "Calculation groups let you define reusable calculation logic — such as time-intelligence variants — once, and apply it consistently across many measures.",
+      },
     ],
   },
 };
 
-export const TOKENS = {
+const TOKENS = {
   bg: "#0B1220",
   bgDeep: "#070C16",
   panel: "#121C2F",
