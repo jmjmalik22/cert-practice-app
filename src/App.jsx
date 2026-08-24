@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Clock, CheckCircle2, XCircle, ArrowRight, RotateCcw, Flag, ChevronLeft } from "lucide-react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // ---------------------------------------------------------------------------
 // Question bank — grouped by exam, each item tagged with a domain so the
@@ -2155,6 +2156,7 @@ export default function App() {
       {screen === "home" && <Home onStart={start} />}
       {screen === "practice" && <Practice exam={exam} onExit={() => setScreen("home")} />}
       {screen === "mock" && <MockExam exam={exam} onExit={() => setScreen("home")} />}
+      <SpeedInsights />
     </div>
   );
 }
