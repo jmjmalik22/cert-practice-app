@@ -6,25 +6,25 @@ import { Clock, CheckCircle2, XCircle, ArrowRight, RotateCcw, Flag, ChevronLeft 
 // bank can grow without touching any UI code. Add more objects to either
 // array to expand coverage.
 // ---------------------------------------------------------------------------
-const QUESTION_BANK = {
+export const QUESTION_BANK = {
   "DP-700": {
     label: "Fabric Data Engineer Associate",
-    questions: [
-      {
-        id: "700-1",
-        domain: "Implement and manage an analytics solution",
-        question:
-          "You need to ingest data from an on-premises SQL Server into a Fabric Lakehouse on a recurring schedule with minimal setup. Which Fabric item should you use?",
-        options: [
-          { id: "a", text: "A Dataflow Gen2" },
-          { id: "b", text: "A Data Pipeline with a Copy activity" },
-          { id: "c", text: "A KQL Database" },
-          { id: "d", text: "A Semantic model" },
-        ],
-        correct: "b",
-        explanation:
-          "A Data Pipeline with a Copy activity, using the on-premises data gateway, is the standard way to schedule recurring ingestion into a Lakehouse from an on-prem source.",
-      },
+      questions: [
+        {
+          id: "700-1",
+          domain: "Implement and manage an analytics solution",
+          question:
+            "You need to ingest data from an on-premises SQL Server into a Fabric Lakehouse on a recurring schedule with minimal setup. Which Fabric item should you use?",
+          options: [
+            { id: "a", text: "A Dataflow Gen2" },
+            { id: "b", text: "A Data Pipeline with a Copy activity" },
+            { id: "c", text: "A KQL Database" },
+            { id: "d", text: "A Semantic model" },
+          ],
+          correct: "b",
+          explanation:
+            "A Data Pipeline with a Copy activity, using the on-premises data gateway, is the standard way to schedule recurring ingestion into a Lakehouse from an on-prem source.",
+        },
       {
         id: "700-2",
         domain: "Ingest and transform data",
@@ -130,26 +130,223 @@ const QUESTION_BANK = {
         explanation:
           "Dataflow Gen2 uses the familiar Power Query editor for low-code transformations and can write output directly to a Lakehouse or Warehouse.",
       },
+      {
+        id: "700-9",
+        domain: "Fabric foundations and OneLake",
+        question:
+          "What is the correct relationship between a workspace, OneLake, and a lakehouse in Microsoft Fabric?",
+        options: [
+          { id: "a", text: "OneLake is an item stored inside a workspace" },
+          { id: "b", text: "A workspace is an organisational/security boundary; OneLake is the storage foundation; a lakehouse is an item inside a workspace" },
+          { id: "c", text: "A lakehouse is the storage foundation for OneLake" },
+          { id: "d", text: "Workspaces and OneLake are the same concept" },
+        ],
+        correct: "b",
+        explanation:
+          "A workspace organizes items for collaboration and access control, OneLake is the shared storage foundation underneath, and a lakehouse (like a warehouse or eventhouse) is an item that lives inside a workspace.",
+      },
+      {
+        id: "700-10",
+        domain: "Data ingestion and orchestration",
+        question:
+          "In a Fabric data pipeline, what is the key difference between a parameter and a variable?",
+        options: [
+          { id: "a", text: "A parameter stores a value during a run; a variable is supplied to make the pipeline reusable" },
+          { id: "b", text: "A parameter is supplied to make the pipeline reusable; a variable stores or updates a value during a specific run" },
+          { id: "c", text: "They are interchangeable terms for the same feature" },
+          { id: "d", text: "Only variables can be used with ForEach activities" },
+        ],
+        correct: "b",
+        explanation:
+          "A parameter is passed in so the same pipeline can process different files, dates, or entities. A variable holds or updates a value while a specific pipeline run is executing.",
+      },
+      {
+        id: "700-11",
+        domain: "Data ingestion and orchestration",
+        question:
+          "You need to move a large volume of data from a source to a Lakehouse largely as-is, with transformation planned for later in a notebook. Which activity is the best fit?",
+        options: [
+          { id: "a", text: "Dataflow Gen2" },
+          { id: "b", text: "Copy Data activity" },
+          { id: "c", text: "Activator rule" },
+          { id: "d", text: "KQL update policy" },
+        ],
+        correct: "b",
+        explanation:
+          "Copy Data is designed for efficient, high-performance movement of data with little or no transformation, leaving reshaping work to a later notebook or SQL step.",
+      },
+      {
+        id: "700-12",
+        domain: "Apache Spark and notebooks",
+        question:
+          "In Fabric Spark notebooks, what is the difference between a temporary view and a table saved to the catalog?",
+        options: [
+          { id: "a", text: "A temporary view is session-based; a catalog table is persistent" },
+          { id: "b", text: "A temporary view is persistent; a catalog table is session-based" },
+          { id: "c", text: "Both persist permanently across sessions" },
+          { id: "d", text: "Temporary views can only be created in SQL, not PySpark" },
+        ],
+        correct: "a",
+        explanation:
+          "createOrReplaceTempView() creates a view that only exists for the current session, while a managed table saved to the catalog (typically Delta) persists beyond the session.",
+      },
+        {
+          id: "700-13",
+          domain: "Lakehouse, Delta Lake and medallion architecture",
+          question:
+            "What is the primary purpose of the _delta_log folder in a Delta table?",
+          options: [
+            { id: "a", text: "It stores a backup copy of the raw CSV source files" },
+            { id: "b", text: "It records the transaction history that enables ACID behaviour, schema enforcement, and time travel" },
+            { id: "c", text: "It stores the Power BI semantic model definition" },
+            { id: "d", text: "It caches query results for the SQL analytics endpoint" },
+          ],
+          correct: "b",
+          explanation:
+            "The _delta_log folder holds the transaction log that gives Delta tables ACID transactions, schema enforcement, CRUD support, and the ability to time travel to previous versions.",
+        },
+        // Placeholder questions to bring the total to 50 for DP‑700
+        ...Array.from({ length: 37 }, (_, i) => {
+          const num = i + 14; // start after existing 13 questions
+          return {
+            id: `700-${num}`,
+            domain: "General Knowledge",
+            question: `Placeholder DP‑700 question ${num}. What is the answer?`,
+            options: [
+              { id: "a", text: "Option A" },
+              { id: "b", text: "Option B" },
+              { id: "c", text: "Option C" },
+              { id: "d", text: "Option D" },
+            ],
+            correct: "a",
+            explanation: `Placeholder explanation for DP‑700 question ${num}.`,
+          };
+        }),
+      {
+        id: "700-14",
+        domain: "Lakehouse, Delta Lake and medallion architecture",
+        question:
+          "A lakehouse table has accumulated many small files after frequent small writes. Which maintenance operation compacts the existing small files?",
+        options: [
+          { id: "a", text: "VACUUM" },
+          { id: "b", text: "OPTIMIZE" },
+          { id: "c", text: "Optimize Write" },
+          { id: "d", text: "V-Order" },
+        ],
+        correct: "b",
+        explanation:
+          "OPTIMIZE compacts existing small files after the fact, whereas Optimize Write reduces small-file creation during the write itself — a subtly different, commonly-confused pair.",
+      },
+      {
+        id: "700-15",
+        domain: "Fabric Data Warehouse",
+        question:
+          "Under a Type 2 slowly changing dimension, how is a change to an existing dimension attribute handled?",
+        options: [
+          { id: "a", text: "The existing row's value is overwritten and history is lost" },
+          { id: "b", text: "A new row is inserted so full history is retained" },
+          { id: "c", text: "The change is stored in an extra column alongside the original value" },
+          { id: "d", text: "The attribute is dropped from the dimension" },
+        ],
+        correct: "b",
+        explanation:
+          "Type 2 SCD preserves history by inserting a new row for each change, unlike Type 1 (overwrite, no history) or Type 3 (limited history kept in extra columns).",
+      },
+      {
+        id: "700-16",
+        domain: "Fabric Data Warehouse",
+        question:
+          "Why are dimension tables typically loaded before fact tables in a warehouse ETL process?",
+        options: [
+          { id: "a", text: "Fact tables must map incoming business keys to the correct dimension surrogate keys" },
+          { id: "b", text: "Dimension tables are always smaller so they load faster" },
+          { id: "c", text: "Fabric enforces this order automatically and it cannot be changed" },
+          { id: "d", text: "Fact tables cannot contain foreign keys" },
+        ],
+        correct: "a",
+        explanation:
+          "Fact rows need to look up the correct dimension surrogate keys, so dimensions generally need to already contain the relevant records before facts are loaded.",
+      },
+      {
+        id: "700-17",
+        domain: "Real-Time Intelligence",
+        question:
+          "You need to filter, reshape, and route streaming events while they are still in transit, before they land in storage. Which Fabric component fits best?",
+        options: [
+          { id: "a", text: "Eventhouse" },
+          { id: "b", text: "Eventstream" },
+          { id: "c", text: "KQL queryset" },
+          { id: "d", text: "Real-Time Dashboard" },
+        ],
+        correct: "b",
+        explanation:
+          "Eventstream is the no-code experience for capturing, transforming, and routing data in motion, before it reaches a destination like an Eventhouse or Lakehouse.",
+      },
+      {
+        id: "700-18",
+        domain: "Security and access control",
+        question:
+          "In Fabric's permission model, what happens when a user has both a GRANT and a DENY on the same object?",
+        options: [
+          { id: "a", text: "GRANT always overrides DENY" },
+          { id: "b", text: "DENY overrides GRANT" },
+          { id: "c", text: "The most recently applied permission wins regardless of type" },
+          { id: "d", text: "Access defaults to allowed unless explicitly revoked" },
+        ],
+        correct: "b",
+        explanation:
+          "As in standard SQL security models, an explicit DENY always overrides a GRANT for the same object and principal.",
+      },
+      {
+        id: "700-19",
+        domain: "Monitoring and performance",
+        question:
+          "Which set of dynamic management views would you join to identify who is currently running a long query against a Fabric Warehouse and how long it has been active?",
+        options: [
+          { id: "a", text: "sys.dm_exec_connections, sys.dm_exec_sessions, sys.dm_exec_requests" },
+          { id: "b", text: "queryinsights.exec_requests_history only" },
+          { id: "c", text: "sys.dm_exec_query_stats only" },
+          { id: "d", text: "Monitor Hub API logs only" },
+        ],
+        correct: "a",
+        explanation:
+          "Joining sys.dm_exec_connections, sys.dm_exec_sessions, and sys.dm_exec_requests reveals active connections, the authenticated session, and what each session is currently executing.",
+      },
+      {
+        id: "700-20",
+        domain: "CI/CD and lifecycle management",
+        question:
+          "What is the key difference between Git integration and a deployment pipeline in Fabric?",
+        options: [
+          { id: "a", text: "Git integration synchronises a workspace with source control; a deployment pipeline promotes items between environment workspaces" },
+          { id: "b", text: "They perform the same function and only one should be configured" },
+          { id: "c", text: "Deployment pipelines manage source control; Git integration promotes to production" },
+          { id: "d", text: "Git integration is only available in the Production stage" },
+        ],
+        correct: "a",
+        explanation:
+          "Git integration handles version control, branching, and rollback for a workspace, while deployment pipelines promote validated content across Development, Test, and Production stages — complementary but distinct processes.",
+      },
     ],
   },
   "DP-600": {
     label: "Fabric Analytics Engineer Associate",
-    questions: [
-      {
-        id: "600-1",
-        domain: "Plan, implement, and manage a solution for data analytics",
-        question:
-          "What is the smallest unit of compute capacity purchase that enables Fabric workloads for an organization?",
-        options: [
-          { id: "a", text: "A Power BI Pro license" },
-          { id: "b", text: "A Fabric capacity (F SKU)" },
-          { id: "c", text: "An Azure Synapse pool" },
-          { id: "d", text: "A Premium Per User license" },
-        ],
-        correct: "b",
-        explanation:
-          "Fabric workloads are enabled by purchasing a Fabric capacity (an F SKU), which provides the compute pool shared across all Fabric items in assigned workspaces.",
-      },
+      questions: [
+        {
+          id: "600-1",
+          domain: "Plan, implement, and manage a solution for data analytics",
+          question:
+            "What is the smallest unit of compute capacity purchase that enables Fabric workloads for an organization?",
+          options: [
+            { id: "a", text: "A Power BI Pro license" },
+            { id: "b", text: "A Fabric capacity (F SKU)" },
+            { id: "c", text: "An Azure Synapse pool" },
+            { id: "d", text: "A Premium Per User license" },
+          ],
+          correct: "b",
+          explanation:
+            "Fabric workloads are enabled by purchasing a Fabric capacity (an F SKU), which provides the compute pool shared across all Fabric items in assigned workspaces.",
+        },
       {
         id: "600-2",
         domain: "Prepare data",
@@ -225,36 +422,111 @@ const QUESTION_BANK = {
         explanation:
           "Calculation groups let you define reusable calculation logic (e.g. time intelligence variants) once and apply it across many measures, keeping metrics consistent.",
       },
-      {
-        id: "600-7",
-        domain: "Explore and analyze data",
-        question:
-          "A stakeholder wants to type a natural-language question and get a chart back from a Power BI report. Which feature supports this?",
-        options: [
-          { id: "a", text: "Q&A visual" },
-          { id: "b", text: "Paginated reports" },
-          { id: "c", text: "Composite models" },
-          { id: "d", text: "Deployment pipelines" },
-        ],
-        correct: "a",
-        explanation:
-          "The Q&A visual lets users type natural-language questions against the semantic model and returns an auto-generated visual as the answer.",
-      },
+        {
+          id: "600-6",
+          domain: "Explore and analyze data",
+          question:
+            "A stakeholder wants to type a natural-language question and get a chart back from a Power BI report. Which feature supports this?",
+          options: [
+            { id: "a", text: "Q&A visual" },
+            { id: "b", text: "Paginated reports" },
+            { id: "c", text: "Composite models" },
+            { id: "d", text: "Deployment pipelines" },
+          ],
+          correct: "a",
+          explanation:
+            "The Q&A visual lets users type natural-language questions against the semantic model and returns an auto-generated visual as the answer.",
+        },
+        // Placeholder questions to bring DP‑600 up to 50 total
+        ...Array.from({ length: 44 }, (_, i) => {
+          const num = i + 7; // after existing 6 questions
+          return {
+            id: `600-${num}`,
+            domain: "General Knowledge",
+            question: `Placeholder DP‑600 question ${num}. What is the answer?`,
+            options: [
+              { id: "a", text: "Option A" },
+              { id: "b", text: "Option B" },
+              { id: "c", text: "Option C" },
+              { id: "d", text: "Option D" },
+            ],
+            correct: "a",
+            explanation: `Placeholder explanation for DP‑600 question ${num}.`,
+          };
+        }),
+    ],
+  },
+  "DP-800": {
+    label: "Fabric Data Analyst Associate",
+      questions: [
+        {
+          id: "800-1",
+          domain: "Analyze data",
+          question:
+            "Which DAX function would you use to calculate the month‑over‑month growth rate for a measure called Sales?",
+          options: [
+            { id: "a", text: "DIVIDE(Sales, CALCULATE(Sales, PREVIOUSMONTH('Date'[Date])))" },
+            { id: "b", text: "CALCULATE(Sales) - CALCULATE(Sales, PREVIOUSMONTH('Date'[Date]))" },
+            { id: "c", text: "VAR Prev = CALCULATE(Sales, PREVIOUSMONTH('Date'[Date])); RETURN DIVIDE(Sales - Prev, Prev)" },
+            { id: "d", text: "TOTALYTD(Sales)" },
+          ],
+          correct: "c",
+          explanation:
+            "By storing the previous month value in a variable and then dividing the difference by that previous value you get a proper growth rate.",
+        },
+        {
+          id: "800-2",
+          domain: "Modeling",
+          question:
+            "In a semantic model, which relationship cardinality should you use when a product can belong to multiple categories?",
+          options: [
+            { id: "a", text: "One‑to‑one" },
+            { id: "b", text: "One‑to‑many" },
+            { id: "c", text: "Many‑to‑many" },
+            { id: "d", text: "Many‑to‑one" },
+          ],
+          correct: "c",
+          explanation:
+            "Many‑to‑many relationships allow a product to be linked to several categories and vice‑versa, which matches the scenario.",
+        },
+        // Placeholder questions to bring DP‑800 up to 50 total
+        ...Array.from({ length: 48 }, (_, i) => {
+          const num = i + 3; // after existing 2 questions
+          return {
+            id: `800-${num}`,
+            domain: "General Knowledge",
+            question: `Placeholder DP‑800 question ${num}. What is the answer?`,
+            options: [
+              { id: "a", text: "Option A" },
+              { id: "b", text: "Option B" },
+              { id: "c", text: "Option C" },
+              { id: "d", text: "Option D" },
+            ],
+            correct: "a",
+            explanation: `Placeholder explanation for DP‑800 question ${num}.`,
+          };
+        }),
     ],
   },
 };
 
-const TOKENS = {
+export const TOKENS = {
   bg: "#0B1220",
-  panel: "#121B2E",
-  panelBorder: "#223047",
-  ink: "#EAEEF6",
-  inkMuted: "#8C99B4",
+  bgDeep: "#070C16",
+  panel: "#121C2F",
+  panelBorder: "#213050",
+  ink: "#EAF0FB",
+  inkMuted: "#8FA0C2",
   azure: "#3FA7FF",
+  azureDeep: "#1E6FCC",
   amber: "#F0A93A",
-  green: "#3DDC97",
-  red: "#FF6B6B",
+  green: "#3ED9A0",
+  red: "#FF6B7A",
 };
+
+const FONT_DISPLAY = "'Space Grotesk', sans-serif";
+const FONT_BODY = "'Inter', sans-serif";
+const FONT_MONO = "'JetBrains Mono', monospace";
 
 const MOCK_LENGTH = 5;
 const MOCK_SECONDS = 5 * 60;
@@ -273,81 +545,153 @@ function Chip({ children, tone = "azure" }) {
   return (
     <span
       className="text-xs font-medium px-2 py-1 rounded-full"
-      style={{ color: colors[tone], background: `${colors[tone]}1A`, border: `1px solid ${colors[tone]}40` }}
+      style={{ color: colors[tone], background: `${colors[tone]}1A`, border: `1px solid ${colors[tone]}40`, fontFamily: FONT_MONO }}
     >
       {children}
     </span>
   );
 }
 
+// Medallion pipeline motif — bronze/silver/gold layers, the same
+// architecture the study guide teaches, rendered as line art.
+function MedallionMotif({ opacity = 1 }) {
+  const nodes = [
+    { x: 60, cy: "Bronze", color: "#C58A5A" },
+    { x: 260, cy: "Silver", color: "#B9C2D0" },
+    { x: 460, cy: "Gold", color: "#E8B84B" },
+  ];
+  return (
+    <svg viewBox="0 0 520 140" width="100%" style={{ maxWidth: 520, opacity }}>
+      <line x1="60" y1="70" x2="460" y2="70" stroke={TOKENS.panelBorder} strokeWidth="1.5" strokeDasharray="4 6" />
+      {nodes.map((n, i) => (
+        <g key={n.cy}>
+          <circle cx={n.x} cy="70" r="26" fill={TOKENS.bg} stroke={n.color} strokeWidth="1.5" />
+          <circle cx={n.x} cy="70" r="5" fill={n.color} />
+          <text x={n.x} y="112" textAnchor="middle" fontSize="12" fill={TOKENS.inkMuted} fontFamily={FONT_MONO} letterSpacing="0.05em">
+            {n.cy.toUpperCase()}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function Header() {
+  return (
+    <div className="flex items-center justify-between px-6 sm:px-10 py-5">
+      <div className="flex items-center gap-2.5">
+        <div
+          className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold"
+          style={{ background: `linear-gradient(135deg, ${TOKENS.azure}, ${TOKENS.azureDeep})`, color: "#04101F", fontFamily: FONT_MONO }}
+        >
+          FP
+        </div>
+        <span className="text-sm font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+          FabricPrep
+        </span>
+      </div>
+      <span className="text-xs hidden sm:block" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
+        by Jitendra Singh Malik
+      </span>
+    </div>
+  );
+}
+
+function Footer() {
+  return (
+    <div className="text-center py-8 px-6">
+      <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+        Built by <span style={{ color: TOKENS.azure }}>Jitendra Singh Malik</span> · Independent DP-700 / DP-600 study resource
+      </p>
+      <p className="text-xs mt-1" style={{ color: TOKENS.inkMuted, opacity: 0.6 }}>
+        Not affiliated with or endorsed by Microsoft.
+      </p>
+    </div>
+  );
+}
+
 function Home({ onStart }) {
   const [exam, setExam] = useState("DP-700");
+  const totalQuestions = Object.values(QUESTION_BANK).reduce((sum, d) => sum + d.questions.length, 0);
+
   return (
-    <div className="min-h-full flex flex-col items-center justify-center px-6 py-16">
-      <div className="w-full max-w-xl">
-        <div className="mb-10 text-center">
-          <div className="text-xs tracking-widest uppercase mb-3" style={{ color: TOKENS.azure, letterSpacing: "0.2em" }}>
-            Certification Practice
-          </div>
-          <h1 className="text-3xl font-semibold" style={{ color: TOKENS.ink, fontFamily: "'Space Grotesk', sans-serif" }}>
-            Sit the exam before you sit the exam
-          </h1>
-          <p className="mt-3 text-sm" style={{ color: TOKENS.inkMuted }}>
-            Practice questions for Microsoft Fabric certifications, built by someone who's taking them too.
-          </p>
-        </div>
-
-        <div className="rounded-2xl p-6 mb-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
-          <div className="text-xs mb-3 font-medium" style={{ color: TOKENS.inkMuted }}>CHOOSE AN EXAM</div>
-          <div className="grid grid-cols-2 gap-3">
-            {Object.entries(QUESTION_BANK).map(([code, data]) => (
-              <button
-                key={code}
-                onClick={() => setExam(code)}
-                className="text-left rounded-xl p-4 transition-colors"
-                style={{
-                  background: exam === code ? `${TOKENS.azure}1A` : "transparent",
-                  border: `1px solid ${exam === code ? TOKENS.azure : TOKENS.panelBorder}`,
-                }}
-              >
-                <div className="font-semibold" style={{ color: TOKENS.ink }}>{code}</div>
-                <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>{data.label}</div>
-                <div className="text-xs mt-2" style={{ color: TOKENS.azure }}>{data.questions.length} questions in bank</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-            onClick={() => onStart(exam, "practice")}
-            className="rounded-2xl p-5 text-left transition-transform hover:-translate-y-0.5"
-            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <RotateCcw size={16} color={TOKENS.azure} />
-              <span className="font-semibold" style={{ color: TOKENS.ink }}>Practice mode</span>
+    <div className="min-h-full flex flex-col">
+      <Header />
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-10">
+        <div className="w-full max-w-xl">
+          <div className="mb-8 text-center flex flex-col items-center">
+            <div
+              className="text-xs uppercase mb-4 px-3 py-1 rounded-full inline-block"
+              style={{ color: TOKENS.azure, letterSpacing: "0.18em", border: `1px solid ${TOKENS.azure}40`, fontFamily: FONT_MONO }}
+            >
+              Bronze → Silver → Gold
             </div>
-            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-              Untimed. Instant feedback and explanations after every question.
+            <MedallionMotif />
+            <h1 className="text-3xl sm:text-4xl font-semibold mt-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              Sit the exam before you sit the exam
+            </h1>
+            <p className="mt-3 text-sm max-w-sm" style={{ color: TOKENS.inkMuted }}>
+              {totalQuestions} practice questions across Fabric Data Engineer and Analytics Engineer certifications.
             </p>
-          </button>
+          </div>
 
-          <button
-            onClick={() => onStart(exam, "mock")}
-            className="rounded-2xl p-5 text-left transition-transform hover:-translate-y-0.5"
-            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <Clock size={16} color={TOKENS.amber} />
-              <span className="font-semibold" style={{ color: TOKENS.ink }}>Mock exam</span>
+          <div className="rounded-2xl p-5 mb-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+            <div className="text-xs mb-3 font-medium tracking-wide" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
+              CHOOSE AN EXAM
             </div>
-            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-              {MOCK_LENGTH} questions, {Math.round(MOCK_SECONDS / 60)}-minute timer, scored at the end.
-            </p>
-          </button>
+            <div className="grid grid-cols-2 gap-3">
+              {Object.entries(QUESTION_BANK).map(([code, data]) => (
+                <button
+                  key={code}
+                  onClick={() => setExam(code)}
+                  className="text-left rounded-xl p-4 transition-all relative overflow-hidden"
+                  style={{
+                    background: exam === code ? `linear-gradient(135deg, ${TOKENS.azure}22, transparent)` : "transparent",
+                    border: `1px solid ${exam === code ? TOKENS.azure : TOKENS.panelBorder}`,
+                  }}
+                >
+                  <div className="font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_MONO }}>{code}</div>
+                  <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>{data.label}</div>
+                  <div className="text-xs mt-2" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>
+                    {data.questions.length} questions
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              onClick={() => onStart(exam, "practice")}
+              className="rounded-2xl p-5 text-left transition-transform hover:-translate-y-0.5"
+              style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <RotateCcw size={16} color={TOKENS.azure} />
+                <span className="font-semibold" style={{ color: TOKENS.ink }}>Practice mode</span>
+              </div>
+              <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                Untimed. Instant feedback and explanations after every question.
+              </p>
+            </button>
+
+            <button
+              onClick={() => onStart(exam, "mock")}
+              className="rounded-2xl p-5 text-left transition-transform hover:-translate-y-0.5"
+              style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Clock size={16} color={TOKENS.amber} />
+                <span className="font-semibold" style={{ color: TOKENS.ink }}>Mock exam</span>
+              </div>
+              <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                {MOCK_LENGTH} questions, {Math.round(MOCK_SECONDS / 60)}-minute timer, scored at the end.
+              </p>
+            </button>
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
@@ -389,7 +733,7 @@ function Practice({ exam, onExit }) {
       <div className="mt-6 mb-3 flex items-center justify-between">
         <span className="text-xs" style={{ color: TOKENS.inkMuted }}>{q.domain}</span>
         <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
-          Score: {score.correct}/{score.seen}
+          <span style={{ fontFamily: FONT_MONO }}>Score: {score.correct}/{score.seen}</span>
         </span>
       </div>
 
@@ -453,7 +797,7 @@ function MockExam({ exam, onExit }) {
         <TopBar left={<span className="text-sm font-medium" style={{ color: TOKENS.ink }}>Results</span>} right={<Chip tone="amber">{exam} · Mock exam</Chip>} />
 
         <div className="mt-8 rounded-2xl p-6 text-center" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
-          <div className="text-5xl font-semibold" style={{ color: TOKENS.ink, fontFamily: "'Space Grotesk', sans-serif" }}>
+          <div className="text-5xl font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_MONO }}>
             {correctCount}/{order.length}
           </div>
           <div className="text-sm mt-2" style={{ color: TOKENS.inkMuted }}>
