@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Clock, CheckCircle2, XCircle, ArrowRight, RotateCcw, Flag, ChevronLeft } from "lucide-react";
+import { useState, useEffect, useRef, useMemo, useContext, createContext } from "react";
+import { Clock, CheckCircle2, XCircle, ArrowRight, RotateCcw, Flag, ChevronLeft, Bookmark } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // Question bank — grouped by exam, each item tagged with a domain so the
@@ -1693,7 +1693,7 @@ const QUESTION_BANK = {
   },
 };
 
-const TOKENS = {
+const DARK_TOKENS = {
   bg: "#0B1220",
   bgDeep: "#070C16",
   panel: "#121C2F",
@@ -1706,6 +1706,104 @@ const TOKENS = {
   green: "#3ED9A0",
   red: "#FF6B7A",
 };
+
+const LIGHT_TOKENS = {
+  bg: "#F4F6FB",
+  bgDeep: "#E9EDF6",
+  panel: "#FFFFFF",
+  panelBorder: "#DCE3F0",
+  ink: "#101828",
+  inkMuted: "#5B677E",
+  azure: "#1E6FCC",
+  azureDeep: "#3FA7FF",
+  amber: "#B97314",
+  green: "#0F7A54",
+  red: "#C13040",
+};
+
+const ThemeContext = createContext(DARK_TOKENS);
+function useTheme() {
+  return useContext(ThemeContext);
+}
+
+// --- localStorage-backed helpers (session/device only, no backend) ---
+function safeGet(key, fallback) {
+  try {
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+function safeSet(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // ignore storage failures (private browsing, quota, etc.)
+  }
+}
+
+function getStoredTheme() {
+  try {
+    return localStorage.getItem("fp_theme") || "dark";
+  } catch {
+    return "dark";
+  }
+}
+function setStoredTheme(t) {
+  try {
+    localStorage.setItem("fp_theme", t);
+  } catch {
+    // ignore
+  }
+}
+
+function updateStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  let last = "";
+  let streak = 0;
+  try {
+    last = localStorage.getItem("fp_last_visit") || "";
+    streak = parseInt(localStorage.getItem("fp_streak") || "0", 10) || 0;
+  } catch {
+    return 0;
+  }
+  if (last === today) return streak;
+  const y = new Date();
+  y.setDate(y.getDate() - 1);
+  const yesterday = y.toISOString().slice(0, 10);
+  streak = last === yesterday ? streak + 1 : 1;
+  try {
+    localStorage.setItem("fp_last_visit", today);
+    localStorage.setItem("fp_streak", String(streak));
+  } catch {
+    // ignore
+  }
+  return streak;
+}
+
+function getAttempted(examCode) {
+  return safeGet(`fp_attempted_${examCode}`, []);
+}
+function markAttempted(examCode, qid) {
+  const arr = getAttempted(examCode);
+  if (!arr.includes(qid)) {
+    arr.push(qid);
+    safeSet(`fp_attempted_${examCode}`, arr);
+  }
+}
+
+function getBookmarks() {
+  return safeGet("fp_bookmarks", []);
+}
+function toggleBookmarkStorage(key) {
+  const arr = getBookmarks();
+  const idx = arr.indexOf(key);
+  if (idx >= 0) arr.splice(idx, 1);
+  else arr.push(key);
+  safeSet("fp_bookmarks", arr);
+  return arr;
+}
 
 const FONT_DISPLAY = "'Space Grotesk', sans-serif";
 const FONT_BODY = "'Inter', sans-serif";
@@ -1724,6 +1822,7 @@ function shuffle(arr) {
 }
 
 function Chip({ children, tone = "azure" }) {
+  const TOKENS = useTheme();
   const colors = { azure: TOKENS.azure, amber: TOKENS.amber, green: TOKENS.green, red: TOKENS.red };
   return (
     <span
@@ -1738,6 +1837,7 @@ function Chip({ children, tone = "azure" }) {
 // Medallion pipeline motif — bronze/silver/gold layers, the same
 // architecture the study guide teaches, rendered as line art.
 function MedallionMotif({ opacity = 1 }) {
+  const TOKENS = useTheme();
   const nodes = [
     { x: 60, cy: "Bronze", color: "#C58A5A" },
     { x: 260, cy: "Silver", color: "#B9C2D0" },
@@ -1759,10 +1859,16 @@ function MedallionMotif({ opacity = 1 }) {
   );
 }
 
-function Header() {
+function Header({ theme, onToggleTheme, streak, onLogoClick }) {
+  const TOKENS = useTheme();
   return (
     <div className="flex items-center justify-between px-6 sm:px-10 py-5">
-      <div className="flex items-center gap-2.5">
+      <button
+        onClick={onLogoClick}
+        className="flex items-center gap-2.5"
+        style={{ background: "transparent", border: "none", cursor: onLogoClick ? "pointer" : "default", padding: 0 }}
+        disabled={!onLogoClick}
+      >
         <div
           className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold"
           style={{ background: `linear-gradient(135deg, ${TOKENS.azure}, ${TOKENS.azureDeep})`, color: "#04101F", fontFamily: FONT_MONO }}
@@ -1772,19 +1878,51 @@ function Header() {
         <span className="text-sm font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
           FabricPrep
         </span>
+      </button>
+      <div className="flex items-center gap-2.5">
+        {streak > 0 && (
+          <div
+            className="hidden sm:flex items-center gap-1 rounded-full px-2.5 py-1"
+            style={{ background: `${TOKENS.amber}1A`, border: `1px solid ${TOKENS.amber}40` }}
+          >
+            <span className="text-xs" style={{ color: TOKENS.amber, fontFamily: FONT_MONO }}>
+              {streak} day{streak === 1 ? "" : "s"} streak
+            </span>
+          </div>
+        )}
+        <button
+          onClick={onToggleTheme}
+          aria-label="Toggle theme"
+          className="relative"
+          style={{ width: 34, height: 20, borderRadius: 999, background: TOKENS.panelBorder, border: `1px solid ${TOKENS.panelBorder}`, cursor: "pointer", padding: 0 }}
+        >
+          <span
+            style={{
+              position: "absolute",
+              top: 2,
+              left: theme === "dark" ? 2 : 16,
+              width: 14,
+              height: 14,
+              borderRadius: "50%",
+              background: TOKENS.azure,
+              transition: "left .15s",
+            }}
+          />
+        </button>
+        <span className="text-xs hidden sm:block" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
+          by Jitendra Singh Malik
+        </span>
       </div>
-      <span className="text-xs hidden sm:block" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
-        by Jitendra Singh Malik
-      </span>
     </div>
   );
 }
 
 function Footer() {
+  const TOKENS = useTheme();
   return (
     <div className="text-center py-8 px-6">
       <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-        Built by <span style={{ color: TOKENS.azure }}>Jitendra Singh Malik</span> · Independent DP-700 / DP-600 study resource
+        Built by <span style={{ color: TOKENS.azure }}>Jitendra Singh Malik</span>
       </p>
       <p className="text-xs mt-1" style={{ color: TOKENS.inkMuted, opacity: 0.6 }}>
         Not affiliated with or endorsed by Microsoft.
@@ -1793,13 +1931,92 @@ function Footer() {
   );
 }
 
-function Home({ onStart }) {
-  const [exam, setExam] = useState("DP-700");
+function Landing({ theme, onToggleTheme, streak, onEnter }) {
+  const TOKENS = useTheme();
+  const totalQuestions = Object.values(QUESTION_BANK).reduce((sum, d) => sum + d.questions.length, 0);
+  const examCount = Object.keys(QUESTION_BANK).length;
+
+  const features = [
+    { icon: RotateCcw, title: "Untimed practice", body: "Work through questions at your own pace, with instant explanations and domain filters." },
+    { icon: Clock, title: "Timed mock exams", body: "Sit a scored, timed exam that mirrors the real format before exam day." },
+    { icon: Bookmark, title: "Bookmark questions", body: "Flag anything tricky and come back to it later." },
+    { icon: Flag, title: "Sourced from Microsoft Learn", body: "Questions are grounded in official Microsoft documentation, not guesswork." },
+  ];
+
+  return (
+    <div className="min-h-full flex flex-col">
+      <Header theme={theme} onToggleTheme={onToggleTheme} streak={streak} />
+
+      <div className="px-6 sm:px-10 py-14 text-center flex flex-col items-center">
+        <div
+          className="text-xs uppercase mb-4 px-3 py-1 rounded-full inline-block"
+          style={{ color: TOKENS.azure, letterSpacing: "0.18em", border: `1px solid ${TOKENS.azure}40`, fontFamily: FONT_MONO }}
+        >
+          Bronze → Silver → Gold
+        </div>
+        <MedallionMotif />
+        <h1 className="text-3xl sm:text-4xl font-semibold mt-2 max-w-xl" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+          Pass your Microsoft certification exam with confidence.
+        </h1>
+        <p className="mt-3 text-sm max-w-md" style={{ color: TOKENS.inkMuted }}>
+          {totalQuestions} realistic practice questions and timed mock exams across {examCount} Microsoft certifications.
+        </p>
+        <button
+          onClick={onEnter}
+          className="mt-6 px-6 py-3 rounded-full font-medium text-sm transition-transform hover:-translate-y-0.5"
+          style={{ background: TOKENS.azure, color: "#04101F" }}
+        >
+          Start practicing →
+        </button>
+      </div>
+
+      <div className="px-6 sm:px-10 pb-14 max-w-3xl mx-auto w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14">
+          {features.map((f) => (
+            <div key={f.title} className="rounded-2xl p-5" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+              <f.icon size={18} color={TOKENS.azure} />
+              <div className="font-semibold text-sm mt-3" style={{ color: TOKENS.ink }}>{f.title}</div>
+              <p className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>{f.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-5 items-start" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+          <div
+            className="w-14 h-14 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0"
+            style={{ background: `${TOKENS.azure}22`, color: TOKENS.azure, fontFamily: FONT_MONO }}
+          >
+            JM
+          </div>
+          <div>
+            <div className="text-xs uppercase mb-2" style={{ color: TOKENS.inkMuted, letterSpacing: "0.12em", fontFamily: FONT_MONO }}>
+              Meet the founder
+            </div>
+            <h2 className="text-lg font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              Hi, I'm Jitendra Singh Malik.
+            </h2>
+            <p className="text-sm mt-2" style={{ color: TOKENS.inkMuted }}>
+              I'm a data engineer and database architect working in a fully Microsoft-embedded stack — SQL Server,
+              Power BI, Azure, and Microsoft Fabric. I built FabricPrep to give you the realistic, exam-style
+              practice I wish I'd had while preparing for my own certifications.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
+
+function Home({ onStart, theme, onToggleTheme, streak, onBackToLanding }) {
+  const TOKENS = useTheme();
+  const [exam, setExam] = useState(null);
   const totalQuestions = Object.values(QUESTION_BANK).reduce((sum, d) => sum + d.questions.length, 0);
 
   return (
     <div className="min-h-full flex flex-col">
-      <Header />
+      <Header theme={theme} onToggleTheme={onToggleTheme} streak={streak} onLogoClick={onBackToLanding} />
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-10">
         <div className="w-full max-w-xl">
           <div className="mb-8 text-center flex flex-col items-center">
@@ -1822,55 +2039,76 @@ function Home({ onStart }) {
             <div className="text-xs mb-3 font-medium tracking-wide" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
               CHOOSE AN EXAM
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {Object.entries(QUESTION_BANK).map(([code, data]) => (
-                <button
-                  key={code}
-                  onClick={() => setExam(code)}
-                  className="text-left rounded-xl p-3 transition-all relative overflow-hidden"
-                  style={{
-                    background: exam === code ? `linear-gradient(135deg, ${TOKENS.azure}22, transparent)` : "transparent",
-                    border: `1px solid ${exam === code ? TOKENS.azure : TOKENS.panelBorder}`,
-                  }}
-                >
-                  <div className="font-semibold text-sm" style={{ color: TOKENS.ink, fontFamily: FONT_MONO }}>{code}</div>
-                  <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>{data.label}</div>
-                  <div className="text-xs mt-2" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>
-                    {data.questions.length} questions
+            <div className="flex flex-col gap-3">
+              {Object.entries(QUESTION_BANK).map(([code, data]) => {
+                const attempted = getAttempted(code).length;
+                const total = data.questions.length;
+                const pct = total ? Math.min(100, Math.round((attempted / total) * 100)) : 0;
+                const isSel = exam === code;
+                return (
+                  <div key={code}>
+                    <button
+                      onClick={() => setExam(isSel ? null : code)}
+                      className="text-left rounded-xl p-3 transition-all w-full"
+                      style={{
+                        background: isSel ? `linear-gradient(135deg, ${TOKENS.azure}22, transparent)` : "transparent",
+                        border: `1px solid ${isSel ? TOKENS.azure : TOKENS.panelBorder}`,
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="font-semibold text-sm" style={{ color: TOKENS.ink, fontFamily: FONT_MONO }}>{code}</span>
+                          <span className="text-xs ml-2" style={{ color: TOKENS.inkMuted }}>{data.label}</span>
+                        </div>
+                        <span className="text-xs" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>{attempted}/{total}</span>
+                      </div>
+                      <div className="mt-2 rounded-full overflow-hidden" style={{ height: 4, background: TOKENS.panelBorder }}>
+                        <div style={{ width: `${pct}%`, height: "100%", background: TOKENS.azure }} />
+                      </div>
+                    </button>
+                    {isSel && (
+                      <div className="mt-3">
+                        <button
+                          onClick={() => setExam(null)}
+                          className="flex items-center gap-1 text-xs mb-2"
+                          style={{ color: TOKENS.inkMuted, background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
+                        >
+                          <ChevronLeft size={14} /> Back to exams
+                        </button>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <button
+                            onClick={() => onStart(exam, "practice")}
+                            className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+                            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <RotateCcw size={16} color={TOKENS.azure} />
+                              <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Practice mode</span>
+                            </div>
+                            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                              Untimed, with domain filters and bookmarks.
+                            </p>
+                          </button>
+                          <button
+                            onClick={() => onStart(exam, "mock")}
+                            className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+                            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <Clock size={16} color={TOKENS.amber} />
+                              <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Mock exam</span>
+                            </div>
+                            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                              {MOCK_LENGTH} questions, {Math.round(MOCK_SECONDS / 60)}-min timer.
+                            </p>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </button>
-              ))}
+                );
+              })}
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button
-              onClick={() => onStart(exam, "practice")}
-              className="rounded-2xl p-5 text-left transition-transform hover:-translate-y-0.5"
-              style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <RotateCcw size={16} color={TOKENS.azure} />
-                <span className="font-semibold" style={{ color: TOKENS.ink }}>Practice mode</span>
-              </div>
-              <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-                Untimed. Instant feedback and explanations after every question.
-              </p>
-            </button>
-
-            <button
-              onClick={() => onStart(exam, "mock")}
-              className="rounded-2xl p-5 text-left transition-transform hover:-translate-y-0.5"
-              style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <Clock size={16} color={TOKENS.amber} />
-                <span className="font-semibold" style={{ color: TOKENS.ink }}>Mock exam</span>
-              </div>
-              <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-                {MOCK_LENGTH} questions, {Math.round(MOCK_SECONDS / 60)}-minute timer, scored at the end.
-              </p>
-            </button>
           </div>
         </div>
       </div>
@@ -1880,26 +2118,48 @@ function Home({ onStart }) {
 }
 
 function Practice({ exam, onExit }) {
+  const TOKENS = useTheme();
   const pool = QUESTION_BANK[exam].questions;
-  const [order] = useState(() => shuffle(pool));
+  const domains = useMemo(() => ["All", ...Array.from(new Set(pool.map((q) => q.domain)))], [pool]);
+  const [domainFilter, setDomainFilter] = useState("All");
+  const filteredPool = useMemo(
+    () => (domainFilter === "All" ? pool : pool.filter((q) => q.domain === domainFilter)),
+    [pool, domainFilter]
+  );
+  const [order, setOrder] = useState(() => shuffle(filteredPool));
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState(null);
   const [revealed, setRevealed] = useState(false);
   const [score, setScore] = useState({ correct: 0, seen: 0 });
+  const [bookmarks, setBookmarks] = useState(() => new Set(getBookmarks()));
+
+  useEffect(() => {
+    setOrder(shuffle(filteredPool));
+    setIdx(0);
+    setSelected(null);
+    setRevealed(false);
+  }, [filteredPool]);
 
   const q = order[idx % order.length];
+  const bmKey = q ? `${exam}:${q.id}` : "";
 
   function choose(optId) {
-    if (revealed) return;
+    if (revealed || !q) return;
     setSelected(optId);
     setRevealed(true);
     setScore((s) => ({ correct: s.correct + (optId === q.correct ? 1 : 0), seen: s.seen + 1 }));
+    markAttempted(exam, q.id);
   }
 
   function next() {
     setSelected(null);
     setRevealed(false);
     setIdx((i) => i + 1);
+  }
+
+  function toggleBm() {
+    const arr = toggleBookmarkStorage(bmKey);
+    setBookmarks(new Set(arr));
   }
 
   return (
@@ -1913,31 +2173,57 @@ function Practice({ exam, onExit }) {
         right={<Chip tone="azure">{exam} · Practice</Chip>}
       />
 
-      <div className="mt-6 mb-3 flex items-center justify-between">
-        <span className="text-xs" style={{ color: TOKENS.inkMuted }}>{q.domain}</span>
-        <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
-          <span style={{ fontFamily: FONT_MONO }}>Score: {score.correct}/{score.seen}</span>
-        </span>
+      <div className="flex flex-wrap gap-1.5 mt-5">
+        {domains.map((d) => (
+          <button
+            key={d}
+            onClick={() => setDomainFilter(d)}
+            className="text-xs rounded-full px-2.5 py-1 transition-colors"
+            style={{
+              color: domainFilter === d ? "#04101F" : TOKENS.inkMuted,
+              background: domainFilter === d ? TOKENS.azure : "transparent",
+              border: `1px solid ${domainFilter === d ? TOKENS.azure : TOKENS.panelBorder}`,
+            }}
+          >
+            {d === "All" ? "All" : d.length > 22 ? d.slice(0, 22) + "…" : d}
+          </button>
+        ))}
       </div>
 
-      <QuestionCard q={q} selected={selected} revealed={revealed} onChoose={choose} />
-
-      {revealed && (
-        <div className="flex justify-end mt-5">
-          <button
-            onClick={next}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm"
-            style={{ background: TOKENS.azure, color: "#04101F" }}
-          >
-            Next question <ArrowRight size={16} />
-          </button>
+      {!q ? (
+        <div className="mt-8 text-sm text-center" style={{ color: TOKENS.inkMuted }}>
+          No questions in this domain.
         </div>
+      ) : (
+        <>
+          <div className="mt-5 mb-3 flex items-center justify-between">
+            <span className="text-xs" style={{ color: TOKENS.inkMuted }}>{q.domain}</span>
+            <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
+              <span style={{ fontFamily: FONT_MONO }}>Score: {score.correct}/{score.seen}</span>
+            </span>
+          </div>
+
+          <QuestionCard q={q} selected={selected} revealed={revealed} onChoose={choose} bookmarked={bookmarks.has(bmKey)} onToggleBookmark={toggleBm} />
+
+          {revealed && (
+            <div className="flex justify-end mt-5">
+              <button
+                onClick={next}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm"
+                style={{ background: TOKENS.azure, color: "#04101F" }}
+              >
+                Next question <ArrowRight size={16} />
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
 }
 
 function MockExam({ exam, onExit }) {
+  const TOKENS = useTheme();
   const pool = QUESTION_BANK[exam].questions;
   const [order] = useState(() => shuffle(pool).slice(0, Math.min(MOCK_LENGTH, pool.length)));
   const [idx, setIdx] = useState(0);
@@ -1946,13 +2232,18 @@ function MockExam({ exam, onExit }) {
   const [finished, setFinished] = useState(false);
   const timerRef = useRef(null);
 
+  function finishExam() {
+    Object.keys(answers).forEach((qid) => markAttempted(exam, qid));
+    setFinished(true);
+  }
+
   useEffect(() => {
     if (finished) return;
     timerRef.current = setInterval(() => {
       setSecondsLeft((s) => {
         if (s <= 1) {
           clearInterval(timerRef.current);
-          setFinished(true);
+          finishExam();
           return 0;
         }
         return s - 1;
@@ -2073,7 +2364,7 @@ function MockExam({ exam, onExit }) {
         </button>
         {idx === order.length - 1 ? (
           <button
-            onClick={() => setFinished(true)}
+            onClick={() => finishExam()}
             className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm"
             style={{ background: TOKENS.green, color: "#04101F" }}
           >
@@ -2102,10 +2393,18 @@ function TopBar({ left, right }) {
   );
 }
 
-function QuestionCard({ q, selected, revealed, onChoose }) {
+function QuestionCard({ q, selected, revealed, onChoose, bookmarked, onToggleBookmark }) {
+  const TOKENS = useTheme();
   return (
     <div className="rounded-2xl p-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
-      <div className="text-base font-medium mb-5" style={{ color: TOKENS.ink }}>{q.question}</div>
+      <div className="flex items-start justify-between gap-3 mb-5">
+        <div className="text-base font-medium" style={{ color: TOKENS.ink }}>{q.question}</div>
+        {onToggleBookmark && (
+          <button onClick={onToggleBookmark} aria-label="Bookmark question" className="flex-shrink-0" style={{ background: "transparent", border: "none", cursor: "pointer", padding: 0 }}>
+            <Bookmark size={18} color={bookmarked ? TOKENS.amber : TOKENS.inkMuted} fill={bookmarked ? TOKENS.amber : "none"} />
+          </button>
+        )}
+      </div>
       <div className="space-y-2.5">
         {q.options.map((opt) => {
           const isSelected = selected === opt.id;
@@ -2142,19 +2441,37 @@ function QuestionCard({ q, selected, revealed, onChoose }) {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState("home");
+  const [screen, setScreen] = useState("landing");
   const [exam, setExam] = useState("DP-700");
+  const [theme, setTheme] = useState(() => getStoredTheme());
+  const [streak, setStreak] = useState(0);
+
+  useEffect(() => {
+    setStreak(updateStreak());
+  }, []);
+
+  function toggleTheme() {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    setStoredTheme(next);
+  }
 
   function start(examCode, mode) {
     setExam(examCode);
     setScreen(mode);
   }
 
+  const tokens = theme === "dark" ? DARK_TOKENS : LIGHT_TOKENS;
+
   return (
-    <div className="min-h-screen w-full" style={{ background: TOKENS.bg, fontFamily: "'Inter', sans-serif" }}>
-      {screen === "home" && <Home onStart={start} />}
-      {screen === "practice" && <Practice exam={exam} onExit={() => setScreen("home")} />}
-      {screen === "mock" && <MockExam exam={exam} onExit={() => setScreen("home")} />}
-    </div>
+    <ThemeContext.Provider value={tokens}>
+      <div className="min-h-screen w-full" style={{ background: tokens.bg, fontFamily: FONT_BODY }}>
+        {screen === "landing" && <Landing theme={theme} onToggleTheme={toggleTheme} streak={streak} onEnter={() => setScreen("home")} />}
+        {screen === "home" && <Home onStart={start} theme={theme} onToggleTheme={toggleTheme} streak={streak} onBackToLanding={() => setScreen("landing")} />}
+        {screen === "practice" && <Practice exam={exam} onExit={() => setScreen("home")} />}
+        {screen === "mock" && <MockExam exam={exam} onExit={() => setScreen("home")} />}
+      </div>
+    </ThemeContext.Provider>
+
   );
 }
