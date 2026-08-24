@@ -1,0 +1,146 @@
+import { useState } from "react";
+import { useParams, Link, Navigate, useOutletContext } from "react-router-dom";
+import { Head as Helmet } from "vite-react-ssg";
+import { RotateCcw, Clock, ChevronLeft } from "lucide-react";
+import { useTheme, FONT_DISPLAY, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, getAttempted } from "../lib/theme.jsx";
+import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank.jsx";
+import { Header, Footer, MedallionMotif } from "../components/Shared.jsx";
+import { Practice } from "../components/Practice.jsx";
+import { MockExam } from "../components/MockExam.jsx";
+
+function buildFaqs(code, meta, total) {
+  return [
+    { q: `How many questions are in the ${code} practice bank?`, a: `There are currently ${total} practice questions for ${code}, covering every domain in the official Microsoft exam skills outline.` },
+    { q: `Is FabricPrep's ${code} practice free?`, a: `Yes — all practice questions and mock exams on FabricPrep are free, with no account or credit card required.` },
+    { q: `Where do the ${code} questions come from?`, a: `Questions are written from official Microsoft Learn documentation and the published exam skills outline for ${code}, not guesswork.` },
+    { q: `What's the difference between Practice mode and Mock exam mode?`, a: `Practice mode is untimed with instant explanations and domain filters, so you can study one topic at a time. Mock exam mode is a timed, scored simulation of exam-day conditions.` },
+    { q: `How hard is the ${code} exam?`, a: `Difficulty depends on your hands-on experience with the technology. Working through the full question bank in both modes is a good way to find your weak spots before exam day.` },
+  ];
+}
+
+export function ExamPage() {
+  const { examSlug } = useParams();
+  const { theme, onToggleTheme, streak } = useOutletContext();
+  const TOKENS = useTheme();
+  const [mode, setMode] = useState(null); // null | "practice" | "mock"
+
+  const code = SLUG_TO_EXAM[examSlug];
+  if (!code) return <Navigate to="/" replace />;
+
+  const data = QUESTION_BANK[code];
+  const meta = EXAM_META[code];
+  const total = data.questions.length;
+  const attempted = getAttempted(code).length;
+  const pct = total ? Math.min(100, Math.round((attempted / total) * 100)) : 0;
+  const faqs = buildFaqs(code, meta, total);
+
+  if (mode === "practice") return <Practice exam={code} onExit={() => setMode(null)} />;
+  if (mode === "mock") return <MockExam exam={code} onExit={() => setMode(null)} />;
+
+  return (
+    <div className="min-h-full flex flex-col">
+      <Helmet>
+        <title>{meta.metaTitle}</title>
+        <meta name="description" content={meta.metaDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://fabricprep.com/${meta.slug}`} />
+        <meta property="og:title" content={meta.metaTitle} />
+        <meta property="og:description" content={meta.metaDescription} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Course",
+            name: meta.title,
+            description: meta.metaDescription,
+            provider: { "@type": "Organization", name: "FabricPrep", sameAs: "https://fabricprep.com/" },
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqs.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          })}
+        </script>
+      </Helmet>
+
+      <Header theme={theme} onToggleTheme={onToggleTheme} streak={streak} onLogoClick={undefined} />
+
+      <div className="flex-1 px-6 py-8 max-w-2xl mx-auto w-full">
+        <Link to="/" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>
+          <ChevronLeft size={14} /> All exams
+        </Link>
+
+        <div className="text-center mb-8 flex flex-col items-center">
+          <div
+            className="text-xs uppercase mb-4 px-3 py-1 rounded-full inline-block"
+            style={{ color: TOKENS.azure, letterSpacing: "0.14em", border: `1px solid ${TOKENS.azure}40`, fontFamily: FONT_MONO }}
+          >
+            {code}
+          </div>
+          <MedallionMotif opacity={0.5} />
+          <h1 className="text-2xl sm:text-3xl font-semibold mt-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            {meta.title}
+          </h1>
+          <p className="mt-3 text-sm max-w-md" style={{ color: TOKENS.inkMuted }}>
+            {total} free practice questions for the {data.label} certification, sourced from official Microsoft
+            Learn documentation. Practice untimed or sit a scored mock exam.
+          </p>
+        </div>
+
+        <div className="rounded-xl p-4 mb-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+          <div className="flex justify-between text-xs mb-2" style={{ color: TOKENS.inkMuted }}>
+            <span>Your progress</span>
+            <span style={{ fontFamily: FONT_MONO }}>{attempted}/{total} attempted</span>
+          </div>
+          <div className="rounded-full overflow-hidden" style={{ height: 5, background: TOKENS.panelBorder }}>
+            <div style={{ width: `${pct}%`, height: "100%", background: TOKENS.azure }} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12">
+          <button
+            onClick={() => setMode("practice")}
+            className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <RotateCcw size={16} color={TOKENS.azure} />
+              <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Practice mode</span>
+            </div>
+            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>Untimed, with domain filters and bookmarks.</p>
+          </button>
+          <button
+            onClick={() => setMode("mock")}
+            className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <Clock size={16} color={TOKENS.amber} />
+              <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Mock exam</span>
+            </div>
+            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>{MOCK_LENGTH} questions, {Math.round(MOCK_SECONDS / 60)}-min timer.</p>
+          </button>
+        </div>
+
+        <h2 className="text-sm font-semibold mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+          Frequently asked questions
+        </h2>
+        <div className="flex flex-col gap-2">
+          {faqs.map((f) => (
+            <details key={f.q} className="rounded-xl p-4" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+              <summary className="text-sm font-medium cursor-pointer" style={{ color: TOKENS.ink }}>{f.q}</summary>
+              <p className="text-xs mt-2" style={{ color: TOKENS.inkMuted }}>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
