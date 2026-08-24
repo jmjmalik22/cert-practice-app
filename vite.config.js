@@ -1,12 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import Sitemap from "vite-plugin-sitemap";
+
+const SLUGS = ["dp-700", "dp-600", "az-900", "dp-900"];
 
 export default defineConfig({
-  plugins: [
-    react(),
-    Sitemap({
-      hostname: "https://fabricprep.com/",
-    }),
-  ],
+  plugins: [react()],
+  ssgOptions: {
+    includedRoutes: () => ["/", ...SLUGS.map((s) => `/${s}`)],
+  },
 });

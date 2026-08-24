@@ -1,10 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import { ViteReactSSG } from "vite-react-ssg";
 import App from "./App.jsx";
+import { Landing } from "./pages/Landing.jsx";
+import { ExamPage } from "./pages/ExamPage.jsx";
 import "./index.css";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const routes = [
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { index: true, element: <Landing /> },
+      { path: ":examSlug", element: <ExamPage /> },
+    ],
+  },
+];
+
+export const createRoot = ViteReactSSG({ routes, basename: "/" });
