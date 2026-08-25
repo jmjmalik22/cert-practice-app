@@ -4,7 +4,7 @@ import { Head as Helmet } from "vite-react-ssg";
 import { RotateCcw, Clock, ChevronLeft } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, getAttempted } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank.jsx";
-import { Header, Footer, MedallionMotif } from "../components/Shared.jsx";
+import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { Practice } from "../components/Practice.jsx";
 import { MockExam } from "../components/MockExam.jsx";
 
@@ -67,8 +67,6 @@ export function ExamPage() {
           })}
         </script>
       </Helmet>
-
-      <Header theme={theme} onToggleTheme={onToggleTheme} streak={streak} onLogoClick={undefined} />
 
       <div className="flex-1 px-6 py-8 max-w-2xl mx-auto w-full">
         <Link to="/" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>
