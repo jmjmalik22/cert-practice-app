@@ -1,4 +1,5 @@
 // Generates sitemap.xml and robots.txt after the SSG build.
+// Updated: 2026-08-25 with SEO improvements (lastmod, priority, changefreq)
 // Slugs are duplicated here (rather than imported) since this script runs
 // under plain Node, not Vite, and can't load .jsx source directly.
 import { writeFileSync } from "fs";
