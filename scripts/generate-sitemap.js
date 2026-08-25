@@ -5,7 +5,7 @@ import { writeFileSync } from "fs";
 
 const HOSTNAME = "https://fabricprep.com";
 const SLUGS = ["dp-700", "dp-600", "az-900", "dp-900", "az-104", "ai-900"];
-const routes = ["/", "/dashboard", ...SLUGS.map((s) => `/${s}`)];
+const routes = ["/", "/dashboard", "/study-guides", ...SLUGS.map((s) => `/${s}`)];
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
