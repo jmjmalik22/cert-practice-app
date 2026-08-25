@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FabricPrep OG Image</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    /* OG Image Container - 1200x630 */
+    .og-image {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 50%, #1a1a2e 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px;
+    }
+
+    /* Decorative background elements */
+    .og-image::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .og-image::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* Grid pattern overlay */
+    .grid-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    /* Content container */
+    .content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 900px;
+    }
+
+    /* Logo/Brand styling */
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+
+    .brand-name {
+      font-size: 72px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -2px;
+    }
+
+    /* Tagline */
+    .tagline {
+      font-size: 32px;
+      color: #cbd5e1;
+      font-weight: 500;
+      margin-bottom: 50px;
+      line-height: 1.4;
+    }
+
+    /* Certification badges */
+    .badges {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 16px 28px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #e2e8f0;
+      backdrop-filter: blur(10px);
+    }
+
+    .badge.azure {
+      border-color: rgba(59, 130, 246, 0.4);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .badge.fabric {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    /* Author credit */
+    .author {
+      position: absolute;
+      bottom: 40px;
+      right: 60px;
+      font-size: 18px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Screenshot instructions */
+    .instructions {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 14px;
+      max-width: 600px;
+      text-align: center;
+      z-index: 100;
+    }
+
+    .instructions strong {
+      color: #3b82f6;
+    }
+
+    /* Responsive for viewing */
+    @media (max-width: 1300px) {
+      .og-image {
+        transform: scale(0.5);
+        transform-origin: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="og-image">
+    <div class="grid-pattern"></div>
+    
+    <div class="content">
+      <div class="brand">
+        <div class="logo-icon">FP</div>
+        <h1 class="brand-name">FabricPrep</h1>
+      </div>
+      
+      <p class="tagline">
+        Master Microsoft Fabric & Azure Certifications<br>
+        with 208+ Practice Questions
+      </p>
+      
+
+    </div>
+    
+    <div class="author">by Jitendra Singh Malik</div>
+  </div>
+
+  <div class="instructions">
+    <strong>📸 How to save:</strong> Open browser dev tools (F12) → Toggle device toolbar (Ctrl+Shift+M) → 
+    Set dimensions to <strong>1200 x 630</strong> → Screenshot and save as <code>public/og-image.png</code>
+    <br><br>
+    Or use: <a href="https://html2canvas.hertzen.com/" target="_blank" style="color: #3b82f6;">html2canvas</a> or any screenshot tool at exact 1200x630
+  </div>
+</body>
+</html>
