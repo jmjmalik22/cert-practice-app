@@ -5,6 +5,7 @@ import { safeGet, safeSet } from "./theme.jsx";
 
 const PROGRESS_KEY = "fp_progress";
 const USER_KEY = "fp_user";
+const EXAM_RESULTS_KEY = "fp_exam_results";
 
 // Default user profile
 export function getDefaultUser() {
@@ -31,6 +32,57 @@ export function getProgress() {
   return safeGet(PROGRESS_KEY, {});
 }
 
+// Import old progress data and merge with new
+export function migrateOldProgress() {
+  const progress = getProgress();
+  const exams = ["DP-700", "DP-600", "AZ-900", "DP-900", "AZ-104", "AI-900"];
+  let migrated = false;
+
+  exams.forEach((examCode) => {
+    // Check for old format data
+    const oldAttempted = safeGet(`fp_attempted_${examCode}`, []);
+    const oldBookmarks = safeGet("fp_bookmarks", []);
+
+    if (oldAttempted.length > 0 && !progress[examCode]?.attempts?.length) {
+      // Migrate old data to new format
+      if (!progress[examCode]) {
+        progress[examCode] = { attempts: [], correct: 0, total: 0, bookmarked: [] };
+      }
+
+      // Add attempted questions (we don't know if correct, so mark as neutral)
+      oldAttempted.forEach((qid) => {
+        if (!progress[examCode].attempts.find((a) => a.questionId === qid)) {
+          progress[examCode].attempts.push({
+            questionId: qid,
+            isCorrect: true, // Assume correct for migration
+            timestamp: new Date().toISOString(),
+          });
+          progress[examCode].total += 1;
+          progress[examCode].correct += 1;
+        }
+      });
+
+      // Migrate bookmarks for this exam
+      oldBookmarks
+        .filter((key) => key.startsWith(`${examCode}:`))
+        .forEach((key) => {
+          const qid = key.split(":")[1];
+          if (!progress[examCode].bookmarked.includes(qid)) {
+            progress[examCode].bookmarked.push(qid);
+          }
+        });
+
+      migrated = true;
+    }
+  });
+
+  if (migrated) {
+    safeSet(PROGRESS_KEY, progress);
+  }
+
+  return progress;
+}
+
 // Save progress for a specific exam
 export function saveExamProgress(examCode, data) {
   const progress = getProgress();
@@ -43,7 +95,14 @@ export function saveExamProgress(examCode, data) {
 }
 
 // Record a question attempt
-export function recordAttempt(examCode, questionId, isCorrect, timeSpent = 0) {
+export function recordAttempt(examCode, questionId, isCorrect, timeSpent = 0, isMockExam = false) {
+  // Also update old system for compatibility with existing UI
+  const oldAttempted = safeGet(`fp_attempted_${examCode}`, []);
+  if (!oldAttempted.includes(questionId)) {
+    oldAttempted.push(questionId);
+    safeSet(`fp_attempted_${examCode}`, oldAttempted);
+  }
+
   const progress = getProgress();
   if (!progress[examCode]) {
     progress[examCode] = {
@@ -60,6 +119,7 @@ export function recordAttempt(examCode, questionId, isCorrect, timeSpent = 0) {
     isCorrect,
     timeSpent,
     timestamp: new Date().toISOString(),
+    isMockExam,
   });
 
   exam.total += 1;
@@ -96,12 +156,24 @@ export function getBookmarks(examCode) {
 
 // Calculate exam statistics
 export function getExamStats(examCode, totalQuestions = 0) {
+  migrateOldProgress(); // Ensure old data is migrated
   const progress = getProgress();
   const exam = progress[examCode] || { attempts: [], correct: 0, total: 0, bookmarked: [] };
 
-  const uniqueQuestions = new Set(exam.attempts.map((a) => a.questionId));
+  // Only count practice mode (not mock exams) for completion %
+  const practiceAttempts = exam.attempts.filter((a) => !a.isMockExam);
+  const uniqueQuestions = new Set(practiceAttempts.map((a) => a.questionId));
   const accuracy = exam.total > 0 ? Math.round((exam.correct / exam.total) * 100) : 0;
-  const completion = totalQuestions > 0 ? Math.round((uniqueQuestions.size / totalQuestions) * 100) : 0;
+  
+  // Calculate mastery: questions answered correctly at least 2 times
+  const correctCounts = {};
+  practiceAttempts.forEach((a) => {
+    if (a.isCorrect) {
+      correctCounts[a.questionId] = (correctCounts[a.questionId] || 0) + 1;
+    }
+  });
+  const masteredQuestions = Object.entries(correctCounts).filter(([_, count]) => count >= 2).length;
+  const mastery = totalQuestions > 0 ? Math.round((masteredQuestions / totalQuestions) * 100) : 0;
 
   // Get weak areas (questions answered incorrectly multiple times)
   const weakAreas = {};
@@ -128,7 +200,8 @@ export function getExamStats(examCode, totalQuestions = 0) {
     correct: exam.correct,
     accuracy,
     uniqueQuestionsAnswered: uniqueQuestions.size,
-    completion,
+    masteredQuestions,
+    mastery,
     bookmarked: exam.bookmarked.length,
     weakAreas: Object.entries(weakAreas)
       .sort((a, b) => b[1] - a[1])
@@ -141,6 +214,7 @@ export function getExamStats(examCode, totalQuestions = 0) {
 
 // Get overall stats across all exams
 export function getOverallStats() {
+  migrateOldProgress(); // Ensure old data is migrated
   const progress = getProgress();
   const exams = Object.keys(progress);
 
@@ -170,6 +244,7 @@ export function getOverallStats() {
 
 // Get study streak (consecutive days with activity)
 export function getStudyStreak() {
+  migrateOldProgress(); // Ensure old data is migrated
   const progress = getProgress();
   const allAttempts = [];
 
@@ -209,7 +284,50 @@ export function getStudyStreak() {
   };
 }
 
+// Save a mock exam result
+export function saveExamResult(examCode, result) {
+  const results = safeGet(EXAM_RESULTS_KEY, []);
+  results.push({
+    examCode,
+    score: result.score,
+    total: result.total,
+    percentage: result.percentage,
+    correct: result.correct,
+    incorrect: result.incorrect,
+    timeSpent: result.timeSpent,
+    timestamp: new Date().toISOString(),
+    isMockExam: true, // Flag to identify mock exam attempts
+  });
+  safeSet(EXAM_RESULTS_KEY, results);
+}
+
+// Get all exam results
+export function getExamResults(examCode = null) {
+  const results = safeGet(EXAM_RESULTS_KEY, []);
+  if (examCode) {
+    return results.filter((r) => r.examCode === examCode);
+  }
+  return results;
+}
+
+// Get best score for an exam
+export function getBestScore(examCode) {
+  const results = getExamResults(examCode);
+  if (results.length === 0) return null;
+  return results.reduce((best, current) =>
+    current.percentage > best.percentage ? current : best
+  );
+}
+
+// Get latest exam result
+export function getLatestResult(examCode = null) {
+  const results = examCode ? getExamResults(examCode) : safeGet(EXAM_RESULTS_KEY, []);
+  if (results.length === 0) return null;
+  return results.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+}
+
 // Clear all progress (for testing/reset)
 export function clearProgress() {
   safeSet(PROGRESS_KEY, {});
+  safeSet(EXAM_RESULTS_KEY, []);
 }

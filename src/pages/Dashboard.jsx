@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, useOutletContext } from "react-router-dom";
-import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight } from "lucide-react";
+import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight, Zap } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
 import { Header, Footer } from "../components/Shared.jsx";
-import { getOverallStats, getExamStats, getStudyStreak, getUser } from "../lib/progress.jsx";
+import { getOverallStats, getExamStats, getUser, getExamResults, getBestScore } from "../lib/progress.jsx";
+import { getAttempted, updateStreak } from "../lib/theme.jsx";
 
 function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
   const TOKENS = useTheme();
@@ -72,13 +73,15 @@ function ExamProgressCard({ examCode, stats }) {
   const TOKENS = useTheme();
   const meta = EXAM_META[examCode];
   const totalQuestions = QUESTION_BANK[examCode]?.questions.length || 0;
+  const attempted = getAttempted(examCode).length;
+  const coverage = totalQuestions > 0 ? Math.round((attempted / totalQuestions) * 100) : 0;
 
   if (!meta) return null;
 
   return (
     <Link
       to={`/${meta.slug}`}
-      className="block rounded-xl p-5 transition-all hover:opacity-90"
+      className="block rounded-xl p-5 transition-all hover:opacity-90 relative"
       style={{
         background: TOKENS.panel,
         border: `1px solid ${TOKENS.panelBorder}`,
@@ -90,7 +93,7 @@ function ExamProgressCard({ examCode, stats }) {
             {examCode}
           </h3>
           <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-            {stats.uniqueQuestionsAnswered} of {totalQuestions} questions
+            {attempted} of {totalQuestions} questions seen
           </p>
         </div>
         <div
@@ -101,15 +104,25 @@ function ExamProgressCard({ examCode, stats }) {
             fontFamily: FONT_MONO,
           }}
         >
-          {stats.accuracy}%
+          {coverage}%
         </div>
       </div>
 
-      <ProgressBar progress={(stats.uniqueQuestionsAnswered / totalQuestions) * 100} color="azure" />
+      <ProgressBar progress={coverage} color="azure" />
 
-      <div className="flex items-center justify-between mt-4 text-xs" style={{ color: TOKENS.inkMuted }}>
-        <span>{stats.completion}% complete</span>
-        <span>{stats.correct}/{stats.totalAttempts} correct</span>
+      <div className="grid grid-cols-3 gap-2 mt-4 text-xs text-center">
+        <div>
+          <div className="font-semibold" style={{ color: TOKENS.ink }}>{stats.totalAttempts}</div>
+          <div style={{ color: TOKENS.inkMuted }}>Total Attempts</div>
+        </div>
+        <div>
+          <div className="font-semibold" style={{ color: TOKENS.green }}>{stats.correct}</div>
+          <div style={{ color: TOKENS.inkMuted }}>Correct</div>
+        </div>
+        <div>
+          <div className="font-semibold" style={{ color: TOKENS.amber }}>{stats.accuracy}%</div>
+          <div style={{ color: TOKENS.inkMuted }}>Accuracy</div>
+        </div>
       </div>
 
       {stats.bookmarked > 0 && (
@@ -128,6 +141,117 @@ function ExamProgressCard({ examCode, stats }) {
         style={{ color: TOKENS.inkMuted }}
       />
     </Link>
+  );
+}
+
+function ExamResultsSection() {
+  const TOKENS = useTheme();
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    setResults(getExamResults());
+  }, []);
+
+  if (results.length === 0) return null;
+
+  // Group by exam
+  const byExam = results.reduce((acc, r) => {
+    if (!acc[r.examCode]) acc[r.examCode] = [];
+    acc[r.examCode].push(r);
+    return acc;
+  }, {});
+
+  return (
+    <div className="mt-8">
+      <h2
+        className="text-lg font-semibold mb-4 flex items-center gap-2"
+        style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
+      >
+        <Trophy size={20} style={{ color: TOKENS.amber }} />
+        Mock Exam Results
+      </h2>
+      <div className="space-y-4">
+        {Object.entries(byExam).map(([examCode, examResults]) => {
+          const best = examResults.reduce((b, c) => (c.percentage > b.percentage ? c : b));
+          const latest = examResults[examResults.length - 1];
+          const meta = EXAM_META[examCode];
+
+          return (
+            <div
+              key={examCode}
+              className="rounded-xl p-4"
+              style={{
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.panelBorder}`,
+              }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-medium" style={{ color: TOKENS.ink }}>
+                  {examCode}
+                </span>
+                <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                  {examResults.length} attempt{examResults.length > 1 ? "s" : ""}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div className="text-lg font-bold" style={{ color: TOKENS.green }}>
+                    {best.percentage}%
+                  </div>
+                  <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Best Score</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold" style={{ color: TOKENS.azure }}>
+                    {latest.percentage}%
+                  </div>
+                  <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Latest</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold" style={{ color: TOKENS.ink }}>
+                    {best.score}/{best.total}
+                  </div>
+                  <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Best</div>
+                </div>
+              </div>
+
+              {/* List all attempts for this exam */}
+              <div className="mt-3 pt-3 border-t" style={{ borderColor: TOKENS.panelBorder }}>
+                <p className="text-xs font-medium mb-2" style={{ color: TOKENS.inkMuted }}>
+                  All attempts:
+                </p>
+                <div className="space-y-2">
+                  {examResults.map((result, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between text-xs py-1 px-2 rounded"
+                      style={{ background: TOKENS.bg }}
+                    >
+                      <span style={{ color: TOKENS.inkMuted }}>
+                        #{idx + 1} · {new Date(result.timestamp).toLocaleDateString()}
+                      </span>
+                      <span
+                        className="font-medium"
+                        style={{
+                          color:
+                            result.percentage >= 70
+                              ? TOKENS.green
+                              : result.percentage >= 50
+                              ? TOKENS.amber
+                              : TOKENS.red,
+                        }}
+                      >
+                        {result.score}/{result.total} ({result.percentage}%)
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -161,15 +285,15 @@ export function Dashboard() {
   const TOKENS = useTheme();
   const [stats, setStats] = useState(null);
   const [examStats, setExamStats] = useState([]);
-  const [studyStreak, setStudyStreak] = useState({ streak: 0, totalStudyDays: 0 });
+  const [visitStreak, setVisitStreak] = useState(0);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const overall = getOverallStats();
-    const streakData = getStudyStreak();
+    const streakCount = updateStreak();
     const userData = getUser();
     setStats(overall);
-    setStudyStreak(streakData);
+    setVisitStreak(streakCount);
     setUser(userData);
 
     // Get stats for each exam that has progress
@@ -208,34 +332,27 @@ export function Dashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
           <StatCard
             icon={Trophy}
-            label="Questions Answered"
+            label="Total Attempts"
             value={stats.totalAttempts}
-            subtext={`${stats.uniqueQuestionsAnswered} unique`}
+            subtext={`${stats.uniqueQuestionsAnswered} unique questions`}
             color="amber"
           />
           <StatCard
             icon={Target}
-            label="Accuracy Rate"
-            value={`${stats.accuracy}%`}
-            subtext={`${stats.totalCorrect} correct`}
+            label="Correct Answers"
+            value={stats.totalCorrect}
+            subtext={`${stats.accuracy}% accuracy rate`}
             color="green"
           />
           <StatCard
             icon={Flame}
             label="Study Streak"
-            value={`${studyStreak.streak} days`}
-            subtext={`${studyStreak.totalStudyDays} total days`}
+            value={`${visitStreak} day${visitStreak === 1 ? "" : "s"}`}
+            subtext="Keep it up!"
             color="amber"
-          />
-          <StatCard
-            icon={BookOpen}
-            label="Bookmarked"
-            value={stats.totalBookmarked}
-            subtext="Questions saved"
-            color="azure"
           />
         </div>
 
@@ -277,6 +394,9 @@ export function Dashboard() {
                 </Link>
               </div>
             )}
+
+            {/* Mock Exam Results */}
+            <ExamResultsSection />
           </div>
 
           {/* Activity & Quick Links */}

@@ -2,6 +2,7 @@ import { Head as Helmet } from "vite-react-ssg";
 import { Link, useOutletContext } from "react-router-dom";
 import { RotateCcw, Clock, Bookmark, Flag } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
+import { getExamStats } from "../lib/progress.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
 import { Header, Footer, MedallionMotif } from "../components/Shared.jsx";
 
@@ -92,6 +93,8 @@ export function Landing() {
             const attempted = getAttempted(code).length;
             const total = data.questions.length;
             const pct = total ? Math.min(100, Math.round((attempted / total) * 100)) : 0;
+            const stats = getExamStats(code, total);
+            const hasAttempts = stats.totalAttempts > 0;
             return (
               <Link
                 key={code}
@@ -121,18 +124,16 @@ export function Landing() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs font-medium" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>{attempted}/{total}</div>
-                    <div className="text-xs mt-1" style={{ color: pct > 70 ? TOKENS.green : pct > 30 ? TOKENS.amber : TOKENS.inkMuted }}>
-                      {pct}% complete
+                    <div className="text-xs font-medium" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
+                      {attempted}/{total}
+                    </div>
+                    <div className="text-xs mt-1" style={{ color: hasAttempts ? TOKENS.green : TOKENS.inkMuted }}>
+                      {hasAttempts ? `${stats.accuracy}% accuracy` : "Not started"}
                     </div>
                   </div>
                 </div>
                 
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-xs" style={{ color: TOKENS.inkMuted }}>Progress</span>
-                  <span className="text-xs font-medium" style={{ color: TOKENS.azure }}>{pct}%</span>
-                </div>
-                <div className="relative rounded-full overflow-hidden" style={{ height: 6, background: TOKENS.panelBorder }}>
+                <div className="relative rounded-full overflow-hidden mt-3" style={{ height: 6, background: TOKENS.panelBorder }}>
                   <div 
                     className="absolute top-0 left-0 h-full rounded-full transition-all duration-500 ease-out"
                     style={{ 

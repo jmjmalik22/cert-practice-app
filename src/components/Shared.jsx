@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Home, BookOpen } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
 
@@ -62,6 +62,22 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
         </span>
       </button>
       <div className="flex items-center gap-2.5">
+        <Link
+          to="/"
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+          style={{ color: TOKENS.ink, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+        >
+          <Home size={14} />
+          Home
+        </Link>
+        <Link
+          to="/study-guides"
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+          style={{ color: TOKENS.ink, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+        >
+          <BookOpen size={14} />
+          Study Guides
+        </Link>
         <Link
           to="/dashboard"
           className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
