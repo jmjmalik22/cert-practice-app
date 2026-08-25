@@ -52,9 +52,9 @@ export function safeSet(key, value) {
 
 export function getStoredTheme() {
   try {
-    return localStorage.getItem("fp_theme") || "dark";
+    return localStorage.getItem("fp_theme") || "light";
   } catch {
-    return "dark";
+    return "light";
   }
 }
 export function setStoredTheme(t) {

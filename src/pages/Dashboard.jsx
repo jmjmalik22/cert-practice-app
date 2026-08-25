@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, useOutletContext } from "react-router-dom";
-import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight, Zap } from "lucide-react";
+import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
-import { Header, Footer } from "../components/Shared.jsx";
-import { getOverallStats, getExamStats, getUser, getExamResults, getBestScore } from "../lib/progress.jsx";
+import { Footer } from "../components/Shared.jsx";
+import { getOverallStats, getExamStats, getUser, getExamResults } from "../lib/progress.jsx";
 import { getAttempted, updateStreak } from "../lib/theme.jsx";
 
 function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
@@ -318,7 +318,6 @@ export function Dashboard() {
         <meta name="description" content="Track your Microsoft certification study progress with FabricPrep." />
       </Helmet>
 
-      <Header theme={theme} onToggleTheme={onToggleTheme} streak={streak} />
 
       <main className="flex-1 px-6 sm:px-10 py-8">
         {/* Header */}

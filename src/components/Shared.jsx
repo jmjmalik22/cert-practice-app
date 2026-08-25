@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
-import { LayoutDashboard, Home, BookOpen } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Home, LayoutDashboard, BookOpen } from "lucide-react";
+import { useState } from "react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
 
@@ -41,85 +42,144 @@ export function MedallionMotif({ opacity = 1 }) {
   );
 }
 
-export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
+const NAV_ITEMS = [
+  { to: "/", label: "Home", icon: Home },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/study-guides", label: "Study Guides", icon: BookOpen },
+];
+
+export function Header({ theme, onToggleTheme, streak }) {
   const TOKENS = useTheme();
+  const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
-    <div className="flex items-center justify-between px-6 sm:px-10 py-5">
-      <button
-        onClick={onLogoClick}
-        className="flex items-center gap-2.5"
-        style={{ background: "transparent", border: "none", cursor: onLogoClick ? "pointer" : "default", padding: 0 }}
-        disabled={!onLogoClick}
-      >
-        <div
-          className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold"
-          style={{ background: `linear-gradient(135deg, ${TOKENS.azure}, ${TOKENS.azureDeep})`, color: "#04101F", fontFamily: FONT_MONO }}
-        >
-          FP
-        </div>
-        <span className="text-sm font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-          FabricPrep
-        </span>
-      </button>
-      <div className="flex items-center gap-2.5">
-        <Link
-          to="/"
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-          style={{ color: TOKENS.ink, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-        >
-          <Home size={14} />
-          Home
-        </Link>
-        <Link
-          to="/study-guides"
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-          style={{ color: TOKENS.ink, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-        >
-          <BookOpen size={14} />
-          Study Guides
-        </Link>
-        <Link
-          to="/dashboard"
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-          style={{ color: TOKENS.ink, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-        >
-          <LayoutDashboard size={14} />
-          Dashboard
-        </Link>
-        <UserBadge />
-        {streak > 0 && (
-          <div
-            className="hidden sm:flex items-center gap-1 rounded-full px-2.5 py-1"
-            style={{ background: `${TOKENS.amber}1A`, border: `1px solid ${TOKENS.amber}40` }}
-          >
-            <span className="text-xs" style={{ color: TOKENS.amber, fontFamily: FONT_MONO }}>
-              {streak} day{streak === 1 ? "" : "s"} streak
+    <div style={{ borderBottom: `1px solid ${TOKENS.panelBorder}` }}>
+      <div className="flex items-center justify-between px-4 sm:px-8 py-4">
+        <div className="flex items-center gap-6">
+          <Link to="/" className="flex items-center gap-2" style={{ textDecoration: "none" }}>
+            <div
+              className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${TOKENS.azure}, ${TOKENS.azureDeep})`, color: "#04101F", fontFamily: FONT_MONO }}
+            >
+              FP
+            </div>
+            <span className="text-sm font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              FabricPrep
             </span>
-          </div>
-        )}
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-1">
+            {NAV_ITEMS.map((item) => {
+              const active = location.pathname === item.to;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors"
+                  style={{ color: active ? TOKENS.ink : TOKENS.inkMuted, background: active ? `${TOKENS.azure}1A` : "transparent", textDecoration: "none" }}
+                >
+                  <item.icon size={15} color={active ? TOKENS.azure : TOKENS.inkMuted} />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="hidden md:flex items-center gap-3">
+          {streak > 0 && (
+            <div
+              className="flex items-center gap-1 rounded-full px-2.5 py-1"
+              style={{ background: `${TOKENS.amber}1A`, border: `1px solid ${TOKENS.amber}40` }}
+            >
+              <span className="text-xs" style={{ color: TOKENS.amber, fontFamily: FONT_MONO }}>
+                {streak} day{streak === 1 ? "" : "s"} streak
+              </span>
+            </div>
+          )}
+          <UserBadge />
+          <button
+            onClick={onToggleTheme}
+            aria-label="Toggle theme"
+            className="relative"
+            style={{ width: 34, height: 20, borderRadius: 999, background: TOKENS.panelBorder, border: `1px solid ${TOKENS.panelBorder}`, cursor: "pointer", padding: 0 }}
+          >
+            <span
+              style={{
+                position: "absolute",
+                top: 2,
+                left: theme === "dark" ? 2 : 16,
+                width: 14,
+                height: 14,
+                borderRadius: "50%",
+                background: TOKENS.azure,
+                transition: "left .15s",
+              }}
+            />
+          </button>
+        </div>
+
         <button
-          onClick={onToggleTheme}
-          aria-label="Toggle theme"
-          className="relative"
-          style={{ width: 34, height: 20, borderRadius: 999, background: TOKENS.panelBorder, border: `1px solid ${TOKENS.panelBorder}`, cursor: "pointer", padding: 0 }}
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-label="Toggle menu"
+          className="md:hidden"
+          style={{ background: "transparent", border: "none", color: TOKENS.ink, cursor: "pointer", padding: 0 }}
         >
-          <span
-            style={{
-              position: "absolute",
-              top: 2,
-              left: theme === "dark" ? 2 : 16,
-              width: 14,
-              height: 14,
-              borderRadius: "50%",
-              background: TOKENS.azure,
-              transition: "left .15s",
-            }}
-          />
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
-        <span className="text-xs hidden sm:block" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
-          by Jitendra Singh Malik
-        </span>
       </div>
+
+      {mobileOpen && (
+        <div className="md:hidden px-4 pb-4 flex flex-col gap-3">
+          <nav className="flex flex-col gap-1">
+            {NAV_ITEMS.map((item) => {
+              const active = location.pathname === item.to;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm"
+                  style={{ color: active ? TOKENS.ink : TOKENS.inkMuted, background: active ? `${TOKENS.azure}1A` : "transparent", textDecoration: "none" }}
+                >
+                  <item.icon size={15} color={active ? TOKENS.azure : TOKENS.inkMuted} />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="flex items-center justify-between px-3">
+            <div className="flex items-center gap-2">
+              <UserBadge />
+              {streak > 0 && (
+                <span className="text-xs" style={{ color: TOKENS.amber, fontFamily: FONT_MONO }}>
+                  {streak} day{streak === 1 ? "" : "s"} streak
+                </span>
+              )}
+            </div>
+            <button
+              onClick={onToggleTheme}
+              aria-label="Toggle theme"
+              className="relative"
+              style={{ width: 34, height: 20, borderRadius: 999, background: TOKENS.panelBorder, border: `1px solid ${TOKENS.panelBorder}`, cursor: "pointer", padding: 0 }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: 2,
+                  left: theme === "dark" ? 2 : 16,
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  background: TOKENS.azure,
+                  transition: "left .15s",
+                }}
+              />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

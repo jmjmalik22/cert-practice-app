@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, useOutletContext } from "react-router-dom";
-import { BookOpen, Download, ChevronRight, FileText, Video, ExternalLink } from "lucide-react";
+import { BookOpen, Download, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
-import { Header, Footer } from "../components/Shared.jsx";
+import { Footer } from "../components/Shared.jsx";
 import { EXAM_META } from "../lib/questionBank.jsx";
 
 const STUDY_RESOURCES = [
@@ -137,7 +137,6 @@ export function StudyGuides() {
         <meta name="description" content="Free study guides and resources for Microsoft Fabric and Azure certifications." />
       </Helmet>
 
-      <Header theme={theme} onToggleTheme={onToggleTheme} streak={streak} />
 
       <main className="flex-1 px-6 sm:px-10 py-8">
         {/* Header */}
