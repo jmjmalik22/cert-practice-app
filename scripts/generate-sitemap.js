@@ -4,12 +4,26 @@
 import { writeFileSync } from "fs";
 
 const HOSTNAME = "https://fabricprep.com";
-const SLUGS = ["dp-700", "dp-600", "az-900", "dp-900", "az-104", "ai-900"];
-const routes = ["/", "/dashboard", "/study-guides", ...SLUGS.map((s) => `/${s}`)];
+const SLUGS = ["dp-700", "dp-600", "az-900", "dp-900"];
+
+// Define routes with metadata for better SEO
+const routes = [
+  { path: "/", priority: "1.0", changefreq: "weekly" },
+  { path: "/dashboard", priority: "0.8", changefreq: "weekly" },
+  { path: "/study-guides", priority: "0.9", changefreq: "weekly" },
+  ...SLUGS.map((s) => ({ path: `/${s}`, priority: "0.9", changefreq: "weekly" })),
+];
+
+const today = new Date().toISOString().split("T")[0];
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${routes.map((r) => `  <url><loc>${HOSTNAME}${r}</loc></url>`).join("\n")}
+${routes.map((r) => `  <url>
+    <loc>${HOSTNAME}${r.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${r.changefreq}</changefreq>
+    <priority>${r.priority}</priority>
+  </url>`).join("\n")}
 </urlset>
 `;
 
