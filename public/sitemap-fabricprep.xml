@@ -10,44 +10,32 @@
   
   <!-- Certification Practice Pages -->
   <url>
-    <loc>https://fabricprep.com/microsoft-fabric-dp-700</loc>
+    <loc>https://fabricprep.com/dp-700</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  
+
   <url>
-    <loc>https://fabricprep.com/microsoft-fabric-dp-600</loc>
+    <loc>https://fabricprep.com/dp-600</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  
+
   <url>
-    <loc>https://fabricprep.com/microsoft-azure-az-900</loc>
+    <loc>https://fabricprep.com/az-900</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  
+
   <url>
-    <loc>https://fabricprep.com/microsoft-azure-dp-900</loc>
+    <loc>https://fabricprep.com/dp-900</loc>
     <lastmod>2026-08-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  
-  <url>
-    <loc>https://fabricprep.com/microsoft-azure-az-104</loc>
-    <lastmod>2026-08-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>https://fabricprep.com/microsoft-azure-ai-900</loc>
-    <lastmod>2026-08-25</lastmod>
-    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 </urlset>

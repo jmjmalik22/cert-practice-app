@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://fabricprep-5vsnekusk-certprep.vercel.app/sitemap.xml
+Sitemap: https://fabricprep.com/sitemap.xml
 
 # Crawl-delay (optional - prevents overloading server)
 Crawl-delay: 10
