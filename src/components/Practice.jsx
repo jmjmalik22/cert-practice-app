@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { ChevronLeft, ArrowRight } from "lucide-react";
 import { useTheme, FONT_MONO, getBookmarks, toggleBookmarkStorage, markAttempted, shuffle } from "../lib/theme.jsx";
 import { QUESTION_BANK } from "../lib/questionBank.jsx";
+import { recordAttempt, toggleBookmark, getBookmarks as getProgressBookmarks } from "../lib/progress.jsx";
 import { Chip } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
@@ -35,8 +36,11 @@ export function Practice({ exam, onExit }) {
     if (revealed || !q) return;
     setSelected(optId);
     setRevealed(true);
-    setScore((s) => ({ correct: s.correct + (optId === q.correct ? 1 : 0), seen: s.seen + 1 }));
+    const isCorrect = optId === q.correct;
+    setScore((s) => ({ correct: s.correct + (isCorrect ? 1 : 0), seen: s.seen + 1 }));
     markAttempted(exam, q.id);
+    // Record in progress tracking
+    recordAttempt(exam, q.id, isCorrect);
   }
 
   function next() {
@@ -48,6 +52,8 @@ export function Practice({ exam, onExit }) {
   function toggleBm() {
     const arr = toggleBookmarkStorage(bmKey);
     setBookmarks(new Set(arr));
+    // Also record in progress tracking
+    toggleBookmark(exam, q.id);
   }
 
   return (

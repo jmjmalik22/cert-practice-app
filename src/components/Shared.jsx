@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { LayoutDashboard } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 
 export function Chip({ children, tone = "azure" }) {
@@ -59,6 +61,14 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
         </span>
       </button>
       <div className="flex items-center gap-2.5">
+        <Link
+          to="/dashboard"
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+          style={{ color: TOKENS.ink, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+        >
+          <LayoutDashboard size={14} />
+          Dashboard
+        </Link>
         {streak > 0 && (
           <div
             className="hidden sm:flex items-center gap-1 rounded-full px-2.5 py-1"
