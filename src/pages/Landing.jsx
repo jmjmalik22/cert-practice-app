@@ -4,7 +4,7 @@ import { RotateCcw, Clock, Bookmark, Flag } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
-import { Header, Footer, MedallionMotif } from "../components/Shared.jsx";
+import { Footer, MedallionMotif } from "../components/Shared.jsx";
 
 export function Landing() {
   const { theme, onToggleTheme, streak } = useOutletContext();
@@ -44,8 +44,6 @@ export function Landing() {
           })}
         </script>
       </Helmet>
-
-      <Header theme={theme} onToggleTheme={onToggleTheme} streak={streak} />
 
       <div className="px-6 sm:px-10 pt-16 pb-20 text-center flex flex-col items-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 pointer-events-none">

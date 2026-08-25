@@ -13,6 +13,7 @@ const routes = [
   { path: "/dashboard", priority: "0.8", changefreq: "weekly" },
   { path: "/study-guides", priority: "0.9", changefreq: "weekly" },
   ...SLUGS.map((s) => ({ path: `/${s}`, priority: "0.9", changefreq: "weekly" })),
+  ...SLUGS.map((s) => ({ path: `/study-guides/${s}`, priority: "0.8", changefreq: "monthly" })),
 ];
 
 const today = new Date().toISOString().split("T")[0];
