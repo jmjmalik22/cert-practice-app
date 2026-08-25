@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { LayoutDashboard } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
+import { UserBadge } from "./UserProfile.jsx";
 
 export function Chip({ children, tone = "azure" }) {
   const TOKENS = useTheme();
@@ -69,6 +70,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
           <LayoutDashboard size={14} />
           Dashboard
         </Link>
+        <UserBadge />
         {streak > 0 && (
           <div
             className="hidden sm:flex items-center gap-1 rounded-full px-2.5 py-1"

@@ -5,7 +5,7 @@ import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight } from "
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
 import { Header, Footer } from "../components/Shared.jsx";
-import { getOverallStats, getExamStats, getStudyStreak } from "../lib/progress.jsx";
+import { getOverallStats, getExamStats, getStudyStreak, getUser } from "../lib/progress.jsx";
 
 function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
   const TOKENS = useTheme();
@@ -162,12 +162,15 @@ export function Dashboard() {
   const [stats, setStats] = useState(null);
   const [examStats, setExamStats] = useState([]);
   const [studyStreak, setStudyStreak] = useState({ streak: 0, totalStudyDays: 0 });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const overall = getOverallStats();
     const streakData = getStudyStreak();
+    const userData = getUser();
     setStats(overall);
     setStudyStreak(streakData);
+    setUser(userData);
 
     // Get stats for each exam that has progress
     const exams = Object.keys(QUESTION_BANK);
@@ -197,7 +200,7 @@ export function Dashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            Your Progress
+            {user?.name ? `Hello, ${user.name}!` : "Your Progress"}
           </h1>
           <p style={{ color: TOKENS.inkMuted }}>
             Track your certification journey and see how far you have come.
