@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Clock, CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft } from "lucide-react";
 import { useTheme, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, markAttempted, shuffle } from "../lib/theme.jsx";
 import { QUESTION_BANK } from "../lib/questionBank.jsx";
+import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
 import { Chip } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
@@ -16,7 +17,28 @@ export function MockExam({ exam, onExit }) {
   const timerRef = useRef(null);
 
   function finishExam() {
-    Object.keys(answers).forEach((qid) => markAttempted(exam, qid));
+    const correctCount = order.filter((qq) => answers[qq.id] === qq.correct).length;
+    const incorrectCount = order.length - correctCount;
+    const percentage = Math.round((correctCount / order.length) * 100);
+    const timeSpent = MOCK_SECONDS - secondsLeft;
+
+    // Save each question attempt (mark as mock exam)
+    order.forEach((qq) => {
+      const isCorrect = answers[qq.id] === qq.correct;
+      markAttempted(exam, qq.id);
+      recordAttempt(exam, qq.id, isCorrect, 0, true); // true = isMockExam
+    });
+
+    // Save exam result
+    saveExamResult(exam, {
+      score: correctCount,
+      total: order.length,
+      percentage,
+      correct: correctCount,
+      incorrect: incorrectCount,
+      timeSpent,
+    });
+
     setFinished(true);
   }
 

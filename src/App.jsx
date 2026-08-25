@@ -9,13 +9,21 @@ import {
   setStoredTheme,
   updateStreak,
 } from "./lib/theme.jsx";
+import { getUser } from "./lib/progress.jsx";
+import { UserProfileModal } from "./components/UserProfile.jsx";
 
 export default function App() {
   const [theme, setTheme] = useState(() => getStoredTheme());
   const [streak, setStreak] = useState(0);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   useEffect(() => {
     setStreak(updateStreak());
+    // Show profile modal if user hasn't set name
+    const user = getUser();
+    if (!user.name) {
+      setShowProfileModal(true);
+    }
   }, []);
 
   function toggleTheme() {
@@ -30,6 +38,9 @@ export default function App() {
     <ThemeContext.Provider value={tokens}>
       <div className="min-h-screen w-full" style={{ background: tokens.bg, fontFamily: FONT_BODY }}>
         <Outlet context={{ theme, onToggleTheme: toggleTheme, streak }} />
+        {showProfileModal && (
+          <UserProfileModal onClose={() => setShowProfileModal(false)} />
+        )}
       </div>
     </ThemeContext.Provider>
   );

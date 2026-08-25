@@ -1,4 +1,4 @@
-import { Bookmark } from "lucide-react";
+import { Bookmark, CheckCircle2, XCircle } from "lucide-react";
 import { useTheme } from "../lib/theme.jsx";
 
 export function TopBar({ left, right }) {
