@@ -275,17 +275,15 @@ export function Landing() {
           
           <div className="relative z-10 flex-shrink-0">
             <div className="relative">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center text-lg font-bold"
+              <img
+                src="/CoverPic_Face.jpg"
+                alt="Jitendra Singh Malik"
+                className="w-40 h-40 rounded-full object-cover"
                 style={{ 
-                  background: `linear-gradient(135deg, ${TOKENS.azure}, ${TOKENS.green})`, 
-                  color: "#04101F",
-                  fontFamily: FONT_DISPLAY,
+                  border: `3px solid ${TOKENS.azure}`,
                   boxShadow: `0 8px 24px ${TOKENS.azure}40`
                 }}
-              >
-                JM
-              </div>
+              />
               <div 
                 className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs"
                 style={{ 
