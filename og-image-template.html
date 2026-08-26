@@ -150,14 +150,34 @@
       background: rgba(16, 185, 129, 0.1);
     }
 
-    /* Author credit */
+    /* Author photo */
     .author {
       position: absolute;
       bottom: 40px;
       right: 60px;
-      font-size: 18px;
-      color: #64748b;
-      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px 25px;
+      border-radius: 60px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .author-photo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(59, 130, 246, 0.5);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .author-name {
+      font-size: 20px;
+      color: #e2e8f0;
+      font-weight: 600;
     }
 
     /* Screenshot instructions */
@@ -207,7 +227,10 @@
 
     </div>
     
-    <div class="author">by Jitendra Singh Malik</div>
+    <div class="author">
+      <img src="public/CoverPic_Face.jpg" alt="Jitendra Singh Malik" class="author-photo">
+      <span class="author-name">by Jitendra Singh Malik</span>
+    </div>
   </div>
 
   <div class="instructions">
