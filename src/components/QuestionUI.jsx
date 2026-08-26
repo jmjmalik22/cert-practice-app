@@ -49,7 +49,7 @@ export function QuestionCard({ q, selected, revealed, onChoose, bookmarked, onTo
         })}
       </div>
       {revealed && (
-        <div className="mt-4 text-xs leading-relaxed p-3 rounded-lg" style={{ color: TOKENS.inkMuted, background: "#0E1626" }}>
+        <div className="mt-4 text-xs leading-relaxed p-3 rounded-lg" style={{ color: TOKENS.ink, background: TOKENS.bgDeep }}>
           {q.explanation}
         </div>
       )}

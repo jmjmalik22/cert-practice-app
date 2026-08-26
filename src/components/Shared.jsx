@@ -53,7 +53,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
       >
         <div
           className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold"
-          style={{ background: `linear-gradient(135deg, ${TOKENS.azure}, ${TOKENS.azureDeep})`, color: "#04101F", fontFamily: FONT_MONO }}
+          style={{ background: `linear-gradient(135deg, ${TOKENS.azure}, ${TOKENS.azureDeep})`, color: TOKENS.bgDeep, fontFamily: FONT_MONO }}
         >
           FP
         </div>

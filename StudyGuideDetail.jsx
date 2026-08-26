@@ -157,38 +157,43 @@ export function StudyGuideDetail() {
           ))}
         </ul>
 
-        <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-          Step-by-step study plan
+        <h2 className="text-sm font-semibold mt-8 mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+          Study roadmap
         </h2>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
           {steps.map((s, i) => (
-            <div key={s.title} className="rounded-xl p-4" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
-              <div className="flex items-center gap-2 mb-1.5">
+            <div key={s.title} className="flex gap-3.5">
+              <div className="flex flex-col items-center flex-shrink-0">
                 <span
-                  className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
                   style={{ background: TOKENS.azure, color: "#04101F", fontFamily: FONT_MONO }}
                 >
                   {i + 1}
                 </span>
-                <span className="text-sm font-medium" style={{ color: TOKENS.ink }}>{s.title}</span>
+                {i < steps.length - 1 && (
+                  <div className="flex-1" style={{ width: 2, background: TOKENS.panelBorder, minHeight: 40 }} />
+                )}
               </div>
-              <p className="text-xs ml-7" style={{ color: TOKENS.inkMuted }}>{s.body}</p>
-              {s.link && (
-                <a
-                  href={s.link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-7 mt-2 inline-flex items-center gap-1 text-xs"
-                  style={{ color: TOKENS.azure }}
-                >
-                  {s.link.label} <ExternalLink size={11} />
-                </a>
-              )}
-              {s.internalLink && (
-                <Link to={s.internalLink} className="ml-7 mt-2 inline-flex items-center gap-1 text-xs" style={{ color: TOKENS.azure }}>
-                  Practice {code} now — {total} free questions <ChevronLeft size={11} style={{ transform: "rotate(180deg)" }} />
-                </Link>
-              )}
+              <div className="pb-6">
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>{s.title}</div>
+                <p className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>{s.body}</p>
+                {s.link && (
+                  
+                    href={s.link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-1 text-xs"
+                    style={{ color: TOKENS.azure }}
+                  >
+                    {s.link.label} <ExternalLink size={11} />
+                  </a>
+                )}
+                {s.internalLink && (
+                  <Link to={s.internalLink} className="mt-2 inline-flex items-center gap-1 text-xs" style={{ color: TOKENS.azure }}>
+                    Practice {code} now — {total} free questions <ChevronLeft size={11} style={{ transform: "rotate(180deg)" }} />
+                  </Link>
+                )}
+              </div>
             </div>
           ))}
         </div>

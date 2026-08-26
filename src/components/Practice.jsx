@@ -74,7 +74,7 @@ export function Practice({ exam, onExit }) {
             onClick={() => setDomainFilter(d)}
             className="text-xs rounded-full px-3 py-1.5 flex-shrink-0 whitespace-nowrap transition-colors"
             style={{
-              color: domainFilter === d ? "#04101F" : TOKENS.inkMuted,
+              color: domainFilter === d ? TOKENS.bgDeep : TOKENS.inkMuted,
               background: domainFilter === d ? TOKENS.azure : "transparent",
               border: `1px solid ${domainFilter === d ? TOKENS.azure : TOKENS.panelBorder}`,
             }}
@@ -104,7 +104,7 @@ export function Practice({ exam, onExit }) {
               <button
                 onClick={next}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm"
-                style={{ background: TOKENS.azure, color: "#04101F" }}
+                style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
               >
                 Next question <ArrowRight size={16} />
               </button>

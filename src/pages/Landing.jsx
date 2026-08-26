@@ -79,6 +79,42 @@ export function Landing() {
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: TOKENS.amber }} /> No sign-up required
           </div>
         </div>
+
+        <div
+          className="mt-10 w-full max-w-md text-left rounded-2xl p-5 relative z-10"
+          style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-medium" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>DP-700 · sample question</span>
+            <span className="text-xs" style={{ color: TOKENS.inkMuted }}>1 of 52</span>
+          </div>
+          <div className="text-sm mb-4" style={{ color: TOKENS.ink }}>
+            Which file format is the default storage format for tables in a Fabric Lakehouse?
+          </div>
+          <div className="flex flex-col gap-2">
+            {[
+              { label: "CSV", correct: false },
+              { label: "Parquet", correct: false },
+              { label: "Delta", correct: true },
+              { label: "Avro", correct: false },
+            ].map((opt) => (
+              <div
+                key={opt.label}
+                className="text-xs px-3 py-2 rounded-lg"
+                style={{
+                  background: opt.correct ? `${TOKENS.green}15` : TOKENS.bg,
+                  border: `1px solid ${opt.correct ? TOKENS.green : TOKENS.panelBorder}`,
+                  color: opt.correct ? TOKENS.green : TOKENS.inkMuted,
+                }}
+              >
+                {opt.label}{opt.correct && " ✓"}
+              </div>
+            ))}
+          </div>
+          <p className="text-xs mt-3" style={{ color: TOKENS.inkMuted }}>
+            Fabric Lakehouse tables are stored as Delta tables, giving you ACID transactions and time travel.
+          </p>
+        </div>
       </div>
 
       <div className="px-6 sm:px-10 pb-14 max-w-3xl mx-auto w-full">
@@ -187,6 +223,42 @@ export function Landing() {
               </div>
             </div>
           ))}
+        </div>
+
+        <h2 className="text-xs uppercase mb-3 text-center" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
+          Why not just a PDF dump
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-16">
+          <div className="rounded-2xl p-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+            <div className="text-xs font-medium mb-3" style={{ color: TOKENS.inkMuted }}>Random brain dumps</div>
+            <ul className="flex flex-col gap-2.5">
+              {[
+                "Copy-pasted questions, no idea if they're current",
+                "Wrong answers with no explanation to learn from",
+                "No domain breakdown — you can't tell where you're weak",
+                "No timer, so exam-day pacing is a surprise",
+              ].map((t) => (
+                <li key={t} className="flex items-start gap-2 text-sm" style={{ color: TOKENS.inkMuted }}>
+                  <span style={{ color: TOKENS.red, flexShrink: 0 }}>✗</span> {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl p-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.azure}` }}>
+            <div className="text-xs font-medium mb-3" style={{ color: TOKENS.azure }}>FabricPrep</div>
+            <ul className="flex flex-col gap-2.5">
+              {[
+                "Every question sourced from official Microsoft Learn docs",
+                "A written explanation for every answer, right or wrong",
+                "Filter by exam domain to target your weak spots",
+                "Timed mock exams that mirror real exam-day pacing",
+              ].map((t) => (
+                <li key={t} className="flex items-start gap-2 text-sm" style={{ color: TOKENS.ink }}>
+                  <span style={{ color: TOKENS.green, flexShrink: 0 }}>✓</span> {t}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <div 
