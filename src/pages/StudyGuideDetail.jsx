@@ -166,7 +166,7 @@ export function StudyGuideDetail() {
               <div className="flex items-center gap-2 mb-1.5">
                 <span
                   className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                  style={{ background: TOKENS.azure, color: "#04101F", fontFamily: FONT_MONO }}
+                  style={{ background: TOKENS.azure, color: TOKENS.bgDeep, fontFamily: FONT_MONO }}
                 >
                   {i + 1}
                 </span>
@@ -201,7 +201,7 @@ export function StudyGuideDetail() {
           <Link
             to={`/${meta.slug}`}
             className="inline-block px-5 py-2.5 rounded-full font-medium text-sm"
-            style={{ background: TOKENS.azure, color: "#04101F", textDecoration: "none" }}
+            style={{ background: TOKENS.azure, color: TOKENS.bgDeep, textDecoration: "none" }}
           >
             Practice {code} now
           </Link>

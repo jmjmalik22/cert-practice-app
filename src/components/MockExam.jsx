@@ -117,7 +117,7 @@ export function MockExam({ exam, onExit }) {
         </div>
 
         <div className="flex justify-center mt-8">
-          <button onClick={onExit} className="px-5 py-2.5 rounded-full font-medium text-sm" style={{ background: TOKENS.azure, color: "#04101F" }}>
+          <button onClick={onExit} className="px-5 py-2.5 rounded-full font-medium text-sm" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>
             Back to home
           </button>
         </div>
@@ -171,7 +171,7 @@ export function MockExam({ exam, onExit }) {
           <button
             onClick={() => finishExam()}
             className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm"
-            style={{ background: TOKENS.green, color: "#04101F" }}
+            style={{ background: TOKENS.green, color: TOKENS.bgDeep }}
           >
             <Flag size={16} /> Submit exam
           </button>
@@ -179,7 +179,7 @@ export function MockExam({ exam, onExit }) {
           <button
             onClick={() => goto(idx + 1)}
             className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm"
-            style={{ background: TOKENS.azure, color: "#04101F" }}
+            style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
           >
             Next <ArrowRight size={16} />
           </button>
