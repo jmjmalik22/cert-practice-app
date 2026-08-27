@@ -315,6 +315,7 @@ export function Dashboard() {
     <div className="min-h-full flex flex-col">
       <Helmet>
         <title>Dashboard | FabricPrep</title>
+        <link rel="canonical" href="https://fabricprep.com/dashboard" />
         <meta name="description" content="Track your Microsoft certification study progress with FabricPrep." />
       </Helmet>
 

@@ -23,6 +23,7 @@ export function Landing() {
     <div className="min-h-full flex flex-col">
       <Helmet>
         <title>Fabric Certification & Azure Certification Practice | FabricPrep</title>
+        <link rel="canonical" href="https://fabricprep.com/" />
         <meta
           name="description"
           content={`${totalQuestions}+ free certification prep practice questions for DP-700, DP-600, AZ-900, DP-900. Fabric prep and Azure prep with realistic mock exams sourced from official Microsoft Learn docs.`}

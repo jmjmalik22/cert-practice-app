@@ -231,6 +231,7 @@ export function DP700StudyGuide() {
     <div className="min-h-full flex flex-col">
       <Helmet>
         <title>{topic.title} | DP-700 Study Guide | FabricPrep</title>
+        <link rel="canonical" href={`https://fabricprep.com/study-guides/dp-700/${topicId}`} />
         <meta
           name="description"
           content={`Study guide for ${topic.title} - DP-700 Microsoft Fabric Data Engineer Associate exam. Covers ${topic.weight} of the exam.`}

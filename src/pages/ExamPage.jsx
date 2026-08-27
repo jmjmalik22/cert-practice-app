@@ -41,6 +41,7 @@ export function ExamPage() {
     <div className="min-h-full flex flex-col">
       <Helmet>
         <title>{meta.metaTitle}</title>
+        <link rel="canonical" href={`https://fabricprep.com/${meta.slug}`} />
         <meta name="description" content={meta.metaDescription} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://fabricprep.com/${meta.slug}`} />
