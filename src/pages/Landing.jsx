@@ -22,12 +22,12 @@ export function Landing() {
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
-        <title>Microsoft Fabric & Azure Certification Practice Questions | FabricPrep</title>
+        <title>Fabric Certification & Azure Certification Practice | FabricPrep</title>
         <meta
           name="description"
-          content={`${totalQuestions}+ free Fabric prep practice questions across ${examCount} Microsoft certifications — DP-700, DP-600, AZ-900, DP-900, and more — sourced from official Microsoft Learn docs.`}
+          content={`${totalQuestions}+ free certification prep practice questions for DP-700, DP-600, AZ-900, DP-900. Fabric prep and Azure prep with realistic mock exams sourced from official Microsoft Learn docs.`}
         />
-        <meta name="keywords" content="fabric prep, fabricprep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, fabric certification, azure certification" />
+        <meta name="keywords" content="fabric certification, microsoft fabric certification, fabric certification exam, fabric prep, fabricprep, dp 700 prep, dp 600 prep, dp 900 prep, az 900 prep, certification prep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, azure certification, fabric data engineer, fabric analytics engineer, data engineer prep, analytics engineer prep, fabric study guide, azure study guide" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fabricprep.com/" />
         <meta property="og:title" content="Microsoft Fabric & Azure Certification Practice Questions | FabricPrep" />
@@ -71,7 +71,7 @@ export function Landing() {
           Pass your Microsoft certification exam with <span style={{ color: TOKENS.azure }}>confidence</span>.
         </h1>
         <p className="mt-4 text-base max-w-lg relative z-10" style={{ color: TOKENS.inkMuted }}>
-          {totalQuestions}+ realistic Fabric prep practice questions and timed mock exams across {examCount} Microsoft certifications.
+          {totalQuestions}+ realistic practice questions for Fabric certification and Azure certification exams. Free DP-700, DP-600, AZ-900, DP-900 prep with timed mock exams.
         </p>
         <div className="mt-6 flex items-center gap-2 text-xs relative z-10">
           <div className="flex items-center gap-1 px-3 py-1 rounded-full" style={{ background: `${TOKENS.green}15`, color: TOKENS.green }}>
