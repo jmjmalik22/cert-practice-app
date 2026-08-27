@@ -26,6 +26,7 @@ export function Landing() {
         <link rel="canonical" href="https://fabricprep.com/" />
         <meta
           name="description"
+<<<<<<< HEAD
           content={`${totalQuestions}+ free certification prep practice questions for DP-700, DP-600, AZ-900, DP-900. Fabric prep and Azure prep with realistic mock exams sourced from official Microsoft Learn docs.`}
         />
         <meta name="keywords" content="fabric certification, microsoft fabric certification, fabric certification exam, fabric prep, fabricprep, dp 700 prep, dp 600 prep, dp 900 prep, az 900 prep, certification prep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, azure certification, fabric data engineer, fabric analytics engineer, data engineer prep, analytics engineer prep, fabric study guide, azure study guide" />
@@ -72,6 +73,7 @@ export function Landing() {
           Pass your Microsoft certification exam with <span style={{ color: TOKENS.azure }}>confidence</span>.
         </h1>
         <p className="mt-4 text-base max-w-lg relative z-10" style={{ color: TOKENS.inkMuted }}>
+<<<<<<< HEAD
           {totalQuestions}+ realistic practice questions for Fabric certification and Azure certification exams. Free DP-700, DP-600, AZ-900, DP-900 prep with timed mock exams.
         </p>
         <div className="mt-6 flex items-center gap-2 text-xs relative z-10">
