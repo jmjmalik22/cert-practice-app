@@ -204,6 +204,7 @@ export function StudyGuideDetail() {
           </>
         )}
 
+<<<<<<< HEAD
         {/* DP-600 Static Exam Topics */}
         {code === "DP-600" && (
           <>
