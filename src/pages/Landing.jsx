@@ -25,8 +25,9 @@ export function Landing() {
         <title>Microsoft Fabric & Azure Certification Practice Questions | FabricPrep</title>
         <meta
           name="description"
-          content={`${totalQuestions}+ free practice questions across ${examCount} Microsoft certifications — DP-700, DP-600, AZ-900, DP-900, and more — sourced from official Microsoft Learn docs.`}
+          content={`${totalQuestions}+ free Fabric prep practice questions across ${examCount} Microsoft certifications — DP-700, DP-600, AZ-900, DP-900, and more — sourced from official Microsoft Learn docs.`}
         />
+        <meta name="keywords" content="fabric prep, fabricprep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, fabric certification, azure certification" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fabricprep.com/" />
         <meta property="og:title" content="Microsoft Fabric & Azure Certification Practice Questions | FabricPrep" />
@@ -38,9 +39,10 @@ export function Landing() {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "FabricPrep",
+            name: "FabricPrep - Fabric Prep",
             url: "https://fabricprep.com/",
-            description: "Free Microsoft certification practice exams for DP-700, DP-600, AZ-900, DP-900, and Azure certifications.",
+            description: "Free Fabric prep and Microsoft certification practice exams for DP-700, DP-600, AZ-900, DP-900, and Azure certifications.",
+            alternateName: ["Fabric Prep", "fabric prep", "FabricPrep"],
           })}
         </script>
       </Helmet>
@@ -69,7 +71,7 @@ export function Landing() {
           Pass your Microsoft certification exam with <span style={{ color: TOKENS.azure }}>confidence</span>.
         </h1>
         <p className="mt-4 text-base max-w-lg relative z-10" style={{ color: TOKENS.inkMuted }}>
-          {totalQuestions}+ realistic practice questions and timed mock exams across {examCount} Microsoft certifications.
+          {totalQuestions}+ realistic Fabric prep practice questions and timed mock exams across {examCount} Microsoft certifications.
         </p>
         <div className="mt-6 flex items-center gap-2 text-xs relative z-10">
           <div className="flex items-center gap-1 px-3 py-1 rounded-full" style={{ background: `${TOKENS.green}15`, color: TOKENS.green }}>
