@@ -8,22 +8,22 @@ import { EXAM_META } from "../lib/questionBank.jsx";
 const STUDY_RESOURCES = [
   {
     examCode: "DP-700",
-    title: "DP-700 Study Guide",
+    title: "DP-700: Microsoft Fabric Data Engineer Associate",
     description: "A step-by-step study path for the Microsoft Fabric Data Engineer Associate certification.",
   },
   {
     examCode: "DP-600",
-    title: "DP-600 Study Guide",
+    title: "DP-600: Fabric Analytics Engineer Associate",
     description: "A step-by-step study path for the Microsoft Fabric Analytics Engineer Associate certification.",
   },
   {
     examCode: "AZ-900",
-    title: "AZ-900 Study Guide",
+    title: "AZ-900: Azure Fundamentals",
     description: "A step-by-step study path for the Microsoft Azure Fundamentals certification.",
   },
   {
     examCode: "DP-900",
-    title: "DP-900 Study Guide",
+    title: "DP-900: Azure Data Fundamentals",
     description: "A step-by-step study path for the Microsoft Azure Data Fundamentals certification.",
   },
 ];
@@ -49,7 +49,7 @@ function ResourceCard({ resource }) {
 
   return (
     <div
-      className="rounded-xl p-5"
+      className="rounded-xl p-5 flex flex-col h-full"
       style={{
         background: TOKENS.panel,
         border: `1px solid ${TOKENS.panelBorder}`,
@@ -67,13 +67,13 @@ function ResourceCard({ resource }) {
       <h3 className="font-semibold mb-1" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
         {resource.title}
       </h3>
-      <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
+      <p className="text-xs mb-4 flex-grow" style={{ color: TOKENS.inkMuted }}>
         {resource.description}
       </p>
 
       <Link
         to={`/study-guides/${resource.examCode.toLowerCase()}`}
-        className="flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-colors"
+        className="flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-colors mt-auto"
         style={{ background: TOKENS.bg, color: TOKENS.ink, textDecoration: "none" }}
       >
         <span>Read the study guide</span>
@@ -106,7 +106,7 @@ export function StudyGuides() {
         </div>
 
         {/* Study Guides Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10 items-stretch">
           {STUDY_RESOURCES.map((resource) => (
             <ResourceCard key={resource.examCode} resource={resource} />
           ))}

@@ -144,7 +144,7 @@ export function StudyGuideDetail() {
         {code === "DP-700" && (
           <>
             <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              Detailed Study Topics
+              DP-700: Microsoft Fabric Data Engineer Associate
             </h2>
             <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
               Dive deep into each exam objective with comprehensive study materials.
@@ -200,6 +200,205 @@ export function StudyGuideDetail() {
                   </div>
                 </div>
               </Link>
+            </div>
+          </>
+        )}
+
+        {/* DP-600 Static Exam Topics */}
+        {code === "DP-600" && (
+          <>
+            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              DP-600: Fabric Analytics Engineer Associate
+            </h2>
+            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
+              Key areas covered in the DP-600 exam.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>📊</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>35-40%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Plan, Implement, and Manage a Power BI Environment</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Tenant settings, workspaces, deployment pipelines, governance</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🔄</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>30-35%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Model and Visualize Data</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Semantic models, DAX, relationships, storage modes</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>📈</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Implement and Manage Data Analytics</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Paginated reports, scorecards, metrics, dataflows, datamarts</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* AZ-900 Static Exam Topics */}
+        {code === "AZ-900" && (
+          <>
+            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              AZ-900: Azure Fundamentals
+            </h2>
+            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
+              Key areas covered in the AZ-900 exam.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>☁️</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Cloud Concepts</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Cloud computing, shared responsibility, models (IaaS, PaaS, SaaS)</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🏛️</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>35-40%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Azure Architecture and Services</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Regions, availability zones, resource groups, core services (compute, storage, networking)</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🔒</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>30-35%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Azure Management and Governance</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Cost management, RBAC, resource locks, tags, policies, monitoring</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* DP-900 Static Exam Topics */}
+        {code === "DP-900" && (
+          <>
+            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              DP-900: Azure Data Fundamentals
+            </h2>
+            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
+              Key areas covered in the DP-900 exam.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🗄️</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Core Data Concepts</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Data types (structured, semi-structured, unstructured), data roles, data analytics</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>📋</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>35-40%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Identify Considerations for Relational Data</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Relational concepts, Azure SQL, PostgreSQL, MySQL, SQL Managed Instance</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>📊</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Considerations for Non-Relational Data</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Azure Cosmos DB, storage accounts, data lake, file storage</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="rounded-xl p-4"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🔍</span>
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>10-15%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Analytics Workloads</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Modern data warehousing, data ingestion, processing, visualization</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </>
         )}
