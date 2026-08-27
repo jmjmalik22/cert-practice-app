@@ -10,7 +10,6 @@ const SLUGS = ["dp-700", "dp-600", "az-900", "dp-900"];
 // Define routes with metadata for better SEO
 const routes = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
-  { path: "/dashboard", priority: "0.8", changefreq: "weekly" },
   { path: "/study-guides", priority: "0.9", changefreq: "weekly" },
   ...SLUGS.map((s) => ({ path: `/${s}`, priority: "0.9", changefreq: "weekly" })),
   ...SLUGS.map((s) => ({ path: `/study-guides/${s}`, priority: "0.8", changefreq: "monthly" })),

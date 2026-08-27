@@ -91,6 +91,7 @@ export function StudyGuides() {
     <div className="min-h-full flex flex-col">
       <Helmet>
         <title>Study Guides | FabricPrep</title>
+        <link rel="canonical" href="https://fabricprep.com/study-guides" />
         <meta name="description" content="Free study guides and resources for Microsoft Fabric and Azure certifications." />
       </Helmet>
 

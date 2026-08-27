@@ -106,6 +106,7 @@ export function StudyGuideDetail() {
     <div className="min-h-full flex flex-col">
       <Helmet>
         <title>{code} Study Guide | FabricPrep</title>
+        <link rel="canonical" href={`https://fabricprep.com/study-guides/${examSlug}`} />
         <meta
           name="description"
           content={`A step-by-step study path for the ${code} exam — prerequisites, official resources, and a study plan, plus free practice questions.`}
