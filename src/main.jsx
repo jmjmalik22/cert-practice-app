@@ -7,6 +7,7 @@ import { StudyGuides } from "./pages/StudyGuides.jsx";
 import { StudyGuideDetail } from "./pages/StudyGuideDetail.jsx";
 import { DP700StudyGuide } from "./pages/study-guides/DP700StudyGuide.jsx";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./index.css";
 
 const routes = [
@@ -16,6 +17,7 @@ const routes = [
       <>
         <App />
         <Analytics />
+        <SpeedInsights />
       </>
     ),
     children: [
