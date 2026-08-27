@@ -1,6 +1,6 @@
 import { Head as Helmet } from "vite-react-ssg";
 import { useParams, Link, Navigate, useOutletContext } from "react-router-dom";
-import { ChevronLeft, ExternalLink, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ExternalLink, CheckCircle2, Database, Activity, Shield } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { EXAM_META, SLUG_TO_EXAM, QUESTION_BANK } from "../lib/questionBank.jsx";
 import { Footer } from "../components/Shared.jsx";
@@ -140,7 +140,71 @@ export function StudyGuideDetail() {
           A study path for {meta.title} — what to know before you start, and the order worth doing things in.
         </p>
 
-        <h2 className="text-sm font-semibold mt-8 mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+        {/* DP-700 Detailed Topics Section - Moved above Prerequisites */}
+        {code === "DP-700" && (
+          <>
+            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              Detailed Study Topics
+            </h2>
+            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
+              Dive deep into each exam objective with comprehensive study materials.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Link
+                to="/study-guides/dp-700/ingestion"
+                className="rounded-xl p-4 transition-colors hover:opacity-90"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <Database size={20} color={TOKENS.azure} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>40-45%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Ingest and Transform Data</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Copy jobs, pipelines, shortcuts, transformations</div>
+                  </div>
+                </div>
+              </Link>
+
+              <Link
+                to="/study-guides/dp-700/monitoring"
+                className="rounded-xl p-4 transition-colors hover:opacity-90"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <Activity size={20} color={TOKENS.azure} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>30-35%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Monitor and Maintain Data</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Pipeline monitoring, optimization, data quality</div>
+                  </div>
+                </div>
+              </Link>
+
+              <Link
+                to="/study-guides/dp-700/security"
+                className="rounded-xl p-4 transition-colors hover:opacity-90 sm:col-span-2"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                    <Shield size={20} color={TOKENS.azure} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Secure Data</div>
+                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Access control, data protection, compliance and auditing</div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </>
+        )}
+
+        <h2 className="text-sm font-semibold mt-10 mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
           Prerequisites
         </h2>
         <p className="text-sm" style={{ color: TOKENS.inkMuted }}>{guide.prereq}</p>
