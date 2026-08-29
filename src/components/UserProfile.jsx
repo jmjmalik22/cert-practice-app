@@ -1,24 +1,11 @@
 import { useState, useEffect } from "react";
-import { User, X } from "lucide-react";
+import { Link } from "react-router-dom";
+import { User, X, ArrowRight } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { getUser, saveUser } from "../lib/progress.jsx";
 
-export function UserProfileModal({ onClose, onSave }) {
+export function UserProfileModal({ onClose }) {
   const TOKENS = useTheme();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (name.trim()) {
-      const user = getUser();
-      user.name = name.trim();
-      user.email = email.trim();
-      saveUser(user);
-      onSave?.(user);
-      onClose();
-    }
-  }
 
   return (
     <div
@@ -54,72 +41,41 @@ export function UserProfileModal({ onClose, onSave }) {
             Welcome to FabricPrep!
           </h2>
           <p style={{ color: TOKENS.inkMuted }}>
-            Set up your profile to track your progress across sessions.
+            Sign in to track your progress across sessions and access all features.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              style={{ color: TOKENS.ink }}
-            >
-              Your Name *
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              className="w-full px-4 py-3 rounded-lg outline-none transition-colors"
-              style={{
-                background: TOKENS.bg,
-                border: `1px solid ${TOKENS.panelBorder}`,
-                color: TOKENS.ink,
-              }}
-              autoFocus
-            />
-          </div>
-
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              style={{ color: TOKENS.inkMuted }}
-            >
-              Email (optional)
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="For future sync features"
-              className="w-full px-4 py-3 rounded-lg outline-none transition-colors"
-              style={{
-                background: TOKENS.bg,
-                border: `1px solid ${TOKENS.panelBorder}`,
-                color: TOKENS.ink,
-              }}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={!name.trim()}
-            className="w-full py-3 rounded-lg font-medium transition-opacity disabled:opacity-50"
+        <div className="space-y-3">
+          <Link
+            to="/login"
+            className="w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-opacity"
             style={{
               background: TOKENS.azure,
               color: "#fff",
+              textDecoration: "none",
             }}
           >
-            Get Started
+            Sign In <ArrowRight size={18} />
+          </Link>
+
+          <button
+            onClick={onClose}
+            className="w-full py-3 rounded-lg font-medium transition-colors"
+            style={{
+              background: "transparent",
+              color: TOKENS.inkMuted,
+              border: `1px solid ${TOKENS.panelBorder}`,
+            }}
+          >
+            Continue as Guest
           </button>
-        </form>
+        </div>
 
         <p
           className="text-xs text-center mt-4"
           style={{ color: TOKENS.inkMuted }}
         >
-          Your data is stored locally on your device.
+          Guests can access Mock Exams with 5 free questions. Sign in for unlimited access.
         </p>
       </div>
     </div>

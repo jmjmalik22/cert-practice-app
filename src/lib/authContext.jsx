@@ -5,6 +5,8 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  sendEmailVerification,
+  reload,
 } from "firebase/auth";
 import { auth } from "./firebase";
 
@@ -29,13 +31,38 @@ export function AuthProvider({ children }) {
     if (displayName) {
       await updateProfile(userCredential.user, { displayName });
     }
+    // Send verification email
+    try {
+      await sendEmailVerification(userCredential.user);
+      console.log("Verification email sent successfully to:", email);
+    } catch (error) {
+      console.error("Error sending verification email:", error.message, error.code);
+      // Don't throw - let user continue even if email fails
+    }
     return userCredential.user;
   };
 
   // Sign in with email and password
   const login = async (email, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    // Reload to get latest emailVerified status
+    await reload(userCredential.user);
     return userCredential.user;
+  };
+
+  // Resend verification email
+  const resendVerificationEmail = async () => {
+    if (auth.currentUser && !auth.currentUser.emailVerified) {
+      await sendEmailVerification(auth.currentUser);
+    }
+  };
+
+  // Refresh user data (to check if email is verified)
+  const refreshUser = async () => {
+    if (auth.currentUser) {
+      await reload(auth.currentUser);
+      setUser(auth.currentUser);
+    }
   };
 
   // Sign out
@@ -49,7 +76,10 @@ export function AuthProvider({ children }) {
     signup,
     login,
     logout,
-    isAuthenticated: !!user,
+    resendVerificationEmail,
+    refreshUser,
+    isAuthenticated: !!user && user.emailVerified, // Require email verification for full access
+    isEmailVerified: user?.emailVerified ?? false,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

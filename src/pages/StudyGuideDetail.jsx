@@ -127,8 +127,13 @@ function buildSteps(code, meta, guide) {
 
 export function StudyGuideDetail() {
   const { examSlug } = useParams();
-  const { theme, onToggleTheme, streak } = useOutletContext();
+  const { theme, onToggleTheme, streak, user } = useOutletContext();
   const TOKENS = useTheme();
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   const code = SLUG_TO_EXAM[examSlug];
   if (!code) return <Navigate to="/study-guides" replace />;

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, Home, BookOpen, Menu, X } from "lucide-react";
+import { LayoutDashboard, Home, BookOpen, Menu, X, Lock } from "lucide-react";
 import { useState } from "react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
