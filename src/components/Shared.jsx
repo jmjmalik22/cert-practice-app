@@ -48,8 +48,8 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
 
   const navItems = [
     { to: "/", label: "Home", icon: Home },
-    { to: "/study-guides", label: "Study Guides", icon: BookOpen },
-    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    ...(user ? [{ to: "/study-guides", label: "Study Guides", icon: BookOpen }] : []),
+    ...(user ? [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }] : []),
   ];
 
   return (
