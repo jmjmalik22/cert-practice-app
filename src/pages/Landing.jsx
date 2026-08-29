@@ -1,14 +1,15 @@
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, useOutletContext } from "react-router-dom";
-import { RotateCcw, Clock, Bookmark, Flag } from "lucide-react";
+import { RotateCcw, Clock, Bookmark, Flag, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 
 export function Landing() {
-  const { theme, onToggleTheme, streak } = useOutletContext();
+  const { theme, onToggleTheme, streak, user } = useOutletContext();
   const TOKENS = useTheme();
+  const isAuthenticated = !!user;
   const totalQuestions = Object.values(QUESTION_BANK).reduce((sum, d) => sum + d.questions.length, 0);
   const examCount = Object.keys(QUESTION_BANK).length;
 
@@ -199,33 +200,44 @@ export function Landing() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-          {features.map((f) => (
-            <div 
-              key={f.title} 
-              className="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
-              style={{ 
-                background: TOKENS.panel, 
-                border: `1px solid ${TOKENS.panelBorder}`,
-                position: "relative",
-                overflow: "hidden"
-              }}
-            >
+          {features.map((f, idx) => {
+            // First 2 features (Untimed practice, Bookmark) require login
+            const requiresAuth = idx === 0 || idx === 2;
+            const isLocked = requiresAuth && !isAuthenticated;
+            
+            return (
               <div 
-                className="absolute top-0 right-0 w-16 h-16 opacity-10 group-hover:opacity-20 transition-opacity duration-300"
+                key={f.title} 
+                className={`rounded-2xl p-6 transition-all duration-300 group relative overflow-hidden ${isLocked ? '' : 'hover:-translate-y-1 hover:shadow-lg'}`}
                 style={{ 
-                  background: `radial-gradient(circle at top right, ${TOKENS.azure}, transparent 70%)`,
+                  background: isLocked ? `${TOKENS.panel}60` : TOKENS.panel, 
+                  border: `1px solid ${TOKENS.panelBorder}`,
                 }}
-              />
-              
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${TOKENS.azure}15` }}>
-                  <f.icon size={20} color={TOKENS.azure} />
+              >
+                {isLocked && (
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${TOKENS.bg}40`, zIndex: 20 }}>
+                    <Link to="/login" className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-full" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.inkMuted }}>
+                      <Lock size={12} /> Sign in to unlock
+                    </Link>
+                  </div>
+                )}
+                <div 
+                  className="absolute top-0 right-0 w-16 h-16 opacity-10 group-hover:opacity-20 transition-opacity duration-300"
+                  style={{ 
+                    background: `radial-gradient(circle at top right, ${TOKENS.azure}, transparent 70%)`,
+                  }}
+                />
+                
+                <div className="relative z-10" style={{ opacity: isLocked ? 0.4 : 1 }}>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: `${TOKENS.azure}15` }}>
+                    <f.icon size={20} color={TOKENS.azure} />
+                  </div>
+                  <div className="font-bold text-base mb-2" style={{ color: TOKENS.ink }}>{f.title}</div>
+                  <p className="text-sm" style={{ color: TOKENS.inkMuted }}>{f.body}</p>
                 </div>
-                <div className="font-bold text-base mb-2" style={{ color: TOKENS.ink }}>{f.title}</div>
-                <p className="text-sm" style={{ color: TOKENS.inkMuted }}>{f.body}</p>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <h2 className="text-xs uppercase mb-3 text-center" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>

@@ -1,5 +1,5 @@
 import { Head as Helmet } from "vite-react-ssg";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, Navigate, useOutletContext } from "react-router-dom";
 import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
@@ -99,8 +99,13 @@ function ResourceCard({ resource }) {
 }
 
 export function StudyGuides() {
-  const { theme, onToggleTheme, streak } = useOutletContext();
+  const { theme, onToggleTheme, streak, user } = useOutletContext();
   const TOKENS = useTheme();
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="min-h-full flex flex-col">

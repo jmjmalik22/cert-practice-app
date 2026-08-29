@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useParams, Link, Navigate, useOutletContext } from "react-router-dom";
 import { Head as Helmet } from "vite-react-ssg";
-import { RotateCcw, Clock, ChevronLeft, BookOpen } from "lucide-react";
+import { RotateCcw, Clock, ChevronLeft, BookOpen, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, getAttempted } from "../lib/theme.jsx";
+import { useAuth } from "../lib/authContext.jsx";
 import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank.jsx";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { Practice } from "../components/Practice.jsx";
@@ -23,9 +24,10 @@ function buildFaqs(code, meta, total) {
 
 export function ExamPage() {
   const { examSlug } = useParams();
-  const { theme, onToggleTheme, streak } = useOutletContext();
+  const { theme, onToggleTheme, streak, user } = useOutletContext();
   const TOKENS = useTheme();
   const [mode, setMode] = useState(null); // null | "practice" | "mock"
+  const isAuthenticated = !!user;
 
   const code = SLUG_TO_EXAM[examSlug];
   if (!code) return <Navigate to="/" replace />;
@@ -105,17 +107,39 @@ export function ExamPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-          <button
-            onClick={() => setMode("practice")}
-            className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
-            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <RotateCcw size={16} color={TOKENS.azure} />
-              <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Practice mode</span>
-            </div>
-            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>Untimed, with domain filters and bookmarks.</p>
-          </button>
+          {/* Practice Mode - Locked for guests */}
+          {isAuthenticated ? (
+            <button
+              onClick={() => setMode("practice")}
+              className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+              style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <RotateCcw size={16} color={TOKENS.azure} />
+                <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Practice mode</span>
+              </div>
+              <p className="text-xs" style={{ color: TOKENS.inkMuted }}>Untimed, with domain filters and bookmarks.</p>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="rounded-xl p-4 text-left relative overflow-hidden"
+              style={{ background: `${TOKENS.panel}80`, border: `1px solid ${TOKENS.panelBorder}` }}
+            >
+              <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${TOKENS.bg}60` }}>
+                <div className="flex items-center gap-1 text-xs" style={{ color: TOKENS.inkMuted }}>
+                  <Lock size={12} /> Sign in to unlock
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mb-1 opacity-40">
+                <RotateCcw size={16} color={TOKENS.inkMuted} />
+                <span className="font-semibold text-sm" style={{ color: TOKENS.inkMuted }}>Practice mode</span>
+              </div>
+              <p className="text-xs opacity-40" style={{ color: TOKENS.inkMuted }}>Untimed, with domain filters and bookmarks.</p>
+            </Link>
+          )}
+
+          {/* Mock Exam - Always available */}
           <button
             onClick={() => setMode("mock")}
             className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
@@ -129,17 +153,34 @@ export function ExamPage() {
           </button>
         </div>
 
-        {/* Study Guide Link */}
+        {/* Study Guide Link - Locked for guests */}
         {STUDY_GUIDE_EXAMS.has(code) && (
-          <Link
-            to={`/study-guides/${meta.slug}`}
-            className="flex items-center justify-center gap-2 rounded-xl p-3 mb-10 text-sm font-medium transition-transform hover:-translate-y-0.5"
-            style={{ background: `${TOKENS.green}15`, border: `1px solid ${TOKENS.green}40`, color: TOKENS.green }}
-          >
-            <BookOpen size={16} />
-            <span>Study Guide</span>
-            <span style={{ color: TOKENS.inkMuted }}>— Comprehensive exam preparation materials</span>
-          </Link>
+          isAuthenticated ? (
+            <Link
+              to={`/study-guides/${meta.slug}`}
+              className="flex items-center justify-center gap-2 rounded-xl p-3 mb-10 text-sm font-medium transition-transform hover:-translate-y-0.5"
+              style={{ background: `${TOKENS.green}15`, border: `1px solid ${TOKENS.green}40`, color: TOKENS.green }}
+            >
+              <BookOpen size={16} />
+              <span>Study Guide</span>
+              <span style={{ color: TOKENS.inkMuted }}>— Comprehensive exam preparation materials</span>
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center justify-center gap-2 rounded-xl p-3 mb-10 text-sm font-medium relative overflow-hidden"
+              style={{ background: `${TOKENS.green}08`, border: `1px solid ${TOKENS.green}20`, color: TOKENS.inkMuted }}
+            >
+              <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${TOKENS.bg}40` }}>
+                <div className="flex items-center gap-1 text-xs" style={{ color: TOKENS.inkMuted }}>
+                  <Lock size={12} /> Sign in to unlock
+                </div>
+              </div>
+              <span className="opacity-40"><BookOpen size={16} /></span>
+              <span className="opacity-40">Study Guide</span>
+              <span className="opacity-40" style={{ color: TOKENS.inkMuted }}>— Comprehensive exam preparation materials</span>
+            </Link>
+          )
         )}
 
         <h2 className="text-sm font-semibold mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>

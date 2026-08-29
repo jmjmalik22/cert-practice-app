@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Head as Helmet } from "vite-react-ssg";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, Navigate, useOutletContext } from "react-router-dom";
 import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
@@ -281,12 +281,17 @@ function ActivityChart({ data }) {
 }
 
 export function Dashboard() {
-  const { theme, onToggleTheme, streak } = useOutletContext();
+  const { theme, onToggleTheme, streak, user } = useOutletContext();
   const TOKENS = useTheme();
   const [stats, setStats] = useState(null);
   const [examStats, setExamStats] = useState([]);
   const [visitStreak, setVisitStreak] = useState(0);
-  const [user, setUser] = useState(null);
+  const [localUser, setLocalUser] = useState(null);
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   useEffect(() => {
     const overall = getOverallStats();
@@ -294,7 +299,7 @@ export function Dashboard() {
     const userData = getUser();
     setStats(overall);
     setVisitStreak(streakCount);
-    setUser(userData);
+    setLocalUser(userData);
 
     // Get stats for each exam that has progress
     const exams = Object.keys(QUESTION_BANK);

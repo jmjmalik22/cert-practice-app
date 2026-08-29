@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Clock, CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Clock, CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, markAttempted, shuffle } from "../lib/theme.jsx";
+import { useAuth } from "../lib/authContext.jsx";
 import { QUESTION_BANK } from "../lib/questionBank.jsx";
 import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
 import { Chip } from "./Shared.jsx";
@@ -54,8 +56,19 @@ const EXAM_CONFIGS = {
 
 export function MockExam({ exam, onExit }) {
   const TOKENS = useTheme();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
   const pool = QUESTION_BANK[exam].questions;
-  const config = EXAM_CONFIGS[exam] || { caseStudyQuestions: 0, standaloneQuestions: MOCK_LENGTH, totalQuestions: MOCK_LENGTH, timeMinutes: Math.round(MOCK_SECONDS / 60) };
+  const fullConfig = EXAM_CONFIGS[exam] || { caseStudyQuestions: 0, standaloneQuestions: MOCK_LENGTH, totalQuestions: MOCK_LENGTH, timeMinutes: Math.round(MOCK_SECONDS / 60) };
+  
+  // For guests, limit to 5 questions and 5 minutes
+  const config = isAuthenticated ? fullConfig : {
+    caseStudyQuestions: 0,
+    standaloneQuestions: 5,
+    totalQuestions: 5,
+    timeMinutes: 5,
+  };
+  
   const [order] = useState(() => shuffle(pool).slice(0, Math.min(config.totalQuestions, pool.length)));
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -192,6 +205,29 @@ export function MockExam({ exam, onExit }) {
           <p className="text-sm mb-8" style={{ color: TOKENS.inkMuted }}>
             The full timed experience. No feedback until you submit your answers, just like the real exam.
           </p>
+
+          {/* Trial banner for guests */}
+          {!isAuthenticated && (
+            <div 
+              className="rounded-xl p-4 mb-6"
+              style={{ background: `${TOKENS.amber}15`, border: `1px solid ${TOKENS.amber}40` }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <Lock size={16} color={TOKENS.amber} />
+                <span className="text-sm font-medium" style={{ color: TOKENS.amber }}>Free Trial</span>
+              </div>
+              <p className="text-xs mb-3" style={{ color: TOKENS.inkMuted }}>
+                You&apos;re trying the demo with 5 questions. Sign in to unlock the full {fullConfig.totalQuestions}-question exam.
+              </p>
+              <Link 
+                to="/login"
+                className="text-xs font-medium"
+                style={{ color: TOKENS.azure }}
+              >
+                Sign in for full access →
+              </Link>
+            </div>
+          )}
 
           <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
             Exam setup

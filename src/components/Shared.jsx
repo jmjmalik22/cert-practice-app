@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, Home, BookOpen, Menu, X } from "lucide-react";
+import { LayoutDashboard, Home, BookOpen, Menu, X, Lock } from "lucide-react";
 import { useState } from "react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
@@ -42,15 +42,25 @@ export function MedallionMotif({ opacity = 1 }) {
   );
 }
 
-export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
+export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogout }) {
   const TOKENS = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [pendingRoute, setPendingRoute] = useState(null);
 
   const navItems = [
-    { to: "/", label: "Home", icon: Home },
-    { to: "/study-guides", label: "Study Guides", icon: BookOpen },
-    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/", label: "Home", icon: Home, public: true },
+    { to: "/study-guides", label: "Study Guides", icon: BookOpen, public: false },
+    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, public: false },
   ];
+
+  function handleNavClick(item, e) {
+    if (!item.public && !user) {
+      e.preventDefault();
+      setPendingRoute(item.to);
+      setShowLoginPrompt(true);
+    }
+  }
 
   return (
     <>
@@ -76,19 +86,48 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
         <div className="hidden sm:flex items-center gap-2.5">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isLocked = !item.public && !user;
             return (
               <Link
                 key={item.to}
                 to={item.to}
+                onClick={(e) => handleNavClick(item, e)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-                style={{ color: TOKENS.ink, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+                style={{ 
+                  color: TOKENS.ink, 
+                  background: TOKENS.panel, 
+                  border: `1px solid ${TOKENS.panelBorder}`,
+                  opacity: isLocked ? 0.6 : 1,
+                }}
               >
                 <Icon size={14} />
                 {item.label}
+                {isLocked && <Lock size={10} />}
               </Link>
             );
           })}
-          <UserBadge />
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                {user.displayName || user.email}
+              </span>
+              <button
+                onClick={onLogout}
+                className="text-xs px-2 py-1 rounded-lg"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.inkMuted }}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="text-xs px-3 py-1.5 rounded-lg font-medium"
+              style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+            >
+              Sign In
+            </Link>
+          )}
           {streak > 0 && (
             <div
               className="flex items-center gap-1 rounded-full px-2.5 py-1"
@@ -125,7 +164,19 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
 
         {/* Mobile Menu Button */}
         <div className="flex sm:hidden items-center gap-2">
-          <UserBadge />
+          {user ? (
+            <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
+              {user.displayName || user.email}
+            </span>
+          ) : (
+            <Link
+              to="/login"
+              className="text-xs px-2 py-1 rounded-lg"
+              style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+            >
+              Sign In
+            </Link>
+          )}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
@@ -146,16 +197,26 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
           <div className="flex flex-col gap-2">
             {navItems.map((item) => {
               const Icon = item.icon;
+              const isLocked = !item.public && !user;
               return (
                 <Link
                   key={item.to}
                   to={item.to}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    handleNavClick(item, e);
+                    if (!isLocked) setMobileMenuOpen(false);
+                  }}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
-                  style={{ color: TOKENS.ink, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+                  style={{ 
+                    color: TOKENS.ink, 
+                    background: TOKENS.panel, 
+                    border: `1px solid ${TOKENS.panelBorder}`,
+                    opacity: isLocked ? 0.6 : 1,
+                  }}
                 >
                   <Icon size={18} color={TOKENS.azure} />
                   {item.label}
+                  {isLocked && <Lock size={14} />}
                 </Link>
               );
             })}
@@ -189,6 +250,48 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
                     transition: "left .15s",
                   }}
                 />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Login Prompt Modal */}
+      {showLoginPrompt && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center z-50"
+          style={{ background: `${TOKENS.bg}80` }}
+          onClick={() => setShowLoginPrompt(false)}
+        >
+          <div 
+            className="rounded-2xl p-6 max-w-sm w-full mx-4"
+            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <Lock size={20} color={TOKENS.amber} />
+              <h3 className="text-lg font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+                Sign In Required
+              </h3>
+            </div>
+            <p className="text-sm mb-6" style={{ color: TOKENS.inkMuted }}>
+              Please sign in to access {pendingRoute === '/study-guides' ? 'Study Guides' : 'Dashboard'}. Create a free account to track your progress across all devices.
+            </p>
+            <div className="flex gap-3">
+              <Link
+                to="/login"
+                className="flex-1 py-2.5 rounded-full text-sm font-medium text-center"
+                style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+                onClick={() => setShowLoginPrompt(false)}
+              >
+                Sign In
+              </Link>
+              <button
+                onClick={() => setShowLoginPrompt(false)}
+                className="flex-1 py-2.5 rounded-full text-sm font-medium"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}
+              >
+                Cancel
               </button>
             </div>
           </div>
