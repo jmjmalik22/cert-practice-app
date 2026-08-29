@@ -42,7 +42,7 @@ export function MedallionMotif({ opacity = 1 }) {
   );
 }
 
-export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
+export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogout }) {
   const TOKENS = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -88,7 +88,28 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
               </Link>
             );
           })}
-          <UserBadge />
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                {user.displayName || user.email}
+              </span>
+              <button
+                onClick={onLogout}
+                className="text-xs px-2 py-1 rounded-lg"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.inkMuted }}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="text-xs px-3 py-1.5 rounded-lg font-medium"
+              style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+            >
+              Sign In
+            </Link>
+          )}
           {streak > 0 && (
             <div
               className="flex items-center gap-1 rounded-full px-2.5 py-1"
@@ -125,7 +146,19 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick }) {
 
         {/* Mobile Menu Button */}
         <div className="flex sm:hidden items-center gap-2">
-          <UserBadge />
+          {user ? (
+            <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
+              {user.displayName || user.email}
+            </span>
+          ) : (
+            <Link
+              to="/login"
+              className="text-xs px-2 py-1 rounded-lg"
+              style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+            >
+              Sign In
+            </Link>
+          )}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"

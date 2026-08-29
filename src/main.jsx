@@ -6,23 +6,31 @@ import { Dashboard } from "./pages/Dashboard.jsx";
 import { StudyGuides } from "./pages/StudyGuides.jsx";
 import { StudyGuideDetail } from "./pages/StudyGuideDetail.jsx";
 import { DP700StudyGuide } from "./pages/study-guides/DP700StudyGuide.jsx";
+import { Login } from "./pages/Login.jsx";
+import { AuthProvider } from "./lib/authContext.jsx";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./index.css";
 
+// Wrap the App with AuthProvider
+function AppWithAuth() {
+  return (
+    <AuthProvider>
+      <App />
+      <Analytics />
+      <SpeedInsights />
+    </AuthProvider>
+  );
+}
+
 const routes = [
   {
     path: "/",
-    element: (
-      <>
-        <App />
-        <Analytics />
-        <SpeedInsights />
-      </>
-    ),
+    element: <AppWithAuth />,
     children: [
       { index: true, element: <Landing /> },
       { path: "dashboard", element: <Dashboard /> },
+      { path: "login", element: <Login /> },
       { path: "study-guides", element: <StudyGuides /> },
       { path: "study-guides/:examSlug", element: <StudyGuideDetail /> },
       { path: "study-guides/dp-700/:topicId", element: <DP700StudyGuide /> },
