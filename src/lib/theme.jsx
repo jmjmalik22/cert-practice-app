@@ -35,6 +35,7 @@ export function useTheme() {
 
 // --- localStorage-backed helpers (session/device only, no backend) ---
 export function safeGet(key, fallback) {
+  if (typeof window === "undefined") return fallback;
   try {
     const v = localStorage.getItem(key);
     return v ? JSON.parse(v) : fallback;
@@ -43,6 +44,7 @@ export function safeGet(key, fallback) {
   }
 }
 export function safeSet(key, value) {
+  if (typeof window === "undefined") return;
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
@@ -51,13 +53,15 @@ export function safeSet(key, value) {
 }
 
 export function getStoredTheme() {
+  if (typeof window === "undefined") return "light";
   try {
-    return localStorage.getItem("fp_theme") || "dark";
+    return localStorage.getItem("fp_theme") || "light";
   } catch {
-    return "dark";
+    return "light";
   }
 }
 export function setStoredTheme(t) {
+  if (typeof window === "undefined") return;
   try {
     localStorage.setItem("fp_theme", t);
   } catch {

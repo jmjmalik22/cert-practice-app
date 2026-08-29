@@ -54,6 +54,42 @@ const GUIDES = {
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/dp-900",
     docsUrl: "https://learn.microsoft.com/en-us/azure/",
   },
+  "AZ-104": {
+    prereq: "No strict prerequisites, but the exam assumes subject matter expertise implementing, managing, and monitoring an Azure environment. You should be familiar with operating systems, networking, servers, and virtualization, plus have experience with PowerShell, Azure CLI, the Azure portal, and ARM templates or Bicep.",
+    background: [
+      "Managing Microsoft Entra identities, groups, and RBAC role assignments",
+      "Azure Storage — accounts, redundancy, access keys, and SAS tokens",
+      "Deploying VMs, containers, and App Service using ARM templates or Bicep",
+      "Virtual networking — VNets, NSGs, peering, and load balancing",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-104",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/az-104",
+    docsUrl: "https://learn.microsoft.com/en-us/azure/?product=featured",
+  },
+  "AI-901": {
+    prereq: "You should have conceptual knowledge of AI solutions in Azure and foundational technical skills to work with them, including knowledge of Python coding syntax and familiarity with Azure resources. No formal data science or software engineering background is assumed.",
+    background: [
+      "Responsible AI principles — fairness, reliability, privacy, inclusiveness, transparency, accountability",
+      "Core AI workload types — generative AI, computer vision, speech, and information extraction",
+      "Basic familiarity with Microsoft Foundry for deploying and testing AI models",
+      "Comfort reading and modifying simple Python code",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-901",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/ai-901",
+    docsUrl: "https://learn.microsoft.com/en-us/azure/ai-foundry/",
+  },
+  "PL-300": {
+    prereq: "No strict prerequisites, but the exam assumes you can deliver actionable insights by working with available data. You should be proficient using Power Query and Data Analysis Expressions (DAX), and comfortable working closely with business stakeholders to identify requirements.",
+    background: [
+      "Power Query — connecting to sources, transforming, and shaping data",
+      "Star schema modeling — fact tables, dimension tables, and relationships",
+      "DAX fundamentals — measures, calculated columns, and filter context",
+      "Publishing, securing, and distributing reports in the Power BI Service",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/pl-300",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/pl-300",
+    docsUrl: "https://learn.microsoft.com/en-us/power-bi/",
+  },
 };
 
 function buildSteps(code, meta, guide) {
