@@ -1,19 +1,67 @@
 import { useState, useEffect, useRef } from "react";
 import { Clock, CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft } from "lucide-react";
-import { useTheme, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, markAttempted, shuffle } from "../lib/theme.jsx";
+import { useTheme, FONT_DISPLAY, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, markAttempted, shuffle } from "../lib/theme.jsx";
 import { QUESTION_BANK } from "../lib/questionBank.jsx";
 import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
 import { Chip } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
+// Exam configurations - can be customized per exam
+const EXAM_CONFIGS = {
+  "DP-700": {
+    caseStudyQuestions: 8,
+    standaloneQuestions: 42,
+    totalQuestions: 50,
+    timeMinutes: 100,
+  },
+  "DP-600": {
+    caseStudyQuestions: 8,
+    standaloneQuestions: 42,
+    totalQuestions: 50,
+    timeMinutes: 100,
+  },
+  "AZ-900": {
+    caseStudyQuestions: 0,
+    standaloneQuestions: 32,
+    totalQuestions: 32,
+    timeMinutes: 45,
+  },
+  "DP-900": {
+    caseStudyQuestions: 0,
+    standaloneQuestions: 32,
+    totalQuestions: 32,
+    timeMinutes: 45,
+  },
+  "AZ-104": {
+    caseStudyQuestions: 0,
+    standaloneQuestions: 40,
+    totalQuestions: 40,
+    timeMinutes: 60,
+  },
+  "AI-901": {
+    caseStudyQuestions: 0,
+    standaloneQuestions: 32,
+    totalQuestions: 32,
+    timeMinutes: 45,
+  },
+  "PL-300": {
+    caseStudyQuestions: 0,
+    standaloneQuestions: 40,
+    totalQuestions: 40,
+    timeMinutes: 60,
+  },
+};
+
 export function MockExam({ exam, onExit }) {
   const TOKENS = useTheme();
   const pool = QUESTION_BANK[exam].questions;
-  const [order] = useState(() => shuffle(pool).slice(0, Math.min(MOCK_LENGTH, pool.length)));
+  const config = EXAM_CONFIGS[exam] || { caseStudyQuestions: 0, standaloneQuestions: MOCK_LENGTH, totalQuestions: MOCK_LENGTH, timeMinutes: Math.round(MOCK_SECONDS / 60) };
+  const [order] = useState(() => shuffle(pool).slice(0, Math.min(config.totalQuestions, pool.length)));
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [secondsLeft, setSecondsLeft] = useState(MOCK_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(config.timeMinutes * 60);
   const [finished, setFinished] = useState(false);
+  const [showSetup, setShowSetup] = useState(true);
   const timerRef = useRef(null);
 
   function finishExam() {
@@ -119,6 +167,107 @@ export function MockExam({ exam, onExit }) {
         <div className="flex justify-center mt-8">
           <button onClick={onExit} className="px-5 py-2.5 rounded-full font-medium text-sm" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>
             Back to home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (showSetup) {
+    return (
+      <div className="min-h-full flex flex-col px-6 py-8 max-w-2xl mx-auto w-full">
+        <TopBar
+          left={
+            <button onClick={onExit} className="flex items-center gap-1 text-sm" style={{ color: TOKENS.inkMuted }}>
+              <ChevronLeft size={16} /> Back to exam hub
+            </button>
+          }
+          right={<Chip tone="amber">{exam} · Practice Exam</Chip>}
+        />
+
+        <div className="mt-8">
+          <h1 className="text-2xl sm:text-3xl font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            {exam} Practice Exam
+          </h1>
+          <p className="text-sm mb-8" style={{ color: TOKENS.inkMuted }}>
+            The full timed experience. No feedback until you submit your answers, just like the real exam.
+          </p>
+
+          <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            Exam setup
+          </h2>
+          <div className="rounded-xl p-4 mb-8" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+            <div className="text-sm mb-4" style={{ color: TOKENS.ink }}>
+              {config.totalQuestions} questions {config.caseStudyQuestions > 0 && `(${config.caseStudyQuestions} case study + ${config.standaloneQuestions} standalone)`} · {config.timeMinutes} min
+            </div>
+            <div className="space-y-3">
+              {config.caseStudyQuestions > 0 && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Case study questions</span>
+                  <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{config.caseStudyQuestions}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Standalone questions</span>
+                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{config.standaloneQuestions}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Time limit</span>
+                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{config.timeMinutes} min</span>
+              </div>
+            </div>
+          </div>
+
+          <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            What to expect
+          </h2>
+          <div className="space-y-4 mb-8">
+            <div className="flex gap-3">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>1</span>
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>No feedback during the exam</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Results, explanations and your score appear only on the summary after you finish.</div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>2</span>
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Move freely and change answers</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Navigate between questions at any time. Answers stay editable until final submission.</div>
+              </div>
+            </div>
+            {config.caseStudyQuestions > 0 && (
+              <div className="flex gap-3">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                  <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>3</span>
+                </div>
+                <div>
+                  <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>The case study comes first</div>
+                  <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Once you leave the case study section you cannot return to it, exactly as in the real exam.</div>
+                </div>
+              </div>
+            )}
+            <div className="flex gap-3">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>{config.caseStudyQuestions > 0 ? '4' : '3'}</span>
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Auto-submit at time-up</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>When the timer reaches zero the exam submits automatically and you land on your results.</div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowSetup(false)}
+            className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-medium text-sm"
+            style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+          >
+            Start Exam <ArrowRight size={16} />
           </button>
         </div>
       </div>
