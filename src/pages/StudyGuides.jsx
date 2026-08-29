@@ -26,6 +26,21 @@ const STUDY_RESOURCES = [
     title: "DP-900: Azure Data Fundamentals",
     description: "A step-by-step study path for the Microsoft Azure Data Fundamentals certification.",
   },
+  {
+    examCode: "AZ-104",
+    title: "AZ-104: Azure Administrator Associate",
+    description: "A step-by-step study path for the Microsoft Azure Administrator Associate certification.",
+  },
+  {
+    examCode: "AI-901",
+    title: "AI-901: Azure AI Fundamentals",
+    description: "A step-by-step study path for the Microsoft Azure AI Fundamentals (Foundry) certification.",
+  },
+  {
+    examCode: "PL-300",
+    title: "PL-300: Power BI Data Analyst Associate",
+    description: "A step-by-step study path for the Microsoft Power BI Data Analyst Associate certification.",
+  },
 ];
 
 const EXTERNAL_RESOURCES = [
