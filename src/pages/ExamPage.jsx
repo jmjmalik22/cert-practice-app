@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useParams, Link, Navigate, useOutletContext } from "react-router-dom";
 import { Head as Helmet } from "vite-react-ssg";
-import { RotateCcw, Clock, ChevronLeft } from "lucide-react";
+import { RotateCcw, Clock, ChevronLeft, BookOpen } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, getAttempted } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank.jsx";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { Practice } from "../components/Practice.jsx";
 import { MockExam } from "../components/MockExam.jsx";
+
+// Exams that have study guides available
+const STUDY_GUIDE_EXAMS = new Set(["DP-700", "DP-600", "AZ-900", "DP-900", "AZ-104", "AI-901", "PL-300"]);
 
 function buildFaqs(code, meta, total) {
   return [
@@ -101,7 +104,7 @@ export function ExamPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <button
             onClick={() => setMode("practice")}
             className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
@@ -125,6 +128,19 @@ export function ExamPage() {
             <p className="text-xs" style={{ color: TOKENS.inkMuted }}>{MOCK_LENGTH} questions, {Math.round(MOCK_SECONDS / 60)}-min timer.</p>
           </button>
         </div>
+
+        {/* Study Guide Link */}
+        {STUDY_GUIDE_EXAMS.has(code) && (
+          <Link
+            to={`/study-guides/${meta.slug}`}
+            className="flex items-center justify-center gap-2 rounded-xl p-3 mb-10 text-sm font-medium transition-transform hover:-translate-y-0.5"
+            style={{ background: `${TOKENS.green}15`, border: `1px solid ${TOKENS.green}40`, color: TOKENS.green }}
+          >
+            <BookOpen size={16} />
+            <span>Study Guide</span>
+            <span style={{ color: TOKENS.inkMuted }}>— Comprehensive exam preparation materials</span>
+          </Link>
+        )}
 
         <h2 className="text-sm font-semibold mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
           Frequently asked questions
