@@ -1,91 +1,54 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Clock, CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft, Lock } from "lucide-react";
-import { useTheme, FONT_DISPLAY, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, markAttempted, shuffle } from "../lib/theme.jsx";
+import { useTheme, FONT_DISPLAY, FONT_MONO, markAttempted, shuffle } from "../lib/theme.jsx";
 import { useAuth } from "../lib/authContext.jsx";
-import { QUESTION_BANK } from "../lib/questionBank.jsx";
+import { GUEST_MOCK_CONFIG, getMockConfig } from "../lib/examCatalog.js";
+import { QUESTION_BANK } from "../lib/questionBank/index.js";
 import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
 import { Chip } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
-// Exam configurations - can be customized per exam
-const EXAM_CONFIGS = {
-  "DP-700": {
-    caseStudyQuestions: 8,
-    standaloneQuestions: 42,
-    totalQuestions: 50,
-    timeMinutes: 100,
-  },
-  "DP-600": {
-    caseStudyQuestions: 8,
-    standaloneQuestions: 42,
-    totalQuestions: 50,
-    timeMinutes: 100,
-  },
-  "AZ-900": {
-    caseStudyQuestions: 0,
-    standaloneQuestions: 32,
-    totalQuestions: 32,
-    timeMinutes: 45,
-  },
-  "DP-900": {
-    caseStudyQuestions: 0,
-    standaloneQuestions: 32,
-    totalQuestions: 32,
-    timeMinutes: 45,
-  },
-  "AZ-104": {
-    caseStudyQuestions: 0,
-    standaloneQuestions: 40,
-    totalQuestions: 40,
-    timeMinutes: 60,
-  },
-  "AI-901": {
-    caseStudyQuestions: 0,
-    standaloneQuestions: 32,
-    totalQuestions: 32,
-    timeMinutes: 45,
-  },
-  "PL-300": {
-    caseStudyQuestions: 0,
-    standaloneQuestions: 40,
-    totalQuestions: 40,
-    timeMinutes: 60,
-  },
-};
-
 export function MockExam({ exam, onExit }) {
   const TOKENS = useTheme();
-  const { user } = useAuth();
-  const isAuthenticated = !!user;
+  const { isAuthenticated } = useAuth();
   const pool = QUESTION_BANK[exam].questions;
-  const fullConfig = EXAM_CONFIGS[exam] || { caseStudyQuestions: 0, standaloneQuestions: MOCK_LENGTH, totalQuestions: MOCK_LENGTH, timeMinutes: Math.round(MOCK_SECONDS / 60) };
-  
-  // For guests, limit to 5 questions and 5 minutes
-  const config = isAuthenticated ? fullConfig : {
-    caseStudyQuestions: 0,
-    standaloneQuestions: 5,
-    totalQuestions: 5,
-    timeMinutes: 5,
-  };
+  const fullConfig = getMockConfig(exam);
+  const config = isAuthenticated ? fullConfig : GUEST_MOCK_CONFIG;
+  const totalSeconds = config.timeMinutes * 60;
   
   const [order] = useState(() => shuffle(pool).slice(0, Math.min(config.totalQuestions, pool.length)));
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [secondsLeft, setSecondsLeft] = useState(config.timeMinutes * 60);
+  const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
   const [finished, setFinished] = useState(false);
   const [showSetup, setShowSetup] = useState(true);
   const timerRef = useRef(null);
+  const answersRef = useRef(answers);
+  const secondsLeftRef = useRef(secondsLeft);
+  const finishedRef = useRef(false);
 
-  function finishExam() {
-    const correctCount = order.filter((qq) => answers[qq.id] === qq.correct).length;
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
+
+  useEffect(() => {
+    secondsLeftRef.current = secondsLeft;
+  }, [secondsLeft]);
+
+  function finishExam(remainingSeconds = secondsLeftRef.current) {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+
+    const currentAnswers = answersRef.current;
+    const correctCount = order.filter((qq) => currentAnswers[qq.id] === qq.correct).length;
     const incorrectCount = order.length - correctCount;
     const percentage = Math.round((correctCount / order.length) * 100);
-    const timeSpent = MOCK_SECONDS - secondsLeft;
+    const timeSpent = totalSeconds - remainingSeconds;
 
     // Save each question attempt (mark as mock exam)
     order.forEach((qq) => {
-      const isCorrect = answers[qq.id] === qq.correct;
+      const isCorrect = currentAnswers[qq.id] === qq.correct;
       markAttempted(exam, qq.id);
       recordAttempt(exam, qq.id, isCorrect, 0, true); // true = isMockExam
     });
@@ -104,19 +67,19 @@ export function MockExam({ exam, onExit }) {
   }
 
   useEffect(() => {
-    if (finished) return;
+    if (finished || showSetup) return undefined;
     timerRef.current = setInterval(() => {
       setSecondsLeft((s) => {
         if (s <= 1) {
           clearInterval(timerRef.current);
-          finishExam();
+          finishExam(0);
           return 0;
         }
         return s - 1;
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [finished]);
+  }, [finished, showSetup]);
 
   const q = order[idx];
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");

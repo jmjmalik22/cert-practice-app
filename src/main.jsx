@@ -7,8 +7,8 @@ import { StudyGuides } from "./pages/StudyGuides.jsx";
 import { StudyGuideDetail } from "./pages/StudyGuideDetail.jsx";
 import { DP700StudyGuide } from "./pages/study-guides/DP700StudyGuide.jsx";
 import { Login } from "./pages/Login.jsx";
-import { ProtectedRoute } from "./components/ProtectedRoute.jsx";
 import { AuthProvider } from "./lib/authContext.jsx";
+import { ROUTE_PATHS } from "./lib/examCatalog.js";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./index.css";
@@ -30,12 +30,12 @@ const routes = [
     element: <AppWithAuth />,
     children: [
       { index: true, element: <Landing /> },
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "login", element: <Login /> },
-      { path: "study-guides", element: <StudyGuides /> },
-      { path: "study-guides/:examSlug", element: <StudyGuideDetail /> },
-      { path: "study-guides/dp-700/:topicId", element: <DP700StudyGuide /> },
-      { path: ":examSlug", element: <ExamPage /> },
+      { path: ROUTE_PATHS.dashboard, element: <Dashboard /> },
+      { path: ROUTE_PATHS.login, element: <Login /> },
+      { path: ROUTE_PATHS.studyGuides, element: <StudyGuides /> },
+      { path: ROUTE_PATHS.dp700StudyGuideTopic, element: <DP700StudyGuide /> },
+      { path: ROUTE_PATHS.studyGuideDetail, element: <StudyGuideDetail /> },
+      { path: ROUTE_PATHS.exam, element: <ExamPage /> },
     ],
   },
 ];

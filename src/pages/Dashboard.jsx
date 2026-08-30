@@ -3,7 +3,7 @@ import { Head as Helmet } from "vite-react-ssg";
 import { Link, Navigate, useOutletContext } from "react-router-dom";
 import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
-import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
+import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
 import { Footer } from "../components/Shared.jsx";
 import { getOverallStats, getExamStats, getUser, getExamResults, getBestScore } from "../lib/progress.jsx";
 import { getAttempted, updateStreak } from "../lib/theme.jsx";
@@ -281,19 +281,16 @@ function ActivityChart({ data }) {
 }
 
 export function Dashboard() {
-  const { theme, onToggleTheme, streak, user } = useOutletContext();
+  const { user, isAuthenticated } = useOutletContext();
   const TOKENS = useTheme();
   const [stats, setStats] = useState(null);
   const [examStats, setExamStats] = useState([]);
   const [visitStreak, setVisitStreak] = useState(0);
   const [localUser, setLocalUser] = useState(null);
 
-  // Redirect to login if not authenticated
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const overall = getOverallStats();
     const streakCount = updateStreak();
     const userData = getUser();
@@ -309,12 +306,18 @@ export function Dashboard() {
         stats: getExamStats(code, QUESTION_BANK[code]?.questions.length || 0),
       }))
       .filter((e) => e.stats.totalAttempts > 0)
-      .sort((a, b) => b.stats.lastAttempt - a.stats.lastAttempt);
+      .sort((a, b) => new Date(b.stats.lastAttempt || 0) - new Date(a.stats.lastAttempt || 0));
 
     setExamStats(examData);
-  }, []);
+  }, [isAuthenticated]);
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (!stats) return null;
+  const displayName = user?.displayName || localUser?.name;
 
   return (
     <div className="min-h-full flex flex-col">
@@ -328,7 +331,7 @@ export function Dashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            {user?.name ? `Hello, ${user.name}!` : "Your Progress"}
+            {displayName ? `Hello, ${displayName}!` : "Your Progress"}
           </h1>
           <p style={{ color: TOKENS.inkMuted }}>
             Track your certification journey and see how far you have come.

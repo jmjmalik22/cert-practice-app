@@ -1,8 +1,8 @@
 import { Head as Helmet } from "vite-react-ssg";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { ChevronLeft, BookOpen, Database, Shield, Activity } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
-import { EXAM_META, SLUG_TO_EXAM } from "../../lib/questionBank.jsx";
+import { EXAM_META } from "../../lib/questionBank/index.js";
 import { Footer } from "../../components/Shared.jsx";
 
 // DP-700 Exam Topics based on Skills Measured
@@ -216,7 +216,6 @@ export const DP700_TOPICS = [
 
 export function DP700StudyGuide() {
   const { topicId } = useParams();
-  const { theme } = useOutletContext();
   const TOKENS = useTheme();
 
   const topic = DP700_TOPICS.find((t) => t.id === topicId);
@@ -364,6 +363,3 @@ export function DP700StudyGuide() {
   );
 }
 
-// Import OutletContext
-import { useOutletContext } from "react-router-dom";
-import { Navigate } from "react-router-dom";

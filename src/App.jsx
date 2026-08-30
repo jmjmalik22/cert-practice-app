@@ -18,7 +18,7 @@ export default function App() {
   const [theme, setTheme] = useState(() => getStoredTheme());
   const [streak, setStreak] = useState(0);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated, isEmailVerified } = useAuth();
 
   useEffect(() => {
     setStreak(updateStreak());
@@ -45,9 +45,10 @@ export default function App() {
           streak={streak} 
           user={user}
           onLogout={logout}
+          isAuthenticated={isAuthenticated}
         />
         <div className="flex-1 flex flex-col min-w-0">
-          <Outlet context={{ theme, onToggleTheme: toggleTheme, streak, user }} />
+          <Outlet context={{ theme, onToggleTheme: toggleTheme, streak, user, isAuthenticated, isEmailVerified }} />
         </div>
         {showProfileModal && !user && (
           <UserProfileModal onClose={() => setShowProfileModal(false)} />

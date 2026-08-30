@@ -2,15 +2,12 @@ import { useState } from "react";
 import { useParams, Link, Navigate, useOutletContext } from "react-router-dom";
 import { Head as Helmet } from "vite-react-ssg";
 import { RotateCcw, Clock, ChevronLeft, BookOpen, Lock } from "lucide-react";
-import { useTheme, FONT_DISPLAY, FONT_MONO, MOCK_LENGTH, MOCK_SECONDS, getAttempted } from "../lib/theme.jsx";
-import { useAuth } from "../lib/authContext.jsx";
-import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank.jsx";
+import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
+import { GUEST_MOCK_CONFIG, STUDY_GUIDE_EXAMS, getMockConfig } from "../lib/examCatalog.js";
+import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank/index.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { Practice } from "../components/Practice.jsx";
 import { MockExam } from "../components/MockExam.jsx";
-
-// Exams that have study guides available
-const STUDY_GUIDE_EXAMS = new Set(["DP-700", "DP-600", "AZ-900", "DP-900", "AZ-104", "AI-901", "PL-300"]);
 
 function buildFaqs(code, meta, total) {
   return [
@@ -24,10 +21,9 @@ function buildFaqs(code, meta, total) {
 
 export function ExamPage() {
   const { examSlug } = useParams();
-  const { theme, onToggleTheme, streak, user } = useOutletContext();
+  const { isAuthenticated } = useOutletContext();
   const TOKENS = useTheme();
   const [mode, setMode] = useState(null); // null | "practice" | "mock"
-  const isAuthenticated = !!user;
 
   const code = SLUG_TO_EXAM[examSlug];
   if (!code) return <Navigate to="/" replace />;
@@ -38,6 +34,7 @@ export function ExamPage() {
   const attempted = getAttempted(code).length;
   const pct = total ? Math.min(100, Math.round((attempted / total) * 100)) : 0;
   const faqs = buildFaqs(code, meta, total);
+  const mockConfig = isAuthenticated ? getMockConfig(code) : GUEST_MOCK_CONFIG;
 
   if (mode === "practice") return <Practice exam={code} onExit={() => setMode(null)} />;
   if (mode === "mock") return <MockExam exam={code} onExit={() => setMode(null)} />;
@@ -149,7 +146,9 @@ export function ExamPage() {
               <Clock size={16} color={TOKENS.amber} />
               <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Mock exam</span>
             </div>
-            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>{MOCK_LENGTH} questions, {Math.round(MOCK_SECONDS / 60)}-min timer.</p>
+            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+              {mockConfig.totalQuestions} questions, {mockConfig.timeMinutes}-min timer.
+            </p>
           </button>
         </div>
 

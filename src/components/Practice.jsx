@@ -1,27 +1,22 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { ChevronLeft, ArrowRight, Clock, Flag, CheckCircle2 } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getBookmarks, toggleBookmarkStorage, markAttempted, shuffle } from "../lib/theme.jsx";
-import { QUESTION_BANK } from "../lib/questionBank.jsx";
-import { recordAttempt, toggleBookmark, getBookmarks as getProgressBookmarks } from "../lib/progress.jsx";
+import { getPracticeConfig } from "../lib/examCatalog.js";
+import { QUESTION_BANK } from "../lib/questionBank/index.js";
+import { recordAttempt, toggleBookmark } from "../lib/progress.jsx";
 import { Chip } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
-
-// Practice mode configurations - can be customized per exam
-const PRACTICE_CONFIGS = {
-  "DP-700": { totalQuestions: 52, caseStudyCount: 8, domains: 3, timeLimit: "Untimed" },
-  "DP-600": { totalQuestions: 48, caseStudyCount: 8, domains: 3, timeLimit: "Untimed" },
-  "AZ-900": { totalQuestions: 36, caseStudyCount: 0, domains: 3, timeLimit: "Untimed" },
-  "DP-900": { totalQuestions: 34, caseStudyCount: 0, domains: 4, timeLimit: "Untimed" },
-  "AZ-104": { totalQuestions: 45, caseStudyCount: 0, domains: 5, timeLimit: "Untimed" },
-  "AI-901": { totalQuestions: 32, caseStudyCount: 0, domains: 4, timeLimit: "Untimed" },
-  "PL-300": { totalQuestions: 42, caseStudyCount: 0, domains: 4, timeLimit: "Untimed" },
-};
 
 export function Practice({ exam, onExit }) {
   const TOKENS = useTheme();
   const pool = QUESTION_BANK[exam].questions;
-  const config = PRACTICE_CONFIGS[exam] || { totalQuestions: pool.length, domains: 3, timeLimit: "Untimed" };
   const domains = useMemo(() => ["All", ...Array.from(new Set(pool.map((q) => q.domain)))], [pool]);
+  const practiceConfig = getPracticeConfig(exam);
+  const config = {
+    ...practiceConfig,
+    totalQuestions: pool.length,
+    domains: domains.length - 1,
+  };
   const [domainFilter, setDomainFilter] = useState("All");
   const [showSetup, setShowSetup] = useState(true);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);

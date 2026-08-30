@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite-react-ssg build && node scripts/generate-sitemap.js",
     "preview": "vite preview",
-    "test": "echo \"No tests defined - passing by default\""
+    "test": "node scripts/validate-question-bank.js"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
