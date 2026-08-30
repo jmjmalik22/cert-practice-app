@@ -276,7 +276,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
               </h3>
             </div>
             <p className="text-sm mb-6" style={{ color: TOKENS.inkMuted }}>
-              Please sign in with a verified account to access Dashboard. Create a free account to track your progress across all devices.
+              Please sign in to access Dashboard. Create a free account to track your progress across all devices.
             </p>
             <div className="flex gap-3">
               <Link
