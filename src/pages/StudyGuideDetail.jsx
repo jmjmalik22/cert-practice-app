@@ -1,8 +1,8 @@
 import { Head as Helmet } from "vite-react-ssg";
-import { useParams, Link, Navigate, useOutletContext } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { ChevronLeft, ExternalLink, CheckCircle2, Database, Activity, Shield } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
-import { EXAM_META, SLUG_TO_EXAM, QUESTION_BANK } from "../lib/questionBank.jsx";
+import { EXAM_META, SLUG_TO_EXAM, QUESTION_BANK } from "../lib/questionBank/index.js";
 import { Footer } from "../components/Shared.jsx";
 
 // Content grounded in Microsoft's official study guides (learn.microsoft.com/credentials/certifications/resources/study-guides).
@@ -127,13 +127,7 @@ function buildSteps(code, meta, guide) {
 
 export function StudyGuideDetail() {
   const { examSlug } = useParams();
-  const { theme, onToggleTheme, streak, user } = useOutletContext();
   const TOKENS = useTheme();
-
-  // Redirect to login if not authenticated
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
 
   const code = SLUG_TO_EXAM[examSlug];
   if (!code) return <Navigate to="/study-guides" replace />;

@@ -42,11 +42,12 @@ export function MedallionMotif({ opacity = 1 }) {
   );
 }
 
-export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogout }) {
+export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogout, isAuthenticated }) {
   const TOKENS = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [pendingRoute, setPendingRoute] = useState(null);
+  const hasFullAccess = isAuthenticated ?? !!user;
 
   const navItems = [
     { to: "/", label: "Home", icon: Home, public: true },
@@ -55,7 +56,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
   ];
 
   function handleNavClick(item, e) {
-    if (!item.public && !user) {
+    if (!item.public && !hasFullAccess) {
       e.preventDefault();
       setPendingRoute(item.to);
       setShowLoginPrompt(true);
@@ -86,7 +87,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
         <div className="hidden sm:flex items-center gap-2.5">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isLocked = !item.public && !user;
+            const isLocked = !item.public && !hasFullAccess;
             return (
               <Link
                 key={item.to}
@@ -197,7 +198,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
           <div className="flex flex-col gap-2">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isLocked = !item.public && !user;
+              const isLocked = !item.public && !hasFullAccess;
               return (
                 <Link
                   key={item.to}
@@ -275,7 +276,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
               </h3>
             </div>
             <p className="text-sm mb-6" style={{ color: TOKENS.inkMuted }}>
-              Please sign in to access Dashboard. Create a free account to track your progress across all devices.
+              Please sign in with a verified account to access Dashboard. Create a free account to track your progress across all devices.
             </p>
             <div className="flex gap-3">
               <Link

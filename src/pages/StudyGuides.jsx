@@ -1,9 +1,9 @@
 import { Head as Helmet } from "vite-react-ssg";
-import { Link, Navigate, useOutletContext } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
-import { EXAM_META } from "../lib/questionBank.jsx";
+import { EXAM_META } from "../lib/questionBank/index.js";
 
 const STUDY_RESOURCES = [
   {
@@ -87,7 +87,7 @@ function ResourceCard({ resource }) {
       </p>
 
       <Link
-        to={`/study-guides/${resource.examCode.toLowerCase()}`}
+        to={`/study-guides/${meta.slug}`}
         className="flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-colors mt-auto"
         style={{ background: TOKENS.bg, color: TOKENS.ink, textDecoration: "none" }}
       >
@@ -99,13 +99,7 @@ function ResourceCard({ resource }) {
 }
 
 export function StudyGuides() {
-  const { theme, onToggleTheme, streak, user } = useOutletContext();
   const TOKENS = useTheme();
-
-  // Redirect to login if not authenticated
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
 
   return (
     <div className="min-h-full flex flex-col">

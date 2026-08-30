@@ -3,13 +3,12 @@ import { Link, useOutletContext } from "react-router-dom";
 import { RotateCcw, Clock, Bookmark, Flag, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
-import { QUESTION_BANK, EXAM_META } from "../lib/questionBank.jsx";
+import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 
 export function Landing() {
-  const { theme, onToggleTheme, streak, user } = useOutletContext();
+  const { isAuthenticated } = useOutletContext();
   const TOKENS = useTheme();
-  const isAuthenticated = !!user;
   const totalQuestions = Object.values(QUESTION_BANK).reduce((sum, d) => sum + d.questions.length, 0);
   const examCount = Object.keys(QUESTION_BANK).length;
 
