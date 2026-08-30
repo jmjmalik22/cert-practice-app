@@ -102,11 +102,6 @@ export function StudyGuides() {
   const { theme, onToggleTheme, streak, user } = useOutletContext();
   const TOKENS = useTheme();
 
-  // Redirect to login if not authenticated
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>

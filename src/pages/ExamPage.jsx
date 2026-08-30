@@ -153,34 +153,17 @@ export function ExamPage() {
           </button>
         </div>
 
-        {/* Study Guide Link - Locked for guests */}
+        {/* Study Guide Link - Public */}
         {STUDY_GUIDE_EXAMS.has(code) && (
-          isAuthenticated ? (
-            <Link
-              to={`/study-guides/${meta.slug}`}
-              className="flex items-center justify-center gap-2 rounded-xl p-3 mb-10 text-sm font-medium transition-transform hover:-translate-y-0.5"
-              style={{ background: `${TOKENS.green}15`, border: `1px solid ${TOKENS.green}40`, color: TOKENS.green }}
-            >
-              <BookOpen size={16} />
-              <span>Study Guide</span>
-              <span style={{ color: TOKENS.inkMuted }}>— Comprehensive exam preparation materials</span>
-            </Link>
-          ) : (
-            <Link
-              to="/login"
-              className="flex items-center justify-center gap-2 rounded-xl p-3 mb-10 text-sm font-medium relative overflow-hidden"
-              style={{ background: `${TOKENS.green}08`, border: `1px solid ${TOKENS.green}20`, color: TOKENS.inkMuted }}
-            >
-              <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${TOKENS.bg}40` }}>
-                <div className="flex items-center gap-1 text-xs" style={{ color: TOKENS.inkMuted }}>
-                  <Lock size={12} /> Sign in to unlock
-                </div>
-              </div>
-              <span className="opacity-40"><BookOpen size={16} /></span>
-              <span className="opacity-40">Study Guide</span>
-              <span className="opacity-40" style={{ color: TOKENS.inkMuted }}>— Comprehensive exam preparation materials</span>
-            </Link>
-          )
+          <Link
+            to={`/study-guides/${meta.slug}`}
+            className="flex items-center justify-center gap-2 rounded-xl p-3 mb-10 text-sm font-medium transition-transform hover:-translate-y-0.5"
+            style={{ background: `${TOKENS.green}15`, border: `1px solid ${TOKENS.green}40`, color: TOKENS.green }}
+          >
+            <BookOpen size={16} />
+            <span>Study Guide</span>
+            <span style={{ color: TOKENS.inkMuted }}>— Comprehensive exam preparation materials</span>
+          </Link>
         )}
 
         <h2 className="text-sm font-semibold mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>

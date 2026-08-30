@@ -50,7 +50,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
 
   const navItems = [
     { to: "/", label: "Home", icon: Home, public: true },
-    { to: "/study-guides", label: "Study Guides", icon: BookOpen, public: false },
+    { to: "/study-guides", label: "Study Guides", icon: BookOpen, public: true },
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, public: false },
   ];
 
@@ -275,7 +275,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
               </h3>
             </div>
             <p className="text-sm mb-6" style={{ color: TOKENS.inkMuted }}>
-              Please sign in to access {pendingRoute === '/study-guides' ? 'Study Guides' : 'Dashboard'}. Create a free account to track your progress across all devices.
+              Please sign in to access Dashboard. Create a free account to track your progress across all devices.
             </p>
             <div className="flex gap-3">
               <Link
