@@ -80,18 +80,27 @@ export function Landing() {
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: TOKENS.green }} /> Free forever
           </div>
           <div className="flex items-center gap-1 px-3 py-1 rounded-full" style={{ background: `${TOKENS.amber}15`, color: TOKENS.amber }}>
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: TOKENS.amber }} /> No sign-up required
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: TOKENS.amber }} /> Completely free signup
           </div>
         </div>
 
-        <div
-          className="mt-10 w-full max-w-md text-left rounded-2xl p-5 relative z-10"
-          style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>DP-700 · sample question</span>
-            <span className="text-xs" style={{ color: TOKENS.inkMuted }}>1 of 52</span>
-          </div>
+        <div className="mt-10 w-full max-w-md relative z-10">
+          {/* Screenshot background cards */}
+          <div className="absolute inset-0 -z-10 transform translate-x-3 translate-y-3 rotate-2 rounded-2xl opacity-40" 
+            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }} 
+          />
+          <div className="absolute inset-0 -z-10 transform -translate-x-2 translate-y-2 -rotate-1 rounded-2xl opacity-60" 
+            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }} 
+          />
+          
+          <div
+            className="text-left rounded-2xl p-5 relative"
+            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-medium" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>DP-700 · sample question</span>
+              <span className="text-xs" style={{ color: TOKENS.inkMuted }}>1 of 52</span>
+            </div>
           <div className="text-sm mb-4" style={{ color: TOKENS.ink }}>
             Which file format is the default storage format for tables in a Fabric Lakehouse?
           </div>
@@ -118,6 +127,7 @@ export function Landing() {
           <p className="text-xs mt-3" style={{ color: TOKENS.inkMuted }}>
             Fabric Lakehouse tables are stored as Delta tables, giving you ACID transactions and time travel.
           </p>
+          </div>
         </div>
       </div>
 
