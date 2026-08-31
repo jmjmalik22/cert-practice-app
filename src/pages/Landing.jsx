@@ -36,10 +36,10 @@ export function Landing() {
           property="og:description"
           content={`${totalQuestions}+ free practice questions across ${examCount} Microsoft certifications, sourced from official Microsoft Learn docs.`}
         />
-        <meta name="image" property="og:image" content="https://fabricprep.com/icon-512.png" />
-        <meta property="og:image:width" content="512" />
-        <meta property="og:image:height" content="512" />
-        <meta name="twitter:image" content="https://fabricprep.com/icon-512.png" />
+        <meta property="og:image" content="https://fabricprep.com/og-image.png" />
+        <meta property="og:image:width" content="446" />
+        <meta property="og:image:height" content="228" />
+        <meta name="twitter:image" content="https://fabricprep.com/og-image.png" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
