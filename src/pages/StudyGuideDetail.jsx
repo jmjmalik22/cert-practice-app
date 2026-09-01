@@ -3,6 +3,7 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { ChevronLeft, ExternalLink, CheckCircle2, Database, Activity, Shield } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { EXAM_META, SLUG_TO_EXAM, QUESTION_BANK } from "../lib/questionBank/index.js";
+import { buildBreadcrumbSchema } from "../lib/examCatalog.js";
 import { Footer } from "../components/Shared.jsx";
 
 // Content grounded in Microsoft's official study guides (learn.microsoft.com/credentials/certifications/resources/study-guides).
@@ -155,6 +156,15 @@ export function StudyGuideDetail() {
             author: { "@type": "Person", name: "Jitendra Singh Malik" },
             publisher: { "@type": "Organization", name: "FabricPrep" },
           })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(
+            buildBreadcrumbSchema([
+              { name: "Home", path: "" },
+              { name: "Study Guides", path: "study-guides" },
+              { name: `${code} Study Guide` },
+            ])
+          )}
         </script>
       </Helmet>
 

@@ -3,7 +3,7 @@ import { useParams, Link, Navigate, useOutletContext } from "react-router-dom";
 import { Head as Helmet } from "vite-react-ssg";
 import { RotateCcw, Clock, ChevronLeft, BookOpen, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
-import { GUEST_MOCK_CONFIG, STUDY_GUIDE_EXAMS, getMockConfig } from "../lib/examCatalog.js";
+import { GUEST_MOCK_CONFIG, STUDY_GUIDE_EXAMS, getMockConfig, buildBreadcrumbSchema } from "../lib/examCatalog.js";
 import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank/index.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { Practice } from "../components/Practice.jsx";
@@ -68,6 +68,14 @@ export function ExamPage() {
               acceptedAnswer: { "@type": "Answer", text: f.a },
             })),
           })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(
+            buildBreadcrumbSchema([
+              { name: "Home", path: "" },
+              { name: code },
+            ])
+          )}
         </script>
       </Helmet>
 
