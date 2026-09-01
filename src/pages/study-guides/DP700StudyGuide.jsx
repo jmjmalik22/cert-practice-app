@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { ChevronLeft, BookOpen, Database, Shield, Activity, Layers, Code2, Droplets, Warehouse, Zap, GitBranch, ListChecks } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
 import { EXAM_META } from "../../lib/questionBank/index.js";
+import { buildBreadcrumbSchema } from "../../lib/examCatalog.js";
 import { Footer } from "../../components/Shared.jsx";
 
 // DP-700 Exam Topics based on Skills Measured
@@ -633,6 +634,27 @@ export function DP700StudyGuide() {
           name="description"
           content={`Study guide for ${topic.title} - DP-700 Microsoft Fabric Data Engineer Associate exam. Covers ${topic.weight} of the exam.`}
         />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: `${topic.title} — DP-700 Study Guide`,
+            about: "DP-700: Microsoft Fabric Data Engineer Associate",
+            description: `Study guide for ${topic.title} - DP-700 Microsoft Fabric Data Engineer Associate exam. Covers ${topic.weight} of the exam.`,
+            author: { "@type": "Person", name: "Jitendra Singh Malik" },
+            publisher: { "@type": "Organization", name: "FabricPrep" },
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(
+            buildBreadcrumbSchema([
+              { name: "Home", path: "" },
+              { name: "Study Guides", path: "study-guides" },
+              { name: "DP-700 Study Guide", path: "study-guides/dp-700" },
+              { name: topic.title },
+            ])
+          )}
+        </script>
       </Helmet>
 
       <main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full">

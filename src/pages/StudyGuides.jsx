@@ -4,6 +4,7 @@ import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
 import { EXAM_META } from "../lib/questionBank/index.js";
+import { buildBreadcrumbSchema, SITE_ORIGIN } from "../lib/examCatalog.js";
 
 const STUDY_RESOURCES = [
   {
@@ -107,6 +108,28 @@ export function StudyGuides() {
         <title>Study Guides | FabricPrep</title>
         <link rel="canonical" href="https://fabricprep.com/study-guides" />
         <meta name="description" content="Free study guides and resources for Microsoft Fabric and Azure certifications." />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Study Guides",
+            description: "Free study guides and resources for Microsoft Fabric and Azure certifications.",
+            hasPart: STUDY_RESOURCES.map((r) => ({
+              "@type": "Article",
+              headline: r.title,
+              description: r.description,
+              url: `${SITE_ORIGIN}/study-guides/${EXAM_META[r.examCode].slug}`,
+            })),
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(
+            buildBreadcrumbSchema([
+              { name: "Home", path: "" },
+              { name: "Study Guides" },
+            ])
+          )}
+        </script>
       </Helmet>
 
       <main className="flex-1 px-6 sm:px-10 py-8">
