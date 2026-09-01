@@ -50,6 +50,18 @@ export function Landing() {
             alternateName: ["Fabric Prep", "fabric prep", "FabricPrep"],
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "FabricPrep",
+            url: "https://fabricprep.com/",
+            logo: "https://fabricprep.com/icon-512.png",
+            description: "Free Microsoft certification practice platform for Fabric and Azure exams, built and maintained by Jitendra Singh Malik.",
+            founder: { "@type": "Person", name: "Jitendra Singh Malik" },
+            sameAs: ["https://www.linkedin.com/in/jitendra123/"],
+          })}
+        </script>
       </Helmet>
 
       <div className="px-6 sm:px-10 pt-16 pb-20 text-center flex flex-col items-center relative overflow-hidden">
