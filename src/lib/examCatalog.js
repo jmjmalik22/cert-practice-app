@@ -211,3 +211,19 @@ export const SITEMAP_ROUTES = Object.freeze([
     changefreq: "monthly",
   })),
 ]);
+
+// Builds a schema.org BreadcrumbList JSON-LD object from an ordered list of
+// { name, path } crumbs. `path` is relative to SITE_ORIGIN (e.g. "study-guides");
+// omit `path` on the final/current crumb if it shouldn't link anywhere.
+export function buildBreadcrumbSchema(crumbs) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((crumb, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: crumb.name,
+      ...(crumb.path !== undefined ? { item: `${SITE_ORIGIN}/${crumb.path}` } : {}),
+    })),
+  };
+}
