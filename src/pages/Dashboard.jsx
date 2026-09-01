@@ -321,10 +321,12 @@ export function Dashboard() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <Helmet>
+       <Helmet>
         <title>Dashboard | FabricPrep</title>
         <link rel="canonical" href="https://fabricprep.com/dashboard" />
         <meta name="description" content="Track your Microsoft certification study progress with FabricPrep." />
+        {/* Logged-in, per-user page with no unique content for search engines to index */}
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       <main className="flex-1 px-6 sm:px-10 py-8">
