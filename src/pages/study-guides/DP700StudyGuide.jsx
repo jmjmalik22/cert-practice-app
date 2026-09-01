@@ -1,6 +1,6 @@
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ChevronLeft, BookOpen, Database, Shield, Activity } from "lucide-react";
+import { ChevronLeft, BookOpen, Database, Shield, Activity, Layers, Code2, Droplets, Warehouse, Zap, GitBranch, ListChecks } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
 import { EXAM_META } from "../../lib/questionBank/index.js";
 import { Footer } from "../../components/Shared.jsx";
@@ -81,6 +81,287 @@ export const DP700_TOPICS = [
     ],
   },
   {
+    id: "fabric-foundations",
+    title: "Fabric Foundations and OneLake",
+    description: "Understand the unified Fabric platform, OneLake storage, and how the core workloads fit together",
+    icon: Layers,
+    weight: "10-15%",
+    sections: [
+      {
+        title: "Microsoft Fabric at a Glance",
+        content: `Microsoft Fabric is an all-in-one analytics platform that brings data ingestion, engineering, warehousing, real-time analytics, data science and Power BI into one SaaS environment. Its shared storage foundation is OneLake.
+
+**Core Fabric Workloads**
+- Data Factory: ingest, transform and orchestrate data
+- Data Engineering: build lakehouses and Spark-based transformation workflows
+- Data Warehouse: create relational analytical stores with transactional T-SQL
+- Real-Time Intelligence: ingest, store, query and act on streaming events
+- Data Science: explore data and build machine-learning solutions
+- Power BI: model, visualise and deliver business insights
+
+**Roles Across Data Teams**
+- Data engineer: ingests and transforms data using pipelines, notebooks and lakehouses
+- Data scientist: uses notebooks, Spark and Python for exploration and machine learning
+- Data analyst: builds semantic models and reports, often using Direct Lake
+- Analytics engineer: curates reliable business-ready data and reusable semantic definitions`,
+      },
+      {
+        title: "OneLake: One Logical Data Lake",
+        content: `OneLake is the unified storage layer for Fabric. Data is stored in open formats such as Delta-Parquet so multiple engines, including Spark, SQL and Power BI, can work with the same data without unnecessary duplication.
+
+**Key OneLake Concepts**
+- Shortcuts reference data in locations such as Amazon S3 or Azure Data Lake without copying it
+- Workspaces organise items for collaboration, access control and lifecycle management
+- The OneLake catalog supports discovery, metadata and governance across the data estate
+
+**Memory Tip**
+- Think of OneLake as the shared foundation, while Fabric workloads are different engines and experiences operating on that foundation`,
+      },
+      {
+        title: "Workspaces and Platform Enablement",
+        content: `Fabric must be enabled by an administrator. Workspaces then act as collaboration containers and can provide lineage, Git integration and managed compute. Access can be granted broadly through workspace roles or narrowly through item permissions.
+
+**Common Confusion**
+- A workspace is an organisational and security boundary
+- OneLake is the storage foundation
+- A lakehouse, warehouse, eventhouse or semantic model is an item inside a workspace`,
+      },
+    ],
+  },
+  {
+    id: "spark-notebooks",
+    title: "Apache Spark and Notebooks",
+    description: "Use distributed Spark processing, DataFrames, and Spark SQL for large-scale transformations in Fabric",
+    icon: Code2,
+    weight: "20-25%",
+    sections: [
+      {
+        title: "Spark Architecture in Fabric",
+        content: `Apache Spark is an open-source parallel-processing framework for large-scale analytics. Fabric provides an integrated environment for Spark-based ingestion, transformation and analysis within a lakehouse.
+
+**Core Spark Components**
+- Head node / driver: coordinates the application and distributed processing
+- Worker nodes / executors: perform the actual processing tasks
+- Spark pool: the compute cluster used to execute workloads
+- Runtime: defines Spark, Delta Lake and Python versions
+- Environment: stores libraries and custom configuration for consistent execution`,
+      },
+      {
+        title: "Working with DataFrames",
+        content: `A DataFrame is Spark's primary structured-data abstraction. It supports chained transformations and can load from files or tables.
+
+**Spark Operations and Their SQL Equivalents**
+- select() maps to a SQL SELECT column list
+- where() maps to a SQL WHERE condition
+- groupBy().count() maps to GROUP BY with aggregation
+- write.mode("overwrite") replaces the existing target data
+- partitionBy() physically organises files by a selected column
+
+**Schema Choice**
+- Schema inference is convenient, but an explicit schema is more reliable and can be more efficient for repeatable production workloads`,
+      },
+      {
+        title: "Spark SQL and the Catalog",
+        content: `Spark SQL allows relational querying inside notebooks. A temporary view is session-based, while a table saved to the catalog is persistent.
+
+**SQL Server Concepts vs Spark SQL**
+- A local temporary table maps to a temporary view created with createOrReplaceTempView
+- A permanent table maps to a managed table, commonly stored in Delta format
+- An external table maps to metadata in the catalog with files stored elsewhere
+- An SSMS query tab maps to a notebook cell using the %%sql magic command
+
+**Saving and Partitioning Data**
+- Parquet is a compressed columnar format suited to analytical workloads
+- Delta tables add transactions, schema controls and version history on top of Parquet files
+- Partitioning can improve selective queries but should be reserved for large tables and sensible low-cardinality filter columns`,
+      },
+    ],
+  },
+  {
+    id: "lakehouse-delta",
+    title: "Lakehouse, Delta Lake and Medallion Architecture",
+    description: "Combine flexible data lake storage with reliable Delta tables, structured through Bronze, Silver and Gold layers",
+    icon: Droplets,
+    weight: "20-25%",
+    sections: [
+      {
+        title: "Lakehouse Fundamentals",
+        content: `A lakehouse combines the flexible storage of a data lake with structured querying and relational features associated with a data warehouse. In Fabric, it supports both Spark and a SQL analytics endpoint.
+
+**Lakehouse Areas**
+- Files: raw or semi-structured files such as CSV, JSON, images and Parquet
+- Tables: Delta tables with metadata, ACID transactions and schema support
+- SQL analytics endpoint: read-only T-SQL access to lakehouse Delta tables
+- Spark notebooks: engineering, advanced transformation and machine-learning workloads
+- Semantic model: relationships, measures and business-ready reporting definitions
+
+**Common Confusion**
+- The SQL analytics endpoint is read-only for lakehouse tables
+- A Fabric Warehouse supports read-and-write transactional T-SQL`,
+      },
+      {
+        title: "Delta Lake Structure and Optimisation",
+        content: `A Delta table is a schema abstraction over Parquet data files plus a transaction log. The _delta_log folder records changes and enables reliable table operations.
+
+**Why Delta Matters**
+- ACID transactions protect consistency during concurrent operations
+- Schema enforcement prevents incompatible structures from being written
+- CRUD operations support insert, update and delete semantics
+- Time travel allows access to previous table versions
+- Batch and streaming workloads can use the same table
+- Open storage keeps Parquet-based data accessible to multiple engines
+
+**Optimising Delta Tables**
+- Optimize Write reduces small files during writes and is generally enabled by default
+- OPTIMIZE compacts existing small files after large loads or fragmentation
+- V-Order improves read efficiency for frequently queried reporting tables
+- VACUUM removes obsolete unreferenced files, but can prevent time travel to older versions
+- Partitioning enables data skipping for very large tables with logical filter columns`,
+      },
+      {
+        title: "Medallion Architecture",
+        content: `The medallion pattern organises data into progressive layers of quality.
+
+**Bronze, Silver, Gold**
+- Bronze: raw source-aligned landing data with minimal modification
+- Silver: validated, cleaned, deduplicated and integrated data
+- Gold: business-ready, enriched or aggregated data for reporting and analytics
+
+**Choosing the Right Tool per Layer**
+- Use Dataflows Gen2 for simpler low-code transformations
+- Use notebooks for large-scale or complex transformations
+- Use pipelines to orchestrate movement between layers
+
+**Design Principle**
+- The medallion pattern does not replace dimensional modelling; the Gold layer can still contain fact and dimension structures`,
+      },
+    ],
+  },
+  {
+    id: "warehouse",
+    title: "Fabric Data Warehouse",
+    description: "Design, load and query a relational analytical store using transactional T-SQL and dimensional modelling",
+    icon: Warehouse,
+    weight: "15-20%",
+    sections: [
+      {
+        title: "Warehouse Fundamentals",
+        content: `A Fabric Data Warehouse is a fully managed relational analytical store built on OneLake. It supports transactional T-SQL, ACID behaviour and open Delta storage.
+
+**Warehouse vs SQL Analytics Endpoint**
+- The Warehouse offers full read-and-write T-SQL including INSERT, UPDATE, DELETE and MERGE, over native warehouse tables
+- The SQL analytics endpoint offers a read-only T-SQL experience over lakehouse tables surfaced through SQL
+
+**Connecting External Tools**
+- Copy the warehouse SQL connection string from Fabric
+- Use Microsoft Entra ID authentication; traditional SQL authentication is not supported
+- Specify the warehouse database name when required by the client tool
+- Standard ODBC and OLE DB tools can connect when network access permits TCP port 1433`,
+      },
+      {
+        title: "Dimensional Modelling and Slowly Changing Dimensions",
+        content: `**Core Dimensional Modelling Objects**
+- Fact table: stores quantitative measurements such as sales amount or quantity
+- Dimension table: provides descriptive context such as customer, product, store or date
+- Surrogate key: warehouse-generated identifier with no business meaning
+- Business / alternate key: source-system identifier retained for traceability and lookups
+- Star schema: fact table connected directly to denormalised dimensions
+- Snowflake schema: dimensions further normalised into related tables
+
+**Slowly Changing Dimension Types**
+- Type 0: attributes do not change
+- Type 1: overwrite the existing value; history is not retained
+- Type 2: insert a new row for each change; full history is retained
+- Type 3: store limited history in additional columns
+
+Fact tables are generally loaded after dimensions because incoming business keys must be mapped to the correct dimension surrogate keys.`,
+      },
+      {
+        title: "Loading Strategies and Analytical Functions",
+        content: `**Loading Strategies**
+- Full load: truncate and reload the complete target; simpler, but more resource intensive
+- Incremental load: process only new or changed records; more efficient, but requires change-detection logic
+- Staging: land source-shaped data in auxiliary tables before applying business rules
+- COPY statement: bulk load supported external files into warehouse tables
+- CTAS: create a new table from a SELECT result
+- INSERT...SELECT: append query results into an existing target table
+
+**Useful Analytical Functions**
+- ROW_NUMBER() returns a unique sequential row number within a partition
+- RANK() gives equal values the same rank; subsequent ranks contain gaps
+- DENSE_RANK() gives equal values the same rank with no gaps
+- NTILE(n) divides rows into ranked groups
+- APPROX_COUNT_DISTINCT returns a fast estimate for large distinct-count workloads
+
+**Common Confusion**
+- Data ingestion moves raw data into the analytical platform
+- Data loading places prepared data into final warehouse structures such as dimensions and facts`,
+      },
+    ],
+  },
+  {
+    id: "real-time-intelligence",
+    title: "Real-Time Intelligence",
+    description: "Ingest, store, query and act on streaming data using Eventstream, Eventhouse and Activator",
+    icon: Zap,
+    weight: "10-15%",
+    sections: [
+      {
+        title: "Real-Time Analytics Concepts",
+        content: `Real-time analytics processes and acts on data as it is generated, usually within seconds or minutes. An event is one digital occurrence; a stream is the continuous chronological sequence of events.
+
+**Core Real-Time Components**
+- Real-Time Hub: discover streaming sources
+- Eventstream: capture, transform and route events
+- Eventhouse with KQL databases: store high-velocity time-series data
+- KQL queryset: write and save analytical queries
+- Real-Time Dashboard: display live operational metrics
+- Activator: trigger actions from conditions
+
+**Eventstream Stages**
+- Sources: Azure Event Hubs, IoT Hub, Service Bus, Kafka, MQTT, Google Cloud Pub/Sub and Fabric events
+- Transformations: filter, manage fields, aggregate, group by time window, union, join and expand
+- Destinations: Eventhouse, Lakehouse, Activator, derived stream or custom endpoint
+
+**Scenario Guide**
+- Use Eventstream when data must be transformed or routed while in transit
+- Use direct ingestion when the priority is rapidly landing high-volume data, transforming it afterwards with update policies`,
+      },
+      {
+        title: "Eventhouse and KQL Databases",
+        content: `An Eventhouse is a container for real-time data stores. Its KQL databases are optimised for append-heavy, time-series workloads and automatically organise data for efficient recent-data analysis.
+
+**KQL Practices Worth Remembering**
+- Filter early, especially by time, to reduce scanned data and use indexing effectively
+- Project only required columns to reduce memory and processing overhead
+- Use the smaller input on the left of a join to improve join efficiency
+- Use limit for exploration to prevent unnecessary large result displays
+- Use materialized views to precompute recurring aggregations while incorporating new delta data
+- Use stored functions to standardise reusable and parameterised KQL logic`,
+      },
+      {
+        title: "Real-Time Dashboards and Activator",
+        content: `**Real-Time Dashboards**
+- Tiles execute KQL queries and refresh automatically
+- Base queries allow several tiles to reuse the same core query logic
+- Parameters make dashboards interactive for viewers
+- Multiple pages organise complex operational monitoring scenarios
+
+**Activator**
+Activator detects conditions in changing data and performs actions, following a Connect, Monitor, Act model.
+- Object: a real-world entity such as a device, package or customer
+- Property: a tracked attribute such as temperature or location
+- Event: an incoming record that updates the object state
+- Rule: the condition, threshold or pattern that triggers action
+- Action: email, Teams, Power Automate, notebook or pipeline execution
+
+**Rule Design**
+- Use summarisation windows and duration conditions to avoid triggering on short-lived noise
+- Property filters can narrow a rule to selected objects, priorities or locations`,
+      },
+    ],
+  },
+  {
     id: "monitoring",
     title: "Monitor and Maintain Data",
     description: "Monitor pipeline runs, optimize performance, and maintain data quality",
@@ -149,6 +430,57 @@ export const DP700_TOPICS = [
     ],
   },
   {
+    id: "cicd-lifecycle",
+    title: "CI/CD and Lifecycle Management",
+    description: "Version, test and promote Fabric solutions safely using Git integration, deployment pipelines and the Fabric REST APIs",
+    icon: GitBranch,
+    weight: "10-15%",
+    sections: [
+      {
+        title: "CI/CD Concepts and Lifecycle Pillars",
+        content: `**Core CI/CD Concepts**
+- Continuous integration: developers frequently commit and merge changes so issues are identified early
+- Continuous delivery: validated changes are automatically prepared or deployed to a staging environment before production release
+- Continuous deployment: changes that pass testing are automatically released to production
+
+**Three Lifecycle Pillars in Fabric**
+- Git integration: version history, branching, collaboration and rollback
+- Deployment pipelines: promote content through Development, Test and Production stages
+- Fabric REST APIs: automate Git synchronisation, status checks and deployments`,
+      },
+      {
+        title: "Git Integration Workflow",
+        content: `**Typical Git Workflow in Fabric**
+- Connect a development workspace to a GitHub or Azure DevOps repository and branch
+- Develop in an isolated branch or workspace instead of overwriting shared work
+- Commit workspace changes to the feature branch
+- Open a pull request and merge approved changes into the main branch
+- Synchronise the shared development workspace with the updated branch
+
+**Common Confusion**
+- Git integration synchronises a workspace with source control
+- A deployment pipeline promotes Fabric items between environment workspaces
+- These are complementary but different processes`,
+      },
+      {
+        title: "Deployment Pipelines and Automation",
+        content: `Deployment pipelines assign workspaces to lifecycle stages such as Development, Test and Production. Deploying from one stage to another clones or updates supported items in the target environment.
+
+**Recommended Pattern**
+- A common clean pattern is to connect only the Development workspace to Git
+- Use Git for version control and pull-request review
+- Use deployment pipelines to promote validated content to Test and Production
+
+**Automation with Fabric APIs**
+- Git integration APIs: commit changes, pull updates and check synchronisation status
+- Deployment pipeline APIs: list stage items and deploy stage content programmatically
+
+**Lifecycle Principle**
+- Separate development, testing and production, and use repeatable automation to reduce manual error and keep releases auditable`,
+      },
+    ],
+  },
+  {
     id: "security",
     title: "Secure Data",
     description: "Implement security controls, access management, and compliance",
@@ -212,6 +544,72 @@ export const DP700_TOPICS = [
       },
     ],
   },
+  {
+    id: "scenario-guide",
+    title: "Final Revision: Scenario and Component Guide",
+    description: "Quick-recall tables for choosing the right Fabric component and revising commonly confused concepts before exam day",
+    icon: ListChecks,
+    weight: "Exam-wide",
+    sections: [
+      {
+        title: "Which Fabric Component Should You Choose?",
+        content: `Match each scenario to its best starting choice.
+
+**Component Selection**
+- Move large volumes of data with minimal transformation: Copy Data activity
+- Apply low-code Power Query transformations: Dataflow Gen2
+- Coordinate multiple activities with dependencies and schedules: Data pipeline
+- Perform complex large-scale transformations: Spark notebook
+- Store raw and curated Delta tables: Lakehouse
+- Build a relational star schema with full T-SQL DML: Fabric Data Warehouse
+- Ingest and route streaming events: Eventstream
+- Store and query high-velocity time-series data: Eventhouse / KQL database
+- Show auto-refreshing operational visuals: Real-Time Dashboard
+- Trigger actions when a live condition is met: Activator
+- Read OneLake data directly through Power BI: Direct Lake semantic model`,
+      },
+      {
+        title: "High-Value Comparison Sheet",
+        content: `Commonly confused concept pairs and the key distinction between them.
+
+**Concept Comparisons**
+- Dataflow Gen2 vs Data pipeline: transformation worker vs orchestration manager
+- Copy Data vs Dataflow Gen2: high-speed movement vs visual transformation
+- Lakehouse vs Warehouse: Spark, files and Delta tables vs relational SQL-led warehouse
+- SQL analytics endpoint vs Warehouse: read-only lakehouse SQL vs read-write transactional T-SQL
+- Eventstream vs Eventhouse: ingest, transform and route in motion vs store and query real-time data
+- Pipeline parameter vs Pipeline variable: runtime input vs value stored or changed during a run
+- Optimize Write vs OPTIMIZE: prevent small files during writes vs compact existing files
+- V-Order vs Partitioning: file-level read optimisation vs physical folder layout
+- Workspace role vs Item permission: broad workspace collaboration vs targeted item access
+- Git integration vs Deployment pipeline: source control synchronisation vs environment promotion`,
+      },
+      {
+        title: "Final Checklist",
+        content: `Use these checklists for a last pass before the exam.
+
+**Delta and Lakehouse**
+- A Delta table equals Parquet data files plus a _delta_log transaction history
+- ACID, schema enforcement, CRUD and time travel are core Delta benefits
+- Use OPTIMIZE for existing small files and VACUUM for obsolete files
+- Use partitioning selectively on very large tables with sensible filter columns
+- The lakehouse SQL analytics endpoint is read-only for table data
+
+**Warehouse**
+- Facts hold measurements; dimensions provide context
+- Load dimensions before facts when facts require surrogate-key lookups
+- Type 1 SCD overwrites; Type 2 inserts a new historical row
+- Use full loads for simplicity and incremental loads for efficiency
+
+**Real-Time and Security**
+- Eventstream handles in-flight ingestion, transformation and routing
+- Eventhouse stores high-velocity time-series data in KQL databases
+- Apply least privilege at workspace, item, compute and data layers
+- RLS filters rows, CLS blocks columns, and masking obscures displayed values
+- DENY always overrides GRANT`,
+      },
+    ],
+  },
 ];
 
 export function DP700StudyGuide() {
@@ -260,7 +658,7 @@ export function DP700StudyGuide() {
               className="text-xs uppercase mb-1 px-2 py-0.5 rounded-full inline-block"
               style={{ color: TOKENS.azure, letterSpacing: "0.1em", border: `1px solid ${TOKENS.azure}40`, fontFamily: FONT_MONO }}
             >
-              {topic.weight} of exam
+              {topic.weight}{topic.weight.includes("%") ? " of exam" : ""}
             </div>
             <h1 className="text-2xl sm:text-3xl font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
               {topic.title}
@@ -362,4 +760,3 @@ export function DP700StudyGuide() {
     </div>
   );
 }
-
