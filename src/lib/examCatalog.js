@@ -162,7 +162,18 @@ export function getPracticeConfig(examCode) {
   return EXAM_CATALOG[examCode]?.practice ?? { caseStudyCount: 0, timeLimit: "Untimed" };
 }
 
-export const DP700_TOPIC_IDS = Object.freeze(["ingestion", "monitoring", "security"]);
+export const DP700_TOPIC_IDS = Object.freeze([
+  "ingestion",
+  "fabric-foundations",
+  "spark-notebooks",
+  "lakehouse-delta",
+  "warehouse",
+  "real-time-intelligence",
+  "monitoring",
+  "cicd-lifecycle",
+  "security",
+  "scenario-guide",
+]);
 
 export const ROUTE_PATHS = Object.freeze({
   dashboard: "dashboard",
