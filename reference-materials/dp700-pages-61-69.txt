@@ -1,0 +1,143 @@
+● Events: The raw incoming data points that update these properties.
+Setting Up Data Monitoring
+The primary way to configure these objects is through Fabric Eventstreams. The process
+involves:
+1. Setting Activator as the destination for your eventstream.
+2. Selecting a Unique Identifier (like DeviceID or PackageID) so Activator knows
+which events belong to which object.
+3. Mapping data fields to Properties that will be evaluated against rules.
+Alternative Alerting Approaches
+While business objects are the standard for tracking specific entities, the Activator engine
+also supports:
+● Dashboard Alerts: Created directly from Real-Time Dashboard visuals.
+● System Event Alerts: Monitoring Fabric workspace activities or OneLake file
+operations.
+● Query Alerts: Triggered from KQL Queryset results.
+Unit 3 Create rules in Activator
+Unit 3 of the Use Activator in Microsoft Fabric module explains how to build rules that
+detect specific conditions in your data. It breaks the configuration down into three primary
+sections within the Definition pane:
+1. Choose What to Monitor
+The Monitor section defines the data attribute you are watching. Because raw data can be
+"noisy" (e.g., a momentary temperature spike), Activator uses Summarization to clarify
+trends:
+● Operations: You can choose Average, Minimum/Maximum, Count, or Total.
+● Window Size: Determines how much historical data to include (e.g., the last 10
+minutes).
+● Step Size: Determines how often the rule is recalculated (e.g., every 5 minutes).
+2. Define When to Act
+The Condition section sets the specific threshold or pattern that triggers the rule:
+● Detection Types: Includes Threshold monitoring (greater than/less than), Change
+detection (increases/decreases), Range monitoring, and Missing data (to catch
+sensor failures).
+
+-- 61 of 118 --
+
+● Occurrence: You can trigger the rule Every time the condition is met or only when it
+has been true for a specific duration (to avoid reacting to transient issues).
+3. Focus Your Scope
+The Property Filter section allows you to narrow the rule’s application so it doesn't evaluate
+every event in the stream.
+● You can apply up to three filters to target specific data, such as only monitoring
+"high-priority" shipments or specific cities.
+Unit 4 Configure actions in Activator
+Unit 4 focuses on Configure actions in Activator, which are the final steps that turn data
+detection into meaningful responses.
+Activator provides four primary types of actions:
+● Email Actions: Best for sending detailed context that doesn't require an instant
+response (e.g., daily status reports or non-critical threshold alerts).
+● Teams Actions: Used for high-priority alerts that require immediate team
+coordination and discussion.
+● Power Automate Actions: Triggers multi-step workflows across external apps and
+services, allowing for complex business process automation.
+● Fabric Item Actions: Executes internal Fabric components like Notebooks or Data
+Pipelines for advanced data processing or system adjustments.
+
+-- 62 of 118 --
+
+Implement a Data Warehouse
+
+-- 63 of 118 --
+
+
+
+-- 64 of 118 --
+
+Introduction to end-to-end analytic
+
+-- 65 of 118 --
+
+
+
+-- 66 of 118 --
+
+Get started with data warehouses
+
+-- 67 of 118 --
+
+Unit 1Introduction
+Get started with data warehouses in Microsoft Fabric:
+● Core Role: Relational data warehouses serve as the foundation for enterprise
+business intelligence (BI), providing a structured, SQL-based environment to store
+and analyze large-scale business data.
+● Microsoft Fabric Capability: Fabric offers a fully managed data warehouse with full
+transactional T-SQL support (including INSERT, UPDATE, DELETE, and MERGE
+operations).
+● OneLake Integration: Data is stored in the open Delta format on OneLake, allowing
+seamless integration across other Fabric workloads and providing an intelligent data
+foundation for Copilot and AI-driven insights.
+● What the Module Covers: * Fundamentals of dimensional modeling using fact and
+dimension tables.
+○ Fabric-specific features like Copilot-assisted query authoring.
+○ Data querying, table structuring, security, and monitoring for governance and
+performance.
+Unit 2 Understand data warehouses
+Core Definition & Process
+A data warehouse is a centralized, structured store optimized for analytical queries and
+reporting rather than day-to-day transactions. Building one typically involves:
+● Data Ingestion: Moving data from source systems.
+● Data Storage: Storing data in an analytics-optimized format.
+● Data Processing: Transforming data for analytical tools.
+● Data Analysis & Delivery: Gaining and delivering business insights.
+Dimensional Modeling (Tables)
+Data is organized using dimensional modeling to support efficient analysis of large data
+volumes through two main types of tables:
+● Fact Tables: Contain the primary numerical data and metrics you want to analyze
+(e.g., total sales revenue). They usually have a large number of rows.
+● Dimension Tables: Provide descriptive context for the data in fact tables (e.g.,
+customer details, store locations). They use two types of keys:
+
+-- 68 of 118 --
+
+○ Surrogate Key: A unique identifier internal to the data warehouse for
+consistency.
+○ Alternate Key: A natural or business key (like a product code) to maintain
+traceability back to the source system.
+Specialized Dimensions
+● Time Dimensions: Enable analysts to aggregate data over specific intervals (years,
+quarters, months, days).
+● Slowly Changing Dimensions (SCD): Track changes to attributes over time (e.g., a
+customer changing their address) to ensure accurate historical reporting.
+Schema Designs
+Unlike transactional databases that normalize data to reduce duplication, data warehouses
+use denormalized data to minimize complex query joins.
+● Star Schema: The most common design where a central fact table connects directly
+to surrounding dimension tables. Microsoft provides specific design guidance in What
+is a star schema? for Fabric environments.
+● Snowflake Schema: An extension of the star schema where dimension tables are
+further split (normalized) into secondary dimension tables to handle complex
+hierarchies (e.g., breaking a product table down into categories and suppliers).
+Unit 3 Understand data warehouses in
+Fabric
+What is a Fabric Data Warehouse?
+A Fabric data warehouse is a fully managed, enterprise-scale relational database built on
+OneLake. It features full transactional T-SQL support (DDL and DML) with complete ACID
+compliance, storing its data in the open Delta format so other Fabric workloads can access
+it without duplication.
+Warehouse vs. SQL Analytics Endpoint
+Fabric workspaces include two different SQL-based items depending on your needs:
+● Warehouse: Supports full read and write T-SQL capabilities (INSERT, UPDATE,
+DELETE, MERGE) and handles native warehouse tables.
+
+-- 69 of 118 --
+

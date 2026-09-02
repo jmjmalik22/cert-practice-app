@@ -11,73 +11,57 @@ export const DP700_TOPICS = [
   {
     id: "ingestion",
     title: "Ingest and Transform Data",
-    description: "Implement data ingestion pipelines, transformations, and data movement using Microsoft Fabric",
+      description: "Design batch and streaming loads, choose the right ingestion tool, and transform data with Dataflows Gen2, pipelines, Spark, SQL, and KQL.",
     icon: Database,
-    weight: "40-45%",
+      weight: "30-35%",
     sections: [
       {
-        title: "Data Ingestion",
-        content: `Microsoft Fabric provides multiple ways to ingest data into Lakehouses and Warehouses:
+    title: "Dataflows Gen2: visual ingestion and transformation",
+    content: `Dataflows Gen2 is a low-code ETL tool built on Power Query Online. Its workflow is **Connect → Transform → Land**. Use it when transformation is the main requirement and the team benefits from a visual, reusable process.
 
-**Copy Jobs**
-- Use COPY INTO statements for bulk loading from Azure Data Lake Storage
-- Support for Parquet, CSV, JSON, and Delta formats
-- Configurable error handling and file pattern matching
+  **Core capabilities**
+  - Connect to supported cloud, database, file, and Fabric sources.
+  - Transform data with the Power Query interface or the Advanced Editor using M.
+  - Land results in a Lakehouse, Warehouse, or SQL database.
+  - Use Duplicate or Reference queries when several outputs share one source.
+  - Preserve query folding where possible so supported transformations execute at the source.
 
-**Pipelines**
-- Data Factory pipelines for orchestrated data movement
-- Support for 100+ connectors (SQL Server, Salesforce, REST APIs, etc.)
-- Parameterized pipelines for reusable patterns
-- Scheduling and monitoring capabilities
-
-**Shortcuts**
-- OneLake shortcuts for zero-copy data access
-- Link external storage without data duplication
-- Support for ADLS Gen2, S3, and Dataverse shortcuts
-
-**Dataflows Gen2**
-- Power Query Online for visual data transformation
-- M language for complex transformations
-- Incremental refresh for large datasets`,
+  **Important boundary**
+  Dataflows Gen2 prepares and moves data; it is not a replacement for long-term warehouse storage or row-level security. A Fabric capacity workspace is required.`,
       },
       {
-        title: "Data Transformation",
-        content: `Transform data using Spark, SQL, or visual tools:
+    title: "Pipelines, activities, and Copy Data",
+    content: `A pipeline orchestrates a sequence of activities. It is the manager around workers such as Dataflows Gen2, notebooks, scripts, and Copy Data.
 
-**Spark/PySpark**
-- Notebooks for interactive development
-- Spark Job Definitions for production workloads
-- Delta Lake operations (OPTIMIZE, VACUUM, Z-ORDER)
-- Structured Streaming for real-time processing
+  **Common activities**
+  - Copy Data: move data from a source to a destination, usually with minimal transformation.
+  - Dataflow Gen2: run visual Power Query transformations.
+  - Notebook or stored procedure: run code-heavy Spark or SQL logic.
+  - Get Metadata: inspect files or folders before processing them.
+  - Control flow: use dependencies, If Condition, For Each, parameters, variables, schedules, and event-based triggers.
 
-**T-SQL in Warehouse**
-- Stored procedures for complex transformations
-- CTAS (CREATE TABLE AS SELECT) patterns
-- MERGE statements for upsert operations
-- Materialized views for query acceleration
+  **Choose the tool deliberately**
+  - Choose Copy Data when data should move as-is or transformation happens later.
+  - Choose Dataflow Gen2 when visual cleaning, filtering, joins, or reusable Power Query logic is needed.
+  - Choose a pipeline when scheduling, sequencing, retries, parameters, or monitoring are central.
 
-** medallion Architecture**
-- Bronze: Raw ingestion layer
-- Silver: Cleansed and conformed data
-- Gold: Business-ready aggregated data`,
+  Every pipeline run has a run ID and status that can be used for monitoring and troubleshooting.`,
       },
       {
-        title: "Data Movement Patterns",
-        content: `Common patterns for moving data within Fabric:
+    title: "Batch and streaming loading patterns",
+    content: `Use a full load when rebuilding the target is simple and acceptable. Use an incremental load when only new or changed records should be processed; this requires reliable change detection.
 
-**Lakehouse Federation**
-- Query across multiple lakehouses without copying data
-- Use shortcuts to create logical data marts
+  **Prepare data for analytics**
+  - Land source-shaped data in a staging or Bronze area.
+  - Clean, deduplicate, validate, and conform data in Silver.
+  - Aggregate or model business-ready data in Gold.
+  - Handle missing, duplicate, and late-arriving records explicitly.
 
-**Cross-workspace Sharing**
-- Share lakehouses across workspaces
-- Manage permissions at item level
-
-**Delta Lake Operations**
-- Time travel with version history
-- Optimize file sizes with OPTIMIZE
-- Remove old versions with VACUUM
-- Improve query performance with Z-ORDER`,
+  **Streaming choices**
+  - Use Eventstreams to transform and route events while they are in motion.
+  - Use Spark Structured Streaming for code-based streaming transformations.
+  - Use KQL when the workload is optimized for real-time event analysis and time windows.
+  - Choose native real-time tables or OneLake shortcuts according to whether the data should be copied or accessed in place.`,
       },
     ],
   },
@@ -132,12 +116,12 @@ export const DP700_TOPICS = [
   {
     id: "spark-notebooks",
     title: "Apache Spark and Notebooks",
-    description: "Use distributed Spark processing, DataFrames, and Spark SQL for large-scale transformations in Fabric",
+    description: "Use Spark pools, DataFrames, Spark SQL, notebooks, and Delta tables to process data at scale in a Fabric Lakehouse.",
     icon: Code2,
-    weight: "20-25%",
+    weight: "30-35%",
     sections: [
       {
-        title: "Spark Architecture in Fabric",
+        title: "Spark pools, runtimes, and environments",
         content: `Apache Spark is an open-source parallel-processing framework for large-scale analytics. Fabric provides an integrated environment for Spark-based ingestion, transformation and analysis within a lakehouse.
 
 **Core Spark Components**
@@ -145,7 +129,9 @@ export const DP700_TOPICS = [
 - Worker nodes / executors: perform the actual processing tasks
 - Spark pool: the compute cluster used to execute workloads
 - Runtime: defines Spark, Delta Lake and Python versions
-- Environment: stores libraries and custom configuration for consistent execution`,
+- Environment: stores libraries and custom configuration for consistent execution
+
+Fabric also provides starter pools and configurable pools with autoscale and dynamic allocation. Native Execution Engine can accelerate Parquet and Delta processing, while high-concurrency mode can share a Spark session across notebooks when appropriate.`,
       },
       {
         title: "Working with DataFrames",
@@ -159,10 +145,16 @@ export const DP700_TOPICS = [
 - partitionBy() physically organises files by a selected column
 
 **Schema Choice**
-- Schema inference is convenient, but an explicit schema is more reliable and can be more efficient for repeatable production workloads`,
+- Schema inference is convenient, but an explicit schema is more reliable and can be more efficient for repeatable production workloads.
+
+**Saving and partitioning**
+- Parquet is a compressed columnar format suited to analytical workloads.
+- write.mode("overwrite") replaces the target contents; append adds new output.
+- partitionBy() organizes files by a selected column and can reduce disk I/O for selective queries.
+- Avoid excessive partitions and choose columns with sensible cardinality and common filtering patterns.`,
       },
       {
-        title: "Spark SQL and the Catalog",
+        title: "Spark SQL, the catalog, and visualization",
         content: `Spark SQL allows relational querying inside notebooks. A temporary view is session-based, while a table saved to the catalog is persistent.
 
 **SQL Server Concepts vs Spark SQL**
@@ -174,7 +166,12 @@ export const DP700_TOPICS = [
 **Saving and Partitioning Data**
 - Parquet is a compressed columnar format suited to analytical workloads
 - Delta tables add transactions, schema controls and version history on top of Parquet files
-- Partitioning can improve selective queries but should be reserved for large tables and sensible low-cardinality filter columns`,
+- Partitioning can improve selective queries but should be reserved for large tables and sensible low-cardinality filter columns
+
+**Notebook visualization**
+- Fabric can display query results as a table or a built-in chart without additional code.
+- Use matplotlib or seaborn for customized Python visualizations.
+- Convert a manageable Spark result to Pandas with toPandas() only when the result fits in driver memory.`,
       },
     ],
   },
@@ -302,47 +299,45 @@ Fact tables are generally loaded after dimensions because incoming business keys
   },
   {
     id: "real-time-intelligence",
-    title: "Real-Time Intelligence",
-    description: "Ingest, store, query and act on streaming data using Eventstream, Eventhouse and Activator",
+      title: "Streaming Data and Real-Time Intelligence",
+      description: "Ingest, store, query, visualize, and act on continuous data using Eventstreams, Eventhouse, KQL, dashboards, and Activator.",
     icon: Zap,
-    weight: "10-15%",
+      weight: "30-35%",
     sections: [
       {
-        title: "Real-Time Analytics Concepts",
-        content: `Real-time analytics processes and acts on data as it is generated, usually within seconds or minutes. An event is one digital occurrence; a stream is the continuous chronological sequence of events.
+    title: "Eventhouse and KQL databases",
+    content: `An Eventhouse is a specialized container for KQL databases that handle large volumes of continuous, append-oriented and time-series data. Data is commonly indexed by ingestion time and is usually queried rather than updated in place.
 
-**Core Real-Time Components**
-- Real-Time Hub: discover streaming sources
-- Eventstream: capture, transform and route events
-- Eventhouse with KQL databases: store high-velocity time-series data
-- KQL queryset: write and save analytical queries
-- Real-Time Dashboard: display live operational metrics
-- Activator: trigger actions from conditions
+  **Eventhouse capabilities**
+  - Ingest from files, cloud storage, OneLake, Kafka, Azure Event Hubs, and other streaming sources.
+  - Use database shortcuts to query supported external data without copying it.
+  - Make data available to other Fabric experiences through OneLake integration.
+  - Query with Kusto Query Language (KQL) or supported T-SQL experiences.
 
-**Eventstream Stages**
-- Sources: Azure Event Hubs, IoT Hub, Service Bus, Kafka, MQTT, Google Cloud Pub/Sub and Fabric events
-- Transformations: filter, manage fields, aggregate, group by time window, union, join and expand
-- Destinations: Eventhouse, Lakehouse, Activator, derived stream or custom endpoint
+  **KQL pipeline model**
+  KQL uses the pipe character (|) to pass data through operators such as where, project, summarize, join, and limit. The KQL queryset is used to author, save, visualize, and share queries.`,
+        },
+        {
+    title: "Write efficient KQL",
+    content: `KQL performance depends heavily on reducing the amount of data scanned and processed.
 
-**Scenario Guide**
-- Use Eventstream when data must be transformed or routed while in transit
-- Use direct ingestion when the priority is rapidly landing high-volume data, transforming it afterwards with update policies`,
+  - Filter early, especially with a time-based where clause, so indexes can eliminate irrelevant records.
+  - Use project to return only the columns needed by the next step.
+  - Put the smaller input on the left side of a join when that improves the join's memory use.
+  - Use limit while exploring large result sets, especially after an aggregation.
+  - Use materialized views for recurring aggregations over large, continuously changing tables.
+  - Use stored functions to encapsulate reusable and parameterized KQL logic.`,
       },
       {
-        title: "Eventhouse and KQL Databases",
-        content: `An Eventhouse is a container for real-time data stores. Its KQL databases are optimised for append-heavy, time-series workloads and automatically organise data for efficient recent-data analysis.
+    title: "Eventstreams, dashboards, and Activator",
+    content: `Eventstreams capture events from sources, optionally transform them, and route them to destinations.
 
-**KQL Practices Worth Remembering**
-- Filter early, especially by time, to reduce scanned data and use indexing effectively
-- Project only required columns to reduce memory and processing overhead
-- Use the smaller input on the left of a join to improve join efficiency
-- Use limit for exploration to prevent unnecessary large result displays
-- Use materialized views to precompute recurring aggregations while incorporating new delta data
-- Use stored functions to standardise reusable and parameterised KQL logic`,
-      },
-      {
-        title: "Real-Time Dashboards and Activator",
-        content: `**Real-Time Dashboards**
+  **Eventstream flow**
+  - Sources can include Azure Event Hubs, IoT Hub, Kafka, MQTT, Service Bus, and Fabric events.
+  - Transformations can filter, manage fields, aggregate, group by a time window, union, join, or expand data.
+  - Destinations can include Eventhouse, Lakehouse, Activator, a derived stream, or a custom endpoint.
+
+  **Real-Time Dashboards**
 - Tiles execute KQL queries and refresh automatically
 - Base queries allow several tiles to reuse the same core query logic
 - Parameters make dashboards interactive for viewers

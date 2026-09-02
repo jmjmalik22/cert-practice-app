@@ -1,0 +1,228 @@
+Unit 1: Introduction to end-to-end analytics using Microsoft Fabric
+Microsoft Fabric is an all-in-one analytics solution that consolidates disconnected data tools
+into a single, integrated environment built on a unified data lake.
+Key Takeaways:
+● Solving Fragmentation: Traditionally, organizations struggle with "data silos" where
+teams use separate, disconnected tools for ingestion, governance, and analysis.
+Fabric eliminates this complexity by providing one place for all data professionals to
+collaborate.
+● Unified Foundation (OneLake): Every workload in Fabric sits on top of OneLake.
+Think of it as the "OneDrive for data"—a single, logical lake where data is stored
+once but can be used by various engines without duplication.
+● AI-Ready Infrastructure: Because data is governed and organized in one spot, it is
+immediately ready for AI workloads. This includes Copilots, machine learning
+models, and intelligent agents that require high-quality, centralized data to function
+effectively.
+● The Fabric Advantage: The platform simplifies the entire lifecycle—from raw data
+ingestion to business-ready reports—ensuring that the same data powering a Power
+BI dashboard is the same data fueling an organization's AI initiatives.
+
+-- 21 of 118 --
+
+Introduction to end-to-end analytics
+
+-- 22 of 118 --
+
+Unit 1: Introduction to end-to-end analytics using Microsoft Fabric
+Microsoft Fabric is an all-in-one analytics solution that consolidates disconnected data tools
+into a single, integrated environment built on a unified data lake.
+Key Takeaways:
+● Solving Fragmentation: Traditionally, organizations struggle with "data silos" where
+teams use separate, disconnected tools for ingestion, governance, and analysis.
+Fabric eliminates this complexity by providing one place for all data professionals to
+collaborate.
+● Unified Foundation (OneLake): Every workload in Fabric sits on top of OneLake.
+Think of it as the "OneDrive for data"—a single, logical lake where data is stored
+once but can be used by various engines without duplication.
+● AI-Ready Infrastructure: Because data is governed and organized in one spot, it is
+immediately ready for AI workloads. This includes Copilots, machine learning
+models, and intelligent agents that require high-quality, centralized data to function
+effectively.
+● The Fabric Advantage: The platform simplifies the entire lifecycle—from raw data
+ingestion to business-ready reports—ensuring that the same data powering a Power
+BI dashboard is the same data fueling an organization's AI initiatives.
+Unit 2: Explore end-to-end analytics with Microsoft Fabric
+
+-- 23 of 118 --
+
+The core of the platform is OneLake, a centralized "Data Lake" that allows all analytics
+engines to access the same data without duplication or movement.
+Key Takeaways:
+● OneLake (The "OneDrive" for Data): All data is stored in a single logical lake using
+open formats like Delta-Parquet. This ensures that whether you are using Spark,
+SQL, or Power BI, you are always looking at the same source of truth.
+● Shortcuts: This feature allows you to "link" to data stored in other locations (like
+Amazon S3 or Azure Data Lake) without actually copying it. It keeps Fabric in sync
+with external sources automatically.
+● Unified Workspaces: Assets are organized into Workspaces, which serve as
+containers for team collaboration. They provide strict access control, version control
+through Git integration, and managed compute resources.
+● Centralized Governance: Administration is handled through a single Admin portal.
+Tools like the OneLake catalog provide sensitivity labels and metadata tracking to
+ensure data remains secure and compliant across the entire organization.
+● AI Integration: Because data is governed and stored in an open format within
+OneLake, it is natively accessible to Copilot and other AI agents without the need for
+additional data preparation pipelines.
+Unit 3: Data teams and Microsoft Fabric
+Microsoft Fabric removes data silos, allowing data engineers, scientists, and analysts to
+work together on the same foundation without duplicating efforts or moving data.
+Key Takeaways:
+● Overcoming Traditional Barriers: In standard workflows, teams often struggle with
+misinterpretation and delays due to fragmented tools. Fabric unifies these workflows
+into a single SaaS platform, ensuring everyone uses the same source of truth in
+OneLake.
+● Role-Specific Integration:
+○ Data Engineers: Build the foundation by ingesting and transforming data
+directly into Lakehouses using Pipelines and Notebooks.
+○ Data Scientists: Use integrated Spark notebooks and Python to build
+machine learning models that ground AI agents and Copilots.
+○ Data Analysts: Connect directly to OneLake using Direct Lake mode,
+eliminating the need for time-consuming downstream transformations before
+creating Power BI reports.
+● The Analytics Engineer: This role acts as the bridge, curating data within
+Lakehouses to ensure quality and building semantic models that make data
+accessible for self-service.
+● Empowering Low-Code Users: Citizen developers can use the OneLake catalog
+and natural language queries via Copilot to find and analyze data without needing
+deep technical expertise.
+
+-- 24 of 118 --
+
+● AI Foundation: Every role contributes to "AI-readiness." Clean data from engineers
+and business context from analytics engineers provide the essential grounding for
+accurate AI-driven insights.
+Unit 4: Enable and use Microsoft Fabric
+Before exploring Fabric's capabilities, an administrator must enable it in the tenant settings.
+Once active, users can create collaborative environments called workspaces to house their
+data assets.
+Key Takeaways:
+● Administrative Control: Fabric is enabled through the Admin portal. Access can
+be granted to the entire organization or limited to specific security groups. Those
+without an enterprise setup can sign up for a free Fabric trial.
+● The Workspace Engine: Workspaces are the primary units of collaboration. They
+support Git integration for version control and provide lineage views, which visually
+map how data flows from source to final report.
+● OneLake Catalog: This serves as the "search engine" for your data. Users can use
+the OneLake catalog to discover shared datasets, filtering by domain, keyword, or
+item type to find the right information quickly.
+● Fabric IQ & Data Agents (Preview): A new layer of intelligence that uses
+ontologies to define business concepts. This allows Data Agents to understand
+"business language" (like "Revenue") rather than just raw table schemas when
+answering natural language questions.
+● Copilot Integration: Microsoft Copilot is built into every workload. It assists with
+code generation (SQL, KQL, Python), data transformation guidance, and even the
+automatic creation of Power BI reports and summaries.
+Data Engineering: Create lakehouses and operationalize workflows to build,
+transform, and share your data estate.
+Data Factory: Ingest, transform, and orchestrate data.
+Data Warehouse: Combine multiple sources in a traditional warehouse for analytics.
+Real-Time Intelligence: Process, monitor, and analyze streaming data.
+Industry Solutions: Use out-of-the-box industry data solutions.
+Data Science: Detect trends, identify outliers, and predict values using machine
+learning.
+Databases: Create and manage databases with tools to insert, query, and extract
+data.
+IQ (preview): Unify data across OneLake and organize it according to the language
+of your business using ontologies, graphs, and semantic models.
+Power BI: Create reports and dashboards to make data-driven decisions.
+
+-- 25 of 118 --
+
+Get started with lakehouses
+
+-- 26 of 118 --
+
+Unit 1: Introduction to Lakehouses in Microsoft Fabric
+A Lakehouse is a unified architecture that combines the flexible, low-cost storage of a data
+lake with the structured querying and performance of a data warehouse.
+Key Takeaways:
+● The Hybrid Approach: Lakehouses are designed to handle both structured
+transactional data and unstructured/semi-structured data (like IoT logs or social
+media feeds) in a single location.
+● Unified Foundation (OneLake): Built on the OneLake storage layer, a Lakehouse
+ensures that all data is stored once but remains accessible to multiple compute
+engines.
+● Dual Compute Engines: It leverages Apache Spark for large-scale data processing
+and transformation, and SQL compute engines for high-performance querying and
+reporting.
+● Eliminating Silos: By providing a single platform for all data types, the Lakehouse
+removes the need for complex integration efforts between separate storage systems
+and analytical tools.
+● Downstream Readiness: Data organized within a Lakehouse is immediately
+available for advanced business intelligence, machine learning, and AI-powered
+experiences across Fabric.
+Unit 2: Describe lakehouse features and capabilities
+A Lakehouse bridges the gap between data lakes and warehouses by bringing structured,
+high-performance querying directly to your raw data.
+Key Takeaways:
+● Dual-Folder Design: The lakehouse organizes data into two distinct areas:
+○ Tables Folder: Contains Delta Lake tables that support SQL queries, ACID
+transactions, and schema enforcement for reliable analytics.
+○ Files Folder: A landing zone for raw data in any format (CSV, JSON,
+images). This provides the flexibility to stage and explore data before
+transforming it into structured tables.
+● Delta Lake Advantages: At its core, the lakehouse uses the Delta format, which
+enables "Time Travel" (querying previous versions of data), efficient updates/deletes,
+and ensures data consistency even during simultaneous read/write operations.
+● Layered Security: Fabric provides granular access control, including workspace
+roles for collaborators and row-level/column-level security through the SQL
+analytics endpoint to restrict sensitive data.
+● Foundation for AI: By structuring data with clear schemas and naming conventions,
+the lakehouse becomes "AI-ready." This allows Fabric IQ data agents and Copilot to
+accurately translate natural language questions into business insights.
+
+-- 27 of 118 --
+
+● OneLake Integration: Because it sits on OneLake, any table created in the
+lakehouse is instantly available for reporting in Power BI or processing in Spark
+without needing to move or copy the data.
+Unit 3: Ingest and transform data in a lakehouse
+The lakehouse operates in two modes: Lakehouse explorer for managing files and tables,
+and a SQL analytics endpoint for read-only T-SQL querying.
+Key Takeaways:
+● Logical Organization: Tables are stored in the Tables folder as Delta tables
+(structured), while raw data lives in the Files folder (unstructured). You can use
+schemas (like dbo, sales, or hr) to group tables logically and manage permissions.
+● Flexible Ingestion: You can bring data in through multiple paths:
+○ Manual: Direct uploads or "Load to Table" for a no-code experience.
+○ Automated: Data Factory pipelines for external sources or Dataflows
+Gen2 for a Power Query experience.
+○ Programmatic: Notebooks using Spark (PySpark, Scala, or SQL).
+● Shortcuts (Zero-Copy): Shortcuts allow you to reference data in other cloud storage
+(S3, ADLS Gen2) or other Fabric workspaces. The data appears as if it's local to your
+lakehouse, but it stays in its original source—saving you storage costs and sync time.
+● Transformation Tools: Raw data in the "Files" area can be cleaned and moved to
+"Tables" using Notebooks (favored by engineers) or Dataflows Gen2 (favored by
+analysts). Pipelines orchestrate these tasks to run in sequence or parallel.
+● AI Integration: A clean schema organization is critical because Fabric IQ data
+agents use it to translate natural language questions into accurate SQL queries.
+Unit 4: Query and analyze lakehouse data
+Once data is ingested, you can choose between SQL-based exploration, code-based data
+science, or visual business intelligence without moving the data.
+Key Takeaways:
+● The SQL Analytics Endpoint: Every lakehouse automatically includes a read-only
+SQL endpoint. This allows you to use standard T-SQL to query tables, create views,
+and apply row-level security—making it feel exactly like a traditional SQL database.
+● Spark Notebooks: For more complex logic, you can use Spark notebooks. You have
+the choice of Spark SQL for familiar queries or PySpark (Python) for advanced data
+manipulation and machine learning.
+● Direct Lake Mode: This is a "game-changer" for Power BI. Instead of importing data
+(which takes time and duplicates files), Power BI reads the Delta Parquet files
+directly from OneLake. This provides the speed of "Import" with the real-time
+freshness of "Live Connection."
+● Semantic Models: You can build semantic models on top of your lakehouse tables
+to define relationships and business measures. This creates a curated layer that
+business users can easily navigate in Power BI.
+
+-- 28 of 118 --
+
+● AI Assistance: Copilot is integrated into both the SQL editor and Notebooks,
+allowing you to generate complex queries or Python code from simple natural
+language prompts.
+
+-- 29 of 118 --
+
+Work with Delta Lake tables
+
+-- 30 of 118 --
+

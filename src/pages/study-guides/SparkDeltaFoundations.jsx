@@ -92,9 +92,9 @@ export function SparkDeltaFoundations() {
           <Link to="/study-guides/shared/dataflows-pipelines" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}>
             <ArrowLeft size={14} /> Previous topic
           </Link>
-          <span className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: TOKENS.panelBorder, color: TOKENS.inkMuted }}>
-            Next topic: Eventhouse and KQL coming soon <ArrowRight size={14} />
-          </span>
+          <Link to="/study-guides/shared/eventhouse-kql" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>
+            Next topic: Eventhouse and KQL <ArrowRight size={14} />
+          </Link>
         </div>
       </main>
       <Footer />
