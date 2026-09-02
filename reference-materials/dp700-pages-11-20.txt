@@ -1,0 +1,249 @@
+Use Apache Spark in Microsoft Fabric
+
+-- 11 of 118 --
+
+Unit 1: Introduction to Apache Spark in Microsoft
+Fabric
+Spark is defined as an open-source, parallel processing framework designed
+specifically for large-scale data analytics.
+Key Takeaways:
+● Versatility: Spark is a staple in "big data" scenarios and is implemented across
+various platforms, including Azure HDInsight, Azure Synapse Analytics, and
+Microsoft Fabric.
+● Core Functionality: You can use Spark to ingest, process, and analyze data
+directly within a Lakehouse environment.
+● The Fabric Advantage: While Spark code is generally standardized, Microsoft
+Fabric offers an integrated environment that simplifies the process of combining
+Spark-based tasks with other data services.
+Unit 2: Prepare to Use Apache Spark
+This unit focuses on the infrastructure and configuration required to run Apache Spark
+within Microsoft Fabric, highlighting its "divide and conquer" approach to large-scale data
+processing.
+1. Spark Pools
+A Spark pool is the cluster of compute nodes that execute your data tasks. It consists of two
+main components:
+● Head Node: Runs the driver program to coordinate distributed processes.
+● Worker Nodes: Run executor processes to perform the actual data processing.
+Microsoft Fabric provides a starter pool for quick setup, but you can create custom pools
+to adjust node family types, autoscale limits, and dynamic allocation.
+2. Runtimes and Environments
+● Runtimes: Determine the versions of Apache Spark, Delta Lake, and Python
+installed.
+● Environments: Allow you to create custom configurations. You can install specific
+public libraries (from PyPI) or upload custom packages to ensure all nodes have the
+necessary tools for your specific workload.
+3. Key Optimization Features
+To improve performance and efficiency, Fabric offers several advanced settings:
+
+-- 12 of 118 --
+
+Feature 	Description
+Native Execution
+Engine
+A vectorized engine that speeds up queries on Parquet or
+Delta files.
+High Concurrency
+Mode
+Shares a single Spark session across multiple users or
+notebooks to save resources.
+Automatic MLFlow
+Logging
+Automatically tracks machine learning experiments without
+extra code.
+Unit 4: Work with Data in a Spark Dataframe
+This unit explores how to use the Dataframe—the most common structure for working with
+data in Spark—to load, transform, and save data within a Lakehouse.
+1. Loading Data
+You can ingest data from files (like CSVs) into a dataframe using two primary methods:
+● Inferring a Schema: Spark automatically guesses column names and data types
+(e.g., spark.read.load(..., header=True)).
+● Explicit Schema: You define the structure manually using StructType. This is
+faster and more reliable for complex data.
+2. Manipulating Dataframes
+Spark provides a "Dataframe API" that allows you to chain methods together for
+transformations:
+● select(): Retrieves specific columns (similar to SELECT in SQL).
+● where(): Filters rows based on conditions (similar to WHERE in SQL).
+● groupBy() & count(): Aggregates data to find summaries.
+3. Saving & Optimizing Results
+After processing, you can write data back to the Lakehouse:
+
+-- 13 of 118 --
+
+● Parquet Format: The preferred format for analytics due to its efficiency.
+● Partitioning: Using partitionBy(), you can split data into subfolders based on a
+specific column (e.g., Category). This drastically improves performance for future
+queries by reducing disk I/O.
+Key Comparison for the SQL User
+If you're thinking about your Stored Procedures, here's the translation:
+● df.where() is your WHERE clause.
+● df.write.mode("overwrite") is your TRUNCATE TABLE followed by an
+INSERT.
+● Partitioning is similar to Partitioned Tables in SQL Server, helping the engine skip
+irrelevant data.
+Unit 5: Work with Data using Spark SQL
+This unit focuses on using Spark SQL to bridge the gap between procedural code
+(Python/Scala) and relational querying. It explains how to use the Spark catalog as a
+metastore for your data objects.
+1. The Spark Catalog
+The catalog acts as a library for your relational data. You can make data from a Dataframe
+available in the catalog in two ways:
+● Temporary Views: Use df.createOrReplaceTempView("view_name"). These are
+session-based and disappear when the notebook stops. This is like a Common
+Table Expression (CTE) or a local temp table in SQL.
+● Tables: Use df.write.saveAsTable("table_name"). These are persistent. In Microsoft
+Fabric, these are typically stored in the Delta format, which supports transactions
+and versioning.
+2. Querying with the Spark SQL API
+You can run SQL queries directly within your Python or Scala code using the spark.sql()
+method.
+● Example: df = spark.sql("SELECT * FROM products WHERE Price > 100")
+● This returns a new Dataframe, allowing you to switch back and forth between SQL
+logic and Python logic seamlessly.
+3. The %%sql Magic Command
+For those who prefer a pure SQL experience (similar to an SSMS query window), you can
+use the %%sql magic at the start of a notebook cell.
+● This allows you to write standard SQL syntax to query tables and views.
+
+-- 14 of 118 --
+
+● The results are automatically displayed as a formatted table in the notebook.
+Comparison for the SQL Professional
+SQL Server Concept 	Spark SQL Equivalent
+Local Temp Table (#table) 	Temporary View
+Permanent Table 	Managed Table (Delta format)
+Linked Server / External
+Table
+External Table (Metadata in catalog, files in "Files"
+folder)
+SSMS Query Tab 	%%sql cell in a Notebook
+Unit 6: Visualize Data in a Spark Notebook
+This unit explains how to transform raw data into visual insights directly within a Spark
+notebook. Visualization is often the final step in your "Stored Procedure" replacement
+workflow, allowing you to present results rather than just storing them.
+1. Built-in Notebook Charts
+When you run a query or display a dataframe, Microsoft Fabric provides an immediate,
+"no-code" way to see your data:
+● Instant Toggle: You can switch the view from a Table to a Chart with a single click.
+● Customization: You can use the built-in chart properties to change the chart type
+(Bar, Line, Pie, etc.) and configure the axes without writing extra code.
+2. Visualization via Code (Graphics Packages)
+For more complex or highly customized reports that the built-in tools can't handle, you can
+use industry-standard Python libraries.
+● Matplotlib: The foundation for most Python plotting. It gives you full control over the
+figure size, colors, labels, and grid lines.
+
+-- 15 of 118 --
+
+● Pandas Integration: Since most graphics libraries expect data in a Pandas
+dataframe format, you often use the .toPandas() method to convert your Spark
+results before plotting.
+● Seaborn: An alternative library mentioned for creating more "polished" or statistically
+complex visualizations.
+Key Comparison
+Feature 	Parquet Files 	Delta Tables
+User
+Experience
+Like browsing a folder in
+Windows Explorer.
+Like browsing a Database in SSMS.
+Complexity 	You must manage file paths
+and schemas.
+The system manages metadata for
+you.
+Tool Support 	Great for Spark/Python
+developers.
+Great for SQL Analysts and Power BI.
+Version
+Control
+Hard to track changes to data. Supports Time Travel (viewing older
+versions of the data).
+
+-- 16 of 118 --
+
+Real-time data in an Eventhouse
+
+-- 17 of 118 --
+
+Unit 1: Introduction to KQL Databases in Microsoft Fabric
+An Eventhouse is a specialized data store container designed to manage large volumes of
+continuous data streams using KQL databases.
+Key Takeaways:
+● Real-Time Optimization: Unlike traditional databases, KQL databases are built
+specifically for time-series data—information that is indexed by when it happened
+and is rarely changed once recorded (immutable).
+● The "Conveyor Belt" Model: Data follows an append-only pattern. It flows in and
+is automatically partitioned by ingestion time, allowing the system to find recent data
+instantly without scanning the entire database.
+● Versatile Toolset: Once data is ingested, you can query it using Kusto Query
+Language (KQL) or T-SQL, visualize it through Real-Time Dashboards, or trigger
+automated responses using Fabric Activator.
+● The Fabric Advantage: Microsoft Fabric integrates these databases so you can
+seamlessly move from raw data ingestion to advanced analytics using materialized
+views and stored functions in one unified environment.
+This unit focuses on the practical setup and querying capabilities of Eventhouses and KQL
+databases within Microsoft Fabric.
+Unit 2: Get started with an Eventhouse
+An Eventhouse is the primary workspace for managing real-time data, automatically
+providing a default KQL database for storing tables, stored procedures, and materialized
+views.
+Key Takeaways:
+● Flexible Data Ingestion: You can bring data into a KQL database from nearly
+anywhere—including local files, cloud storage (Azure S3, OneLake), and real-time
+streams like Kafka or Azure Event Hubs.
+● Zero-Copy Integration: Through database shortcuts, you can query external
+databases without moving data. Additionally, OneLake availability ensures your
+KQL data is instantly accessible to other Fabric services like Power BI and
+Lakehouses.
+● Pipeline Query Logic: KQL uses a "funnel" approach where data flows through
+pipes (|). Each operator (like where, project, or summarize) filters or transforms
+the data before passing it to the next step.
+● Advanced Analysis Tools: The KQL queryset provides a dedicated environment to
+save queries, create visualizations, and even use Copilot to generate KQL code
+from natural language questions.
+
+-- 18 of 118 --
+
+Unit 3: Use KQL effectively
+Query optimization in KQL is centered on one main principle: the less data your query scans,
+the faster it runs and the fewer resources it consumes.
+Key Takeaways:
+● Filter Early (The Funnel Principle): Always apply filters—especially time-based
+filters—at the very beginning of your query. By using where statements early, you
+leverage KQL indexes to eliminate millions of unnecessary rows before any
+processing happens.
+● Column Reduction: Use the project operator to select only the specific columns
+you need. Reducing "wide" tables down to a few essential columns significantly
+lowers the memory and processing overhead.
+● Smart Joins: When joining two tables, always place the smaller table first (on the
+left side of the join operator). KQL loads the first table into memory to match
+against the second; using the smaller table first makes this process much more
+efficient.
+● Aggregated Exploration: When testing queries or exploring large datasets, use the
+limit operator after aggregations to prevent the system from trying to display
+millions of result rows at once.
+Unit 4: Materialized views and stored functions
+Materialized views and stored functions are the primary tools used to handle complex
+aggregations and code reusability without sacrificing speed.
+Key Takeaways:
+● Precomputed Performance: Materialized views solve the "big data" lag by storing
+precomputed aggregation results. Instead of calculating a sum or average across
+billions of rows every time a dashboard refreshes, the system only processes new
+"delta" data and merges it with the existing results.
+● Freshness Guarantee: Even though views are precomputed in the background,
+queries always return the most current data. The system automatically combines the
+materialized part (old data) with the delta (newly arrived data) at query time.
+● Code Encapsulation: Stored functions allow you to save complex query logic as a
+reusable alias. This ensures that different team members apply the same filtering or
+transformation logic consistently across the organization.
+● Parameterized Queries: Functions can accept parameters (like a specific ID or
+threshold). This allows you to treat a complex KQL query like a simple table call,
+such as GetTripsByPassengerCount(3), making the code cleaner and more
+accessible for non-experts.
+
+-- 19 of 118 --
+
+Implement a Lakehouse
+
+-- 20 of 118 --
+
