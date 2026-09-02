@@ -488,6 +488,24 @@ export function StudyGuideDetail() {
           </>
         )}
 
+        {(code === "DP-700" || code === "DP-600") && (
+          <div className="rounded-xl p-5 mt-6" style={{ background: `${TOKENS.azure}10`, border: `1px solid ${TOKENS.azure}35` }}>
+            <h2 className="text-base font-semibold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              Shared Fabric foundation
+            </h2>
+            <p className="text-sm mb-3" style={{ color: TOKENS.inkMuted }}>
+              Dataflows Gen2, pipelines, and Copy Data appear across Fabric implementation and analytics scenarios.
+            </p>
+            <Link
+              to="/study-guides/shared/dataflows-pipelines"
+              className="inline-flex items-center gap-2 text-sm font-medium"
+              style={{ color: TOKENS.azure }}
+            >
+              Study this shared topic <ChevronLeft size={14} style={{ transform: "rotate(180deg)" }} />
+            </Link>
+          </div>
+        )}
+
         <h2 className="text-sm font-semibold mt-10 mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
           Prerequisites
         </h2>
