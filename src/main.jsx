@@ -8,6 +8,12 @@ import { StudyGuideDetail } from "./pages/StudyGuideDetail.jsx";
 import { DP700StudyGuide } from "./pages/study-guides/DP700StudyGuide.jsx";
 import { IngestionFoundations } from "./pages/study-guides/IngestionFoundations.jsx";
 import { SharedStudyGuides } from "./pages/study-guides/SharedStudyGuides.jsx";
+import { SparkDeltaFoundations } from "./pages/study-guides/SparkDeltaFoundations.jsx";
+import { EventhouseFoundations } from "./pages/study-guides/EventhouseFoundations.jsx";
+import { WarehouseFoundations } from "./pages/study-guides/WarehouseFoundations.jsx";
+import { MonitoringFoundations } from "./pages/study-guides/MonitoringFoundations.jsx";
+import { SecurityFoundations } from "./pages/study-guides/SecurityFoundations.jsx";
+import { LifecycleFoundations } from "./pages/study-guides/LifecycleFoundations.jsx";
 import { Login } from "./pages/Login.jsx";
 import { NotFound } from "./pages/NotFound.jsx";
 import { AuthProvider } from "./lib/authContext.jsx";
@@ -42,6 +48,12 @@ const routes = [
       { path: ROUTE_PATHS.dp700StudyGuideTopic, element: <DP700StudyGuide /> },
       { path: "study-guides/shared/dataflows-pipelines", element: <IngestionFoundations /> },
       { path: "study-guides/shared", element: <SharedStudyGuides /> },
+      { path: "study-guides/shared/spark-notebooks-delta", element: <SparkDeltaFoundations /> },
+      { path: "study-guides/shared/eventhouse-kql", element: <EventhouseFoundations /> },
+      { path: "study-guides/shared/warehouse-dimensional-modeling", element: <WarehouseFoundations /> },
+      { path: "study-guides/shared/monitoring-optimization", element: <MonitoringFoundations /> },
+      { path: "study-guides/shared/security-governance", element: <SecurityFoundations /> },
+      { path: "study-guides/shared/lifecycle-orchestration", element: <LifecycleFoundations /> },
       { path: ROUTE_PATHS.studyGuideDetail, element: <StudyGuideDetail /> },
       { path: ROUTE_PATHS.exam, element: <ExamPage /> },
       { path: "*", element: <NotFound /> },

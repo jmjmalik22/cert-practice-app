@@ -1,0 +1,233 @@
+UNIT 1
+This module introduces Eventstream in Microsoft Fabric, a feature within Real-Time
+Intelligence designed to manage data in motion without writing code.
+Key Capabilities
+● Capture & Route: Effortlessly collect real-time events and direct them to various
+destinations.
+● No-Code Transformation: Use a drag-and-drop interface to process and transform
+data logic visually.
+● Versatile Connectivity: IngeAzure IoT Hubst data from diverse sources including:
+○ Azure Event Hubs
+●
+○ Apache Kafka
+Objective
+The primary goal of the Eventstream module is to teach users how to build end-to-end
+pipelines that ingest, transform, and store real-time data for advanced analysis.
+UNIT 2 Components of Eventstream
+The Eventstream feature in Microsoft Fabric is a no-code, visual solution for building
+real-time data pipelines. It acts as a delivery mechanism that captures events as they
+happen and routes them to specific locations for analysis or action.
+The system is built around three core components:
+1. Sources
+These are the origins of your data. You can ingest real-time events from both Microsoft
+sources and non-Microsoft platforms.
+2. Transformations
+Before the data reaches its destination, you can reshape it using a drag-and-drop canvas.
+Available operations include:
+● Filtering and Aggregating data.
+● Grouping (e.g., summing values by a specific category).
+● Using SQL code for complex logic.
+● Joining or expanding fields.
+
+-- 51 of 118 --
+
+3. Destinations
+This is where the processed data is sent for storage or further use. Common destinations
+include:
+● Eventhouse or Lakehouse tables.
+● Fabric Activator (to trigger automated actions based on the data).
+● Custom endpoints or derived streams for additional processing.
+Unit 3 Eventstream sources and destinations
+This unit covers the configuration of sources and destinations within a Microsoft Fabric
+Eventstream, highlighting how data flows from external origins to actionable endpoints.
+1. Eventstream Sources
+You can ingest real-time data from a variety of platforms using the eventstream canvas:
+● Microsoft Sources: Azure Event Hubs, IoT Hubs, Service Bus, and CDC feeds.
+● Fabric/Azure Events: Changes in OneLake data stores or Blob Storage events.
+● External Sources: Popular third-party platforms like Apache Kafka, Google Cloud
+Pub/Sub, and MQTT.
+2. Eventstream Destinations
+Once data is ingested (and optionally transformed), it can be routed to multiple endpoints
+simultaneously:
+
+-- 52 of 118 --
+
+● Eventhouse: For high-speed ingestion and analysis using KQL.
+● Lakehouse: Converts events into Delta Lake format for storage in lakehouse tables.
+● Fabric Activator: Triggers automated actions (like notifications or workflows) based
+on specific data patterns.
+● Derived Stream: Acts as a "sub-stream" to enable content-based routing, allowing
+you to send different subsets of data to different destinations.
+● Custom Endpoint: Routes data to external systems or custom applications outside
+of Fabric.
+Unit 4 Eventstream transformations
+This unit focuses on Eventstream transformations, which allow you to clean, enrich, and
+reshape raw streaming data before it reaches its final destination.
+Why Transform Data?
+Raw data is rarely "analysis-ready." Transformations help achieve:
+● Data Quality: Filtering out noise or incomplete records.
+● Enrichment: Adding calculated fields or renaming columns for clarity.
+● Standardization: Ensuring consistent formats across different data sources.
+● Summarization: Calculating averages or totals over specific time windows.
+No-Code Transformation Tools
+The eventstream canvas provides several drag-and-drop tiles to process data:
+● Filter: Keeps only the events that meet specific conditions (e.g., Temperature >
+80°).
+● Manage Fields: Used to add, remove, rename, or change the data type of columns.
+● Aggregate: Calculates values like Sum, Min, Max, or Average in real-time as
+events arrive.
+● Group By: Performs aggregations over specific time intervals, such as Tumbling
+windows (fixed blocks) or Sliding windows (overlapping intervals).
+● Union & Join: Combines multiple streams into one or matches data from two
+different streams based on a shared key.
+● Expand: Breaks down arrays into individual rows.
+
+-- 53 of 118 --
+
+Create Real-Time Dashboards
+
+-- 54 of 118 --
+
+Unit 1 Introduction
+The Core Purpose
+The primary goal of Real-Time Dashboards is to monitor constantly changing data to
+enable immediate operational decisions. Unlike traditional reporting tools that provide
+historical snapshots, these dashboards are designed for high-frequency refreshing.
+Key Technical Components
+● Data Source: The dashboards connect to KQL databases located in eventhouses.
+● Visualizations: They display data through visualizations that refresh automatically to
+reflect the most current information available.
+● Use Case Example: The unit uses a bike-sharing company as an example, where
+an analyst needs to monitor live bike availability and dock capacity to redistribute
+bikes to high-demand areas effectively.
+Comparison: Traditional vs. Real-Time
+Feature 	Traditional Reports 	Real-Time Dashboards
+Data Focus 	Historical snapshots 	Current, live data streams
+Refresh Rate Scheduled/Infrequent 	High-frequency/Automatic
+User Action 	Long-term trend analysis 	Immediate operational response
+Unit 2 - Real-time dashboards
+Unit 3 of the Create Real-Time Dashboards with Microsoft Fabric module focuses on
+Organizing and Filtering Dashboard Data.
+Building on the basic tile creation from Unit 2, this section covers how to make your
+dashboards scalable and interactive. Here are the core highlights:
+1. Base Queries
+To make your dashboard more efficient and easier to maintain, you can use Base Queries.
+● Efficiency: Instead of writing the same KQL code in every tile, you create a single
+"source" query.
+
+-- 55 of 118 --
+
+● Consistency: Multiple tiles (e.g., a map and a bar chart) can reference this base
+query, ensuring they all use the exact same filtered dataset.
+● Variable usage: Once defined, you reference it in individual tiles like a variable (e.g.,
+base_bike_data).
+2. Parameters
+Parameters add interactivity for the end-user.
+● Dynamic Filtering: You can add dropdowns or text boxes (like a "Neighborhood"
+selector) to the dashboard toolbar.
+● KQL Integration: These parameters are injected into your Kusto queries using the
+$parameter_name syntax, allowing the visuals to update instantly based on user
+selection.
+3. Multi-Page Layouts
+For complex monitoring needs, you can organize tiles across multiple pages.
+● This prevents "dashboard clutter" and allows you to group related metrics (e.g., one
+page for "Live Availability" and another for "Technical Health").
+Key Summary Table
+Feature 	Primary Benefit
+Base Queries Simplifies maintenance; reduces redundant code across tiles.
+Parameters 	Enables end-users to slice and dice data without editing queries.
+Pages 	Organizes content for better readability and logical grouping.
+Unit 3 Organize and filter dashboard data
+This unit details how to Organize and filter dashboard data within Microsoft Fabric to
+create more effective and interactive Real-Time Dashboards.
+Key Features for Dashboard Organization
+
+-- 56 of 118 --
+
+● Pages: You can add multiple pages to a single dashboard to serve as containers for
+different sets of tiles. This is useful for grouping related content, such as separating
+data by source or subject area.
+● Parameters: These add flexibility by allowing users to filter the data displayed in tiles
+(e.g., filtering by time period or a specific subset of data).
+○ Variables: Parameters use a variable name with an underscore prefix (e.g.,
+_selected_neighbourhoods).
+○ KQL Integration: You reference these variables directly in your Kusto Query
+Language (KQL) code to make tiles dynamic based on user selection.
+● Auto Refresh: This feature ensures the dashboard updates automatically without
+manual reloads.
+○ Editors can set default and minimum refresh rates to manage system
+performance.
+○ Viewers can adjust the rate during their specific session within the limits set
+by the editor.
+Unit 3 Dashboard management and
+optimization
+This unit, Dashboard management and optimization, focuses on improving the efficiency
+and maintainability of your Microsoft Fabric dashboards using Base Queries.
+The Power of Base Queries
+Instead of writing a unique, heavy query for every single tile, you can create a single
+"source" query that handles the bulk of the data retrieval.
+● Efficiency: It prevents duplicating the same logic across multiple tiles.
+● Performance: It reduces the load on your KQL database by fetching a general set of
+records once and then letting individual tiles filter that specific subset.
+● Maintenance: If you need to change the data source or a core filter, you only have to
+update the base query in one place rather than editing every tile.
+How It Works
+1. Define the Base: You create a query in the dashboard's "Base queries" menu and
+assign it a variable name (e.g., _base_bike_data).
+2. The Logic: This query usually fetches a broad set of data, such as:
+3. Code snippet
+Bikes
+| where ingestion_time() between (ago(30min) .. now())
+| summarize latest_observation = arg_max(ingestion_time(), *) by Neighbourhood
+
+-- 57 of 118 --
+
+4. The Reference: You then create individual tiles that start with that variable name
+instead of the raw table:
+5. Code snippet
+_base_bike_data
+| project Neighbourhood, latest_observation, No_Bikes
+Summary of Benefits
+Feature 	Benefit
+Logic Reuse 	Write once, use across many visuals.
+Variable Mapping 	Use simple names like _base_data to keep tile code clean.
+Optimization 	Faster dashboard loading by streamlining how data is pulled.
+
+-- 58 of 118 --
+
+Use Activator in Microsoft Fabric
+
+-- 59 of 118 --
+
+Unit 1 Use Activator in Microsoft Fabric
+This unit introduces Activator, a real-time event detection and rules engine within Microsoft
+Fabric designed to trigger automated actions based on live data patterns.
+Core Functionality
+Activator operates through a three-step process:
+1. Connect: Link to real-time data sources (e.g., streaming sensor data).
+2. Monitor: Create rules to evaluate specific conditions or thresholds.
+3. Act: Execute actions when conditions are met, such as sending notifications or
+starting automated workflows.
+Key Action Types
+● Notifications: Email alerts or Microsoft Teams messages.
+● Workflows: Triggering Power Automate flows.
+● Automation: Running Microsoft Fabric notebooks to process data or adjust systems.
+Real-World Applications
+Activator is used across various industries where "time-to-response" is critical:
+● Manufacturing: Alerting teams when equipment exceeds safe temperatures.
+● Logistics: Monitoring cold-chain integrity for sensitive goods (like medicine).
+● Retail: Automating inventory reorders when stock hits a critical low.
+● Finance: Flagging unusual transaction patterns for immediate fraud review.
+Unit 2 Configure Activator for your data
+Unit 2 focuses on how to configure Activator to interpret real-time data by organizing it into
+meaningful business entities.
+The Business Object Model
+To monitor data effectively, Activator uses a hierarchy to bridge the gap between raw data
+streams and real-world entities:
+● Objects: Represent individual real-world instances (e.g., a specific package, a
+delivery truck, or a customer).
+● Properties: The specific attributes of that object that you want to track (e.g.,
+temperature, current city, or hours in transit).
+
+-- 60 of 118 --
+

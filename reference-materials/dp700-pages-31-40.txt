@@ -1,0 +1,246 @@
+This introductory unit highlights how Microsoft Fabric leverages the Delta Lake table format
+to combine the best of both worlds: the power of relational databases and the flexibility of
+data lakes.
+Unit 1 Key Takeaways
+● The Foundation: Tables in a Fabric lakehouse are based on the Linux Foundation
+Delta Lake format, an open-source storage layer designed for Apache Spark.
+● Relational Features on Big Data: Delta Lake enables "lakehouse" architecture by
+providing:
+○ ACID Transactions: Ensures data reliability during concurrent operations.
+○ Schema Enforcement: Maintains data quality by preventing inconsistent
+structures.
+○ SQL Semantics: Allows for familiar data manipulation within a Spark
+environment.
+● Simplified Management: While Fabric manages much of the complexity for you,
+Unit 1 emphasizes that understanding the metastore architecture and specialized
+operations is key to building advanced analytics solutions.
+Unit 2
+of this module, Understand Delta Lake, explains the technical structure and benefits of
+using Delta tables within a Microsoft Fabric lakehouse.
+The Technical Structure
+Delta tables are schema abstractions over data files. When you see the Delta (Δ) icon in the
+Fabric UI, the underlying storage consists of:
+● Parquet Files: The actual data stored in a compressed, columnar format.
+● _delta_log Folder: A transaction log containing JSON files that track every change
+made to the table.
+Key Benefits of Delta Lake
+The unit outlines five primary advantages of using this format:
+● Relational Semantics: Supports standard CRUD operations (Create, Read, Update,
+Delete). You can use INSERT, UPDATE, and DELETE just like in a traditional SQL
+database.
+● ACID Transactions: Ensures data reliability through Atomicity, Consistency,
+Isolation, and Durability. This prevents data corruption during concurrent writes.
+● Time Travel: Because every transaction is logged, you can access data versioning
+to query previous states of a table or "travel back in time" to recover data.
+
+-- 31 of 118 --
+
+● Unified Batch & Streaming: Delta tables can act as both sources and sinks,
+allowing the same table to handle real-time data streams and historical batch
+processing simultaneously.
+● Interoperability: Since the data is stored in the open Parquet format, it is highly
+compatible with various engines. In Fabric, you can query these tables using the
+SQL analytics endpoint.
+Unit 3, Create delta tables,
+focuses on the practical methods for defining and saving Delta tables within a Microsoft
+Fabric lakehouse using Apache Spark.
+1. Managed vs. External Tables
+The unit distinguishes between how Fabric handles table data and metadata:
+● Managed Tables: Both the metadata and the data files are managed by the Fabric
+lakehouse. If you delete the table from the metastore, the underlying Parquet files are
+also deleted.
+● External Tables: The metadata is in the metastore, but the data is stored in a
+separate location (like the Files folder or an external URL). Deleting the table
+definition does not delete the actual data files.
+2. Methods for Creating Tables
+There are several ways to define a Delta table depending on your workflow:
+Method 	Best For...
+From a Dataframe 	Quickly saving processed data using
+df.write.format("delta").saveAsTable("name").
+DeltaTableBuilder
+API
+Programmatically defining a table schema (columns and types)
+from scratch using Python.
+Spark SQL 	Using familiar CREATE TABLE syntax, which is ideal for those
+coming from a relational database background.
+3. Saving Data in Delta Format
+You can also save data in the Delta format without immediately defining a table in the
+metastore. This is done by saving a dataframe to a specific path:
+
+-- 32 of 118 --
+
+● Overwrite Mode: Replaces existing data in the folder.
+● Append Mode: Adds new rows to the existing data.
+● Automatic Discovery: A unique Fabric "Tip" mentions that if you save Delta files
+directly to the Tables folder in the lakehouse, Fabric will automatically discover
+them and create the metadata for you.
+Unit 4 - Use Delta Tables in Apache Spark
+The Optimize delta tables module outlines how to manage and improve the performance of
+Delta tables within Microsoft Fabric. It specifically focuses on overcoming the "small file
+problem" caused by Spark's parallel processing and the immutable nature of Parquet files.
+Here are the key features and techniques covered:
+1. Performance Optimization Tools
+● OptimizeWrite: A background feature that reduces the number of small files during
+the write process. It is enabled by default in Fabric but can be toggled via Spark
+configuration.
+● OPTIMIZE Command: A manual maintenance task that consolidates existing small
+Parquet files into larger, more efficient ones.
+● V-Order: A Fabric-specific write optimization that sorts and compresses data to
+enable "lightning-fast" reads. While it adds about 15% overhead to write times, it
+significantly boosts read speeds for Power BI and SQL engines using Verti-Scan
+technology.
+2. Storage Management
+● VACUUM: This command permanently deletes old Parquet data files that are no
+longer referenced in the transaction log and fall outside the retention period (default
+is 7 days).
+○ Note: Running VACUUM prevents "time travel" to versions older than the
+specified threshold.
+3. Data Layout Strategy
+● Partitioning: Organizing data into subfolders (e.g., by Year or Category) to enable
+data skipping.
+● Best Practices: * Use it for: Very large datasets with clear, low-cardinality filtering
+columns.
+○ Avoid it for: Small datasets or columns with high cardinality (too many
+unique values), as this can actually worsen performance by creating too many
+small files.
+Summary Table: When to use what?
+
+-- 33 of 118 --
+
+Feature 	Primary Benefit 	When to Use
+OptimizeWrite Prevents small files 	Always (enabled by default).
+OPTIMIZE 	Consolidates existing
+files
+After large data loads or when query
+performance drops.
+V-Order 	Faster reads (Power
+BI/SQL)
+For tables that are read frequently by
+reporting tools.
+VACUUM 	Saves storage costs 	Regularly, to clean up obsolete data files.
+Partitioning 	Speeds up filtered
+queries
+Only on very large tables with logical filter
+columns.
+Unit 5 - Use delta tables with streaming data
+1. Using Spark SQL
+The most common approach for working with Delta tables is through SQL commands.
+● Integration: You can embed SQL statements within PySpark or Scala using
+spark.sql().
+● Notebook Magic: Use the %%sql magic command in Fabric notebooks to run native
+SQL for tasks like INSERT or UPDATE.
+2. Using the Delta Lake API
+When working directly with file locations rather than catalog tables, the Delta Lake API is
+often more efficient.
+● Functionality: You can create a DeltaTable object using a file path.
+● Programmatic Updates: It allows for structured updates and deletes, such as
+applying a conditional price reduction across a specific category.
+
+-- 34 of 118 --
+
+3. Time Travel and Versioning
+Delta Lake automatically logs every transaction, enabling "Time Travel" to view or restore
+previous states of the data.
+● History: Use the DESCRIBE HISTORY command to see a log of versions,
+timestamps, and operations.
+● Retrieving Past Data: You can load a specific version of a table into a DataFrame by
+using:
+○ versionAsOf: To access a specific version number (e.g., Version 0).
+○ timestampAsOf: To access the data as it existed at a specific date and time.
+Unit 6 - Work with Delta Lake tables
+This unit focuses on using Delta tables as both sources and sinks within a Spark
+Structured Streaming architecture in Microsoft Fabric.
+Core Concepts
+Spark Structured Streaming treats real-time data as a "boundless dataframe," allowing you
+to process live data using the same APIs as static batch data.
+● Streaming Source: Reading data from a Delta table as it is appended.
+● Streaming Sink: Writing processed data streams into a Delta table for persistence
+and further analysis.
+Key Technical Workflows
+1. Using Delta as a Source
+When you use a Delta table as a source, Spark monitors the table's transaction log to
+identify new data.
+● Code Example:
+● Python
+stream_df = spark.readStream.format("delta").table("orders_in")
+●
+●
+● Important Note: By default, Delta sources expect only append operations. If data is
+deleted or updated in the source, you must use options like ignoreChanges or
+ignoreDeletes to prevent errors.
+2. Transforming the Stream
+Once data is in a streaming DataFrame, you can apply standard Spark functions to filter or
+modify it in real time (e.g., filtering NULL values or calculating new columns like Total price).
+
+-- 35 of 118 --
+
+3. Using Delta as a Sink
+To save the streaming data, you define a Delta table as the output.
+● Checkpoints: You must specify a checkpointLocation. This stores the state of the
+stream, allowing it to resume exactly where it left off if a failure occurs.
+● Code Example:
+Python
+deltastream = transformed_df.writeStream.format("delta") \
+.option("checkpointLocation", checkpointpath) \
+.start(output_table_path)
+Summary Table
+Feature 	Description
+API 	Spark Structured Streaming
+Latency 	Near real-time processing.
+Reliability Managed via Checkpoints to track progress and recover from failures.
+Lifecycle Streams must be explicitly stopped (using .stop()) to avoid ongoing compute
+costs.
+
+-- 36 of 118 --
+
+Fabric lakehouse using medallion
+architecture
+
+-- 37 of 118 --
+
+Unit 1 Organize a Fabric lakehouse using medallion architecture design
+he Introduction - Training | Microsoft Learn page provides an overview of the medallion
+architecture within the context of a Microsoft Fabric lakehouse.
+Here is a summary of the key points:
+Core Concept
+The medallion architecture is an industry-standard design pattern used to organize, refine,
+and curate data in a lakehouse environment. It allows businesses to blend the flexibility of
+data lakes with the structured performance of data warehouses.
+The Three Layers
+The module introduces the logical flow of data through three distinct stages:
+● Bronze: The raw data landing zone.
+● Silver: Validated and enriched data.
+● Gold: High-quality, business-ready data curated for reporting and analytics.
+Unit 2 Describe medallion architecture
+This unit from Microsoft Learn explains the medallion architecture, a data design pattern
+used to logically organize a lakehouse into layers that increase in data quality and
+refinement.
+The Three Standard Layers
+● Bronze (Raw): The initial landing zone. Data is stored in its original format
+(structured or unstructured) without any modifications.
+● Silver (Validated): Data is cleaned, merged, and deduplicated. It acts as a
+consistent, "source of truth" repository accessible by multiple teams.
+● Gold (Enriched): Data is further refined and aggregated to meet specific business
+needs. This layer is optimized for analytics, data science, and reporting.
+Moving Data in Microsoft Fabric
+The unit distinguishes between two critical processes for moving data through these layers:
+1. Data Transformation: Altering the structure or content.
+○ Dataflows (Gen2): Best for smaller models and simple logic.
+○ Notebooks: Best for large-scale data and complex transformations.
+2. Data Orchestration: Managing the "flow" and timing of tasks.
+
+-- 38 of 118 --
+
+○ Pipelines: The primary tool used to schedule and automate the movement of
+data from one layer to the next.
+Key Takeaway
+The medallion architecture is flexible. While the three-layer approach is standard,
+organizations can add custom layers (like "Platinum") to suit specific requirements. It is
+designed to work alongside existing data models, not replace them.
+
+-- 39 of 118 --
+
+Implement Real-Time Intelligence
+
+-- 40 of 118 --
+

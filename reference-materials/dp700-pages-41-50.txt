@@ -1,0 +1,225 @@
+
+
+-- 41 of 118 --
+
+Get started with Real-Time Intelligence
+
+-- 42 of 118 --
+
+Unit 1 Introduction to Real-Time Intelligence in
+Microsoft Fabric
+Overview: This unit introduces the concept of Real-Time Intelligence within the Microsoft
+Fabric ecosystem, focusing on its application in high-stakes operational environments like
+logistics and delivery services.
+1. The Business Problem: Batch vs. Real-Time
+Traditional data processing often relies on batch reporting, where data is collected and
+processed in intervals (e.g., overnight). In a delivery company scenario, this leads to
+significant lag:
+● Delayed Awareness: Issues like vehicle breakdowns or weather delays are only
+identified after the fact.
+● Information Gap: Customers remain uninformed about delays in real-time.
+● Reactive Operations: Decisions are made based on old data rather than current
+conditions.
+2. The Solution: Microsoft Fabric Real-Time Intelligence
+Real-Time Intelligence shifts the focus to data in motion. By analyzing streaming data as
+events occur, organizations can achieve:
+● Continuous Monitoring: Tracking GPS trackers, warehouse scanners, and
+feedback systems instantly.
+● Instant Analysis: Identifying route delays and estimating delivery windows based on
+live conditions.
+● Automated Workflows: Setting up customer notifications and route optimization
+triggers automatically.
+3. Key Learning Objectives
+By the end of this module, you will understand how to:
+Objective 	Description
+Component Integration Understand how Microsoft Fabric components work together
+for real-time solutions.
+Data Lifecycle 	Learn to ingest, process, store, and query data as it arrives.
+
+-- 43 of 118 --
+
+Visualization &
+Automation
+Visualize "data in motion" and create automated responses to
+changing conditions.
+Unit 2 What is real-time data analytics?
+Overview: This unit defines real-time analytics as the practice of processing and acting on
+data as it is generated, typically within seconds or minutes. It highlights the shift from
+analyzing static historical data to managing "data in motion."
+1. Core Concepts: Events and Streams
+● Events: Individual digital records of specific actions or changes (e.g., a website click,
+a sensor reading, or a stock price change).
+● Streams: A continuous, chronological sequence of events. Streams act as the
+delivery mechanism that moves data from the source to the processing engine.
+2. Essential Components of a Solution
+To move from raw data to actionable insights, a real-time solution requires:
+● Real-time Ingestion: Collecting data from diverse sources (logs, APIs, sensors)
+simultaneously.
+● Stream Processing: Transforming, filtering, and aggregating data while it is in
+transit.
+● Low-latency Storage: Databases optimized for high-velocity writes and near-instant
+queries.
+● Interactive Dashboards: Visualizations that update automatically as new data
+arrives.
+● Automated Decision Making: Triggers and rules that initiate alerts or workflows
+based on live conditions.
+3. Business Value
+By implementing real-time analytics, organizations can:
+● Respond Immediately: Act on emerging opportunities or threats without lag.
+● Optimize Operations: Adjust resources dynamically based on current demand.
+● Enhance Experience: Provide personalized, contextual interactions to customers.
+● Prevent Issues: Detect anomalies and fix them before they escalate into critical
+failures.
+
+-- 44 of 118 --
+
+4. Integration in Microsoft Fabric
+Microsoft Fabric provides a unified platform for these tasks through:
+● Eventstreams: For ingestion and transformation.
+● Eventhouses: For optimized storage.
+● Real-Time Hub: For data discovery.
+● Activator: For automated alerts and actions.
+Unit 3: Real-Time Intelligence in Microsoft Fabric
+Overview: This unit explores the specific components within Microsoft Fabric that enable
+end-to-end processing of streaming data, from initial capture to automated response.
+1. Key Use Cases
+Real-Time Intelligence is designed for scenarios where "near real-time" insights are critical:
+● Delivery Tracking: Alerting customers about package delays via live vehicle
+monitoring.
+● Equipment Monitoring: Tracking sensor data (like temperature) to prevent
+mechanical failure.
+● Fraud Detection: Instantly blocking suspicious transactions.
+● System Health: Monitoring application errors and website load times to maintain
+service reliability.
+2. Core Components of the Ecosystem
+Microsoft Fabric uses a suite of integrated tools to manage the data lifecycle:
+
+-- 45 of 118 --
+
+Component 	Primary Function
+Eventstreams 	Captures, filters, enriches, and transforms data as it flows into the
+system.
+Eventhouse 	Stores high-velocity time-series data in KQL databases, integrated with
+OneLake.
+KQL Queryset A workspace to run and manage Kusto Query Language (and T-SQL)
+queries.
+Real-Time
+Dashboard
+Provides auto-refreshing visualizations to monitor live conditions and
+trends.
+Activator 	Triggers automated actions (notifications or workflows) when specific
+thresholds are met.
+3. The Real-Time Hub
+The Real-Time Hub acts as a central catalog for all "data-in-motion." It organizes data into
+four main categories:
+● Data Sources: Connectors for Microsoft, database CDC feeds, and external cloud
+providers.
+● Azure Sources: Direct configuration for IoT Hub, Service Bus, and Data Explorer.
+● Fabric Events: Subscriptions to system events (e.g., job status changes or OneLake
+file actions).
+● Azure Events: Subscriptions to Azure service events (e.g., Blob Storage changes).
+Unit 4: Ingest and transform real-time data
+Overview: This unit focuses on the two primary methods for bringing streaming data into
+Microsoft Fabric: using Eventstreams for active processing or Direct Ingestion for
+high-velocity storage.
+1. Eventstreams (In-Transit Transformation)
+Eventstreams act like a "water pipe system" where data is processed while it is moving.
+
+-- 46 of 118 --
+
+● Sources: You can connect to Microsoft sources (Azure Event Hubs, IoT Hub),
+Fabric/Azure events (OneLake changes), and External platforms (Apache Kafka,
+MQTT).
+● Transformations: Data can be cleaned or reshaped before storage using tools like
+SQL code, filters, aggregations, and joins.
+● Destinations: Processed data is routed to a KQL database, Lakehouse, Activator, or
+custom endpoints.
+2. Direct Ingestion (Post-Ingestion Transformation)
+For scenarios requiring speed over immediate reshaping, data can be sent directly to a KQL
+database in an Eventhouse.
+● Sources: Direct ingestion supports local files, Azure Storage, Amazon S3, and
+OneLake.
+● Update Policies: Unlike Eventstreams, transformation happens after the data lands
+in the database. Update policies are automated triggers that run a query to transform
+newly arrived data and save it to a final destination table.
+3. Comparison of Approaches
+Feature 	Eventstreams 	Direct Ingestion
+Transformation
+Timing
+Before data is stored (in-flight). After data lands (via Update
+Policies).
+Primary Tool 	Event Processor / SQL Editor. KQL Queries / Connectors.
+Best For 	Complex routing and
+multi-destination flows.
+High-volume raw data storage
+and rapid querying.
+Unit 5: Store and query real-time data
+Overview: This unit covers how to manage and analyze data once it lands in an
+Eventhouse. It highlights the use of KQL Databases for storage and the Kusto Query
+Language (KQL) for high-performance analysis.
+1. Storage Components in an Eventhouse
+
+-- 47 of 118 --
+
+Within an Eventhouse, you work with two primary structures:
+● KQL Databases: These are real-time optimized data stores that host tables, stored
+functions, materialized views, and data streams.
+● KQL Querysets: A dedicated space for writing and saving queries. These support
+both KQL and a subset of T-SQL.
+2. Kusto Query Language (KQL)
+KQL is the primary language used for querying large volumes of structured and
+semi-structured data. It is optimized for time-series data and uses a pipe-based (|) syntax.
+Basic Syntax Example:
+Code snippet
+stock
+| where ["time"] > ago(5m)
+| summarize avgPrice = avg(todouble(bidPrice)) by symbol
+● Performance: Data is indexed by ingestion time and partitioned automatically for
+speed.
+● Familiarity: If you aren't ready for KQL, you can use T-SQL (e.g., SELECT TOP 10
+* FROM stock) or leverage Copilot to generate queries using natural language.
+3. Advanced Automation & Tools
+To go beyond simple queries, you can use Management Commands to automate data
+processing:
+● Update Policies: Automatically transform and move data into different tables as it
+arrives.
+● Materialized Views: Pre-calculate summary results so complex queries run faster.
+● Stored Functions: Save and reuse frequently used query logic.
+● Copilot for Real-Time Intelligence: An AI assistant that helps translate your
+business questions into functional KQL code.
+Unit 6: Visualize real-time data
+Overview: This unit explains how to transform raw query results into actionable, visual
+insights using Real-Time Dashboards and Power BI within the Microsoft Fabric
+environment.
+
+-- 48 of 118 --
+
+1. Real-Time Dashboards
+Real-Time Dashboards are single-page interfaces designed to show live data at a glance.
+● Tiles: Dashboards are made of "tiles." Each tile runs a specific KQL query to extract
+data from an Eventhouse.
+● Interactivity: Once published, users can interact with tiles to drill deeper into data,
+apply filters, or change the visualization type on the fly.
+● Creation Methods: You can start a dashboard directly from a workspace or promote
+a query from a KQL queryset into a dashboard tile.
+2. Visualization via Power BI
+For more traditional or complex reporting, Fabric allows you to build Power BI reports directly
+from your KQL database.
+● Seamless Integration: Power BI can connect to the KQL database to provide
+high-level business analytics alongside streaming data.
+● Rich Reporting: This is ideal for combining real-time metrics with historical business
+data for a comprehensive overview.
+3. Key Benefits
+● Instant Visibility: No need to manually refresh; visualizations update as the data
+changes.
+● Customization: Edit tiles to show tables, charts, or graphs depending on what best
+represents the data.
+● Data Discovery: Use the visual interface to aggregate and explore "data in motion"
+without writing additional code.
+
+-- 49 of 118 --
+
+Use Eventstream
+
+-- 50 of 118 --
+

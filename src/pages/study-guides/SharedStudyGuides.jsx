@@ -1,31 +1,65 @@
 import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
-import { BookOpen, ChevronRight, Database, Radio, Sparkles } from "lucide-react";
+import { ChevronRight, Database, Radio, Sparkles, Warehouse, Activity, Shield, GitBranch } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../../lib/theme.jsx";
 import { Footer } from "../../components/Shared.jsx";
 
 const TOPICS = [
   {
     number: "01",
-    title: "Dataflows, Pipelines, and Ingestion Choices",
-    description: "Compare Dataflows Gen2, pipelines, and Copy Data for DP-700 and DP-600 scenarios.",
+    title: "Ingest and Transform Data",
+    description: "Batch and streaming ingestion, Dataflows Gen2, pipelines, shortcuts, Spark, SQL, and KQL transformations.",
     path: "/study-guides/shared/dataflows-pipelines",
     icon: Database,
     available: true,
   },
   {
     number: "02",
-    title: "Spark Notebooks and Delta",
-    description: "Spark pools, DataFrames, schemas, partitioning, Spark SQL, and Delta tables.",
+    title: "Lakehouse, Spark, and Delta",
+    description: "Spark pools, DataFrames, schemas, partitioning, Spark SQL, Delta tables, and medallion architecture.",
+    path: "/study-guides/shared/spark-notebooks-delta",
     icon: Sparkles,
-    available: false,
+    available: true,
   },
   {
     number: "03",
-    title: "Eventhouse and KQL",
-    description: "Real-time ingestion, KQL query patterns, materialized views, and stored functions.",
+    title: "Streaming Data and Real-Time Intelligence",
+    description: "Eventstreams, Eventhouse, KQL query patterns, materialized views, stored functions, and Activator.",
+    path: "/study-guides/shared/eventhouse-kql",
     icon: Radio,
-    available: false,
+    available: true,
+  },
+  {
+    number: "04",
+    title: "Warehouse and Dimensional Modelling",
+    description: "Warehouse T-SQL, star schemas, loading strategies, analytical functions, and slowly changing dimensions.",
+    path: "/study-guides/shared/warehouse-dimensional-modeling",
+    icon: Warehouse,
+    available: true,
+  },
+  {
+    number: "05",
+    title: "Monitor and Optimize an Analytics Solution",
+    description: "Monitor Fabric items, resolve ingestion and transformation errors, and optimize Lakehouse, Spark, SQL, and real-time workloads.",
+    path: "/study-guides/shared/monitoring-optimization",
+    icon: Activity,
+    available: true,
+  },
+  {
+    number: "06",
+    title: "Manage Security and Governance",
+    description: "Workspace and item access, row, column, object, and file controls, masking, labels, OneLake security, and auditing.",
+    path: "/study-guides/shared/security-governance",
+    icon: Shield,
+    available: true,
+  },
+  {
+    number: "07",
+    title: "Manage and Implement an Analytics Solution",
+    description: "Workspace settings, Git, database projects, deployment pipelines, orchestration, security, governance, and exam scenarios.",
+    path: "/study-guides/shared/lifecycle-orchestration",
+    icon: GitBranch,
+    available: true,
   },
 ];
 

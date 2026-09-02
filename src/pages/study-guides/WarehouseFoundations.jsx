@@ -1,0 +1,17 @@
+import { Head as Helmet } from "vite-react-ssg";
+import { Link } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Database, GitBranch, Layers } from "lucide-react";
+import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
+import { Footer } from "../../components/Shared.jsx";
+
+const TOPICS = [
+  ["Warehouse", "A Fabric Warehouse provides a relational T-SQL surface for dimensional modeling and analytical workloads."],
+  ["Star schema", "Separate measurable facts from descriptive dimensions so filters and aggregations behave predictably."],
+  ["Loading strategy", "Choose full or incremental loading based on volume, change detection, and the required refresh window."],
+  ["Slowly changing dimensions", "Preserve or overwrite dimension history according to the reporting requirement."],
+];
+
+export function WarehouseFoundations() {
+  const TOKENS = useTheme();
+  return <div className="min-h-full flex flex-col"><Helmet><title>Warehouse and Dimensional Modeling | FabricPrep</title><link rel="canonical" href="https://fabricprep.com/study-guides/shared/warehouse-dimensional-modeling" /><meta name="description" content="Study Fabric Warehouse and dimensional modeling for DP-700 and DP-600." /></Helmet><main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full"><Link to="/study-guides/shared" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}><ArrowLeft size={14} /> In-Depth Fabric Learning Path</Link><div className="text-xs uppercase mb-3 px-3 py-1 rounded-full inline-block" style={{ color: TOKENS.azure, letterSpacing: "0.14em", border: `1px solid ${TOKENS.azure}40`, fontFamily: FONT_MONO }}>Topic 04 · DP-700 · DP-600</div><h1 className="text-2xl sm:text-3xl font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>Warehouse and Dimensional Modeling</h1><p className="mt-3 text-sm" style={{ color: TOKENS.inkMuted }}>Learn how relational warehouse design supports reliable analytical reporting in Microsoft Fabric.</p><div className="grid sm:grid-cols-2 gap-4 mt-8">{TOPICS.map(([title, body], index) => <article key={title} className="rounded-xl p-5" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}><Database size={20} color={TOKENS.azure} className="mb-3" /><h2 className="text-base font-semibold mb-2" style={{ color: TOKENS.ink }}>{String(index + 1).padStart(2, "0")} · {title}</h2><p className="text-sm" style={{ color: TOKENS.inkMuted }}>{body}</p></article>)}</div><div className="rounded-xl p-5 mt-6" style={{ background: `${TOKENS.amber}12`, border: `1px solid ${TOKENS.amber}40` }}><h2 className="text-base font-semibold mb-2" style={{ color: TOKENS.ink }}>Exam checklist</h2><p className="text-sm" style={{ color: TOKENS.inkMuted }}>Know when to use a warehouse, how facts and dimensions relate, and how loading and historical-change decisions affect analytics.</p></div><div className="flex items-center justify-between gap-3 mt-8 pt-6" style={{ borderTop: `1px solid ${TOKENS.panelBorder}` }}><Link to="/study-guides/shared/eventhouse-kql" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}><ArrowLeft size={14} /> Previous topic</Link><Link to="/study-guides/shared/monitoring-optimization" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>Next topic <ArrowRight size={14} /></Link></div></main><Footer /></div>;
+}
