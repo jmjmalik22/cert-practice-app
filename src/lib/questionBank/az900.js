@@ -1276,6 +1276,272 @@ export const AZ_900 = {
       "correct": "a",
       "explanation": "Cloud elasticity lets resources scale up during peak demand and back down afterward, and consumption-based pricing means you only pay for what you use — well suited to spiky workloads like holiday sales."
     },
+	
+	// AZ-900 — 20 new questions (az900-53 through az900-72)
+// Paste this block into src/lib/questionBank/az900.js
+// Insert it right BEFORE the closing "  ]\n};" at the end of the file
+// (i.e., right after the az900-52 question object, adding a comma after that object's closing "}")
+
+    {
+      "id": "az900-53",
+      "domain": "Describe cloud concepts",
+      "question": "A company wants to shift its IT spending from large upfront purchases of hardware to smaller, ongoing pay-as-you-go charges. Which cloud computing benefit does this describe?",
+      "options": [
+        { "id": "a", "text": "Consumption-based pricing (moving CapEx to OpEx)" },
+        { "id": "b", "text": "High availability" },
+        { "id": "c", "text": "Global scale" },
+        { "id": "d", "text": "Fault tolerance" }
+      ],
+      "correct": "a",
+      "explanation": "The consumption-based (pay-as-you-go) model lets organizations replace large capital expenditures (CapEx) on hardware with smaller, ongoing operating expenses (OpEx), paying only for what they use."
+    },
+    {
+      "id": "az900-54",
+      "domain": "Describe cloud concepts",
+      "question": "Because Microsoft purchases hardware and datacenter capacity at massive scale across millions of customers, it can offer Azure services at a lower cost than most individual organizations could achieve on their own. Which concept does this describe?",
+      "options": [
+        { "id": "a", "text": "Economies of scale" },
+        { "id": "b", "text": "High availability" },
+        { "id": "c", "text": "Elasticity" },
+        { "id": "d", "text": "Fault tolerance" }
+      ],
+      "correct": "a",
+      "explanation": "Economies of scale mean that as a cloud provider's operations grow larger, its per-unit costs go down, savings it can pass on to customers."
+    },
+    {
+      "id": "az900-55",
+      "domain": "Describe cloud concepts",
+      "question": "A web application is struggling under heavy traffic. Instead of upgrading to a bigger virtual machine, the team adds several more VM instances behind a load balancer to spread the load. Which type of scaling is this?",
+      "options": [
+        { "id": "a", "text": "Horizontal scaling (scale out)" },
+        { "id": "b", "text": "Vertical scaling (scale up)" },
+        { "id": "c", "text": "Autoscaling down" },
+        { "id": "d", "text": "Fault tolerance" }
+      ],
+      "correct": "a",
+      "explanation": "Horizontal scaling (scaling out) adds more instances of a resource to share the load, as opposed to vertical scaling (scaling up), which increases the size of an existing resource."
+    },
+    {
+      "id": "az900-56",
+      "domain": "Describe cloud concepts",
+      "question": "Which term best describes a cloud system's ability to automatically add and remove resources in response to changing demand, without manual intervention?",
+      "options": [
+        { "id": "a", "text": "Elasticity" },
+        { "id": "b", "text": "Scalability" },
+        { "id": "c", "text": "High availability" },
+        { "id": "d", "text": "Fault tolerance" }
+      ],
+      "correct": "a",
+      "explanation": "Elasticity specifically refers to the automatic, dynamic adjustment of resources to match current demand; scalability more broadly refers to the ability to increase or decrease resources, whether automatic or not."
+    },
+    {
+      "id": "az900-57",
+      "domain": "Describe cloud concepts",
+      "question": "An application is designed so that if one component fails, the system keeps running with no interruption to users because a backup component immediately takes over. What is this design goal called?",
+      "options": [
+        { "id": "a", "text": "Fault tolerance" },
+        { "id": "b", "text": "Elasticity" },
+        { "id": "c", "text": "Agility" },
+        { "id": "d", "text": "Economies of scale" }
+      ],
+      "correct": "a",
+      "explanation": "Fault tolerance is the ability of a system to remain operational even when one or more of its components fail, typically achieved through redundancy."
+    },
+    {
+      "id": "az900-58",
+      "domain": "Describe cloud concepts",
+      "question": "Which term describes the practices and services used to restore business operations to their previous state after a major outage, such as a natural disaster?",
+      "options": [
+        { "id": "a", "text": "Disaster recovery" },
+        { "id": "b", "text": "High availability" },
+        { "id": "c", "text": "Scalability" },
+        { "id": "d", "text": "Agility" }
+      ],
+      "correct": "a",
+      "explanation": "Disaster recovery refers to the plans, tools, and services used to recover applications and data and resume normal business operations after a significant disruptive event."
+    },
+    {
+      "id": "az900-59",
+      "domain": "Describe cloud concepts",
+      "question": "A startup can launch a new global service in days by provisioning cloud resources on demand, rather than waiting weeks to procure and install physical servers. Which cloud benefit does this illustrate?",
+      "options": [
+        { "id": "a", "text": "Agility" },
+        { "id": "b", "text": "Economies of scale" },
+        { "id": "c", "text": "Fault tolerance" },
+        { "id": "d", "text": "Reliability" }
+      ],
+      "correct": "a",
+      "explanation": "Cloud agility is the ability to quickly develop, test, and launch software applications by provisioning and deprovisioning resources on demand."
+    },
+    {
+      "id": "az900-60",
+      "domain": "Describe cloud concepts",
+      "question": "A company wants full control over the operating system and networking configuration of its virtual servers, while Microsoft manages only the underlying physical infrastructure. Which cloud service model best fits this need?",
+      "options": [
+        { "id": "a", "text": "Infrastructure as a Service (IaaS)" },
+        { "id": "b", "text": "Platform as a Service (PaaS)" },
+        { "id": "c", "text": "Software as a Service (SaaS)" },
+        { "id": "d", "text": "Function as a Service" }
+      ],
+      "correct": "a",
+      "explanation": "IaaS gives customers the most control, letting them manage operating systems, networking, and storage, while the provider manages only the physical datacenter, hardware, and virtualization layer."
+    },
+    {
+      "id": "az900-61",
+      "domain": "Describe cloud concepts",
+      "question": "A development team wants to focus purely on writing and deploying application code without managing the underlying servers, operating system patching, or runtime configuration. Which service model is the best fit?",
+      "options": [
+        { "id": "a", "text": "Platform as a Service (PaaS)" },
+        { "id": "b", "text": "Infrastructure as a Service (IaaS)" },
+        { "id": "c", "text": "Software as a Service (SaaS)" },
+        { "id": "d", "text": "On-premises hosting" }
+      ],
+      "correct": "a",
+      "explanation": "PaaS provides a managed platform (runtime, middleware, OS) so developers can focus on building and deploying applications without handling the underlying infrastructure."
+    },
+    {
+      "id": "az900-62",
+      "domain": "Describe cloud concepts",
+      "question": "Employees access a fully managed email service through a web browser, with Microsoft responsible for maintaining the application, infrastructure, and updates. Which cloud service model is this?",
+      "options": [
+        { "id": "a", "text": "Software as a Service (SaaS)" },
+        { "id": "b", "text": "Platform as a Service (PaaS)" },
+        { "id": "c", "text": "Infrastructure as a Service (IaaS)" },
+        { "id": "d", "text": "Serverless computing" }
+      ],
+      "correct": "a",
+      "explanation": "SaaS delivers a complete, ready-to-use application over the internet, with the provider managing everything from the infrastructure up through the application itself."
+    },
+    {
+      "id": "az900-63",
+      "domain": "Describe cloud concepts",
+      "question": "A developer writes a small function that runs only when triggered by an event, such as a file upload, and is billed only for the compute time actually consumed. Which Azure compute concept does this describe?",
+      "options": [
+        { "id": "a", "text": "Serverless computing (e.g., Azure Functions)" },
+        { "id": "b", "text": "Infrastructure as a Service" },
+        { "id": "c", "text": "A dedicated virtual machine" },
+        { "id": "d", "text": "An availability set" }
+      ],
+      "correct": "a",
+      "explanation": "Serverless computing lets you run event-triggered code without provisioning or managing servers, and you're billed based on actual execution time and resources consumed."
+    },
+    {
+      "id": "az900-64",
+      "domain": "Describe cloud concepts",
+      "question": "A government agency must keep all its data and infrastructure on hardware it owns and controls due to strict regulatory requirements, but still wants cloud-like management tools. Which deployment model best fits?",
+      "options": [
+        { "id": "a", "text": "Private cloud" },
+        { "id": "b", "text": "Public cloud" },
+        { "id": "c", "text": "Hybrid cloud" },
+        { "id": "d", "text": "Community cloud" }
+      ],
+      "correct": "a",
+      "explanation": "A private cloud is operated solely for a single organization, giving it full control over hardware and data location while still offering cloud-style management and self-service capabilities."
+    },
+    {
+      "id": "az900-65",
+      "domain": "Describe Azure architecture and services",
+      "question": "Azure groups its datacenters into geographic areas, and many regions are matched with a partner region hundreds of miles away for coordinated disaster recovery. What is this partner relationship called?",
+      "options": [
+        { "id": "a", "text": "A region pair" },
+        { "id": "b", "text": "An availability zone" },
+        { "id": "c", "text": "A resource group" },
+        { "id": "d", "text": "A management group" }
+      ],
+      "correct": "a",
+      "explanation": "Region pairs are two Azure regions within the same geography that are matched together; Azure prioritizes recovery of at least one region in a pair and staggers planned maintenance between them."
+    },
+    {
+      "id": "az900-66",
+      "domain": "Describe Azure management and governance",
+      "question": "Which Azure governance tool enforces organizational rules, such as requiring all resources to be deployed only to specific regions, and evaluates existing resources for compliance?",
+      "options": [
+        { "id": "a", "text": "Azure Policy" },
+        { "id": "b", "text": "Role-based access control (RBAC)" },
+        { "id": "c", "text": "Resource locks" },
+        { "id": "d", "text": "Azure Blueprints" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Policy evaluates resources against defined rules (like allowed regions or required tags) and can enforce or audit compliance, whereas RBAC controls who can perform which actions."
+    },
+    {
+      "id": "az900-67",
+      "domain": "Describe Azure management and governance",
+      "question": "A team lead needs to grant a contractor permission to manage virtual machines in a single resource group, without giving access to the rest of the subscription. Which feature should be used?",
+      "options": [
+        { "id": "a", "text": "Role-based access control (RBAC) assigned at the resource group scope" },
+        { "id": "b", "text": "A resource lock" },
+        { "id": "c", "text": "An Azure Policy definition" },
+        { "id": "d", "text": "A management group" }
+      ],
+      "correct": "a",
+      "explanation": "RBAC lets you assign roles at different scopes (management group, subscription, resource group, or resource), so access can be limited precisely to the resource group in question."
+    },
+    {
+      "id": "az900-68",
+      "domain": "Describe Azure management and governance",
+      "question": "An administrator wants to prevent a critical production database from being accidentally deleted, while still allowing its settings to be modified. Which feature should be applied?",
+      "options": [
+        { "id": "a", "text": "A CanNotDelete resource lock" },
+        { "id": "b", "text": "A ReadOnly resource lock" },
+        { "id": "c", "text": "An Azure Policy deny rule" },
+        { "id": "d", "text": "An RBAC Reader role" }
+      ],
+      "correct": "a",
+      "explanation": "A CanNotDelete lock allows resources to be read and modified but blocks deletion, which is exactly the protection needed here; a ReadOnly lock would also block modification."
+    },
+    {
+      "id": "az900-69",
+      "domain": "Describe Azure management and governance",
+      "question": "A large enterprise wants to apply the same Azure Policy and access controls across dozens of subscriptions at once, rather than configuring each subscription individually. Which feature enables this?",
+      "options": [
+        { "id": "a", "text": "Management groups" },
+        { "id": "b", "text": "Resource groups" },
+        { "id": "c", "text": "Tags" },
+        { "id": "d", "text": "Azure Advisor" }
+      ],
+      "correct": "a",
+      "explanation": "Management groups sit above subscriptions in the hierarchy, letting organizations apply policies and access controls once and have them inherited across many subscriptions."
+    },
+    {
+      "id": "az900-70",
+      "domain": "Describe Azure management and governance",
+      "question": "Which Azure service allows an organization to package a repeatable set of resources, role assignments, and policies into a single definition that can be deployed consistently to meet standards such as ISO or regulatory requirements?",
+      "options": [
+        { "id": "a", "text": "Azure Blueprints" },
+        { "id": "b", "text": "Azure Advisor" },
+        { "id": "c", "text": "Azure Monitor" },
+        { "id": "d", "text": "Cost Management + Billing" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Blueprints package together templates, RBAC assignments, and policies as a repeatable definition, so environments can be deployed consistently to meet organizational or compliance standards."
+    },
+    {
+      "id": "az900-71",
+      "domain": "Describe Azure management and governance",
+      "question": "A finance team wants to receive an automatic alert if Azure spending for a subscription is on track to exceed a set monthly amount. Which capability should they configure?",
+      "options": [
+        { "id": "a", "text": "A budget in Cost Management + Billing" },
+        { "id": "b", "text": "A resource lock" },
+        { "id": "c", "text": "An Azure Policy definition" },
+        { "id": "d", "text": "Azure Advisor recommendations" }
+      ],
+      "correct": "a",
+      "explanation": "Cost Management + Billing lets you set budgets with configurable alert thresholds, notifying stakeholders when spending approaches or exceeds the defined amount."
+    },
+    {
+      "id": "az900-72",
+      "domain": "Describe Azure management and governance",
+      "question": "Where can an organization find Microsoft's documentation on how Azure meets specific regulatory and compliance standards, such as GDPR or ISO 27001, to support its own audits?",
+      "options": [
+        { "id": "a", "text": "The Microsoft Trust Center / Service Trust Portal" },
+        { "id": "b", "text": "Azure Advisor" },
+        { "id": "c", "text": "Azure Monitor" },
+        { "id": "d", "text": "A resource group" }
+      ],
+      "correct": "a",
+      "explanation": "The Microsoft Trust Center and Service Trust Portal provide compliance documentation, audit reports, and resources that help customers understand how Azure meets various regulatory and industry standards."
+    },	
     {
       "id": "az900-52",
       "domain": "Describe Azure architecture and services",

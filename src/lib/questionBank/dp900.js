@@ -1276,6 +1276,273 @@ export const DP_900 = {
       "correct": "a",
       "explanation": "A card (or KPI) visual displays a single important number prominently, ideal for at-a-glance metrics like total revenue, without the complexity of a chart."
     },
+	
+	// DP-900 — 20 new questions (dp900-53 through dp900-72)
+// Paste this block into src/lib/questionBank/dp900.js
+// Insert it right BEFORE the closing "  ]\n};" at the end of the file
+// (i.e., right after the dp900-52 question object, adding a comma after that object's closing "}")
+
+    {
+      "id": "dp900-53",
+      "domain": "Describe core data concepts",
+      "question": "A retailer stores sales transactions in rigid tables with predefined columns, customer emails as free-form text logs, and product photos as image files. Which term correctly groups these three by data type?",
+      "options": [
+        { "id": "a", "text": "Structured (transactions), unstructured (logs and images)" },
+        { "id": "b", "text": "All three are structured data" },
+        { "id": "c", "text": "All three are semi-structured data" },
+        { "id": "d", "text": "Structured (transactions), semi-structured (logs), structured (images)" }
+      ],
+      "correct": "a",
+      "explanation": "Structured data fits a fixed schema (rows/columns), like the sales transactions. Free-form text and image files don't follow a fixed schema and are classified as unstructured data."
+    },
+    {
+      "id": "dp900-54",
+      "domain": "Describe core data concepts",
+      "question": "A banking system needs to process thousands of individual account transactions per second with immediate consistency for balance checks. Which type of workload is this?",
+      "options": [
+        { "id": "a", "text": "Online transaction processing (OLTP)" },
+        { "id": "b", "text": "Online analytical processing (OLAP)" },
+        { "id": "c", "text": "Batch reporting" },
+        { "id": "d", "text": "Data archiving" }
+      ],
+      "correct": "a",
+      "explanation": "OLTP workloads handle high volumes of short, frequent read/write transactions that must be processed quickly and consistently, such as banking transactions."
+    },
+    {
+      "id": "dp900-55",
+      "domain": "Describe core data concepts",
+      "question": "Which data professional role is primarily responsible for designing and building pipelines that move and transform data from source systems into a form ready for analysis?",
+      "options": [
+        { "id": "a", "text": "Data engineer" },
+        { "id": "b", "text": "Database administrator" },
+        { "id": "c", "text": "Data analyst" },
+        { "id": "d", "text": "Data scientist" }
+      ],
+      "correct": "a",
+      "explanation": "Data engineers build and maintain the data pipelines and infrastructure that ingest, transform, and prepare data, distinct from DBAs (who manage database systems) and analysts (who interpret data)."
+    },
+    {
+      "id": "dp900-56",
+      "domain": "Describe core data concepts",
+      "question": "A system processes sensor readings the instant they arrive so a dashboard can show near real-time equipment status, rather than waiting to process readings in scheduled groups. Which processing approach is this?",
+      "options": [
+        { "id": "a", "text": "Streaming (real-time) processing" },
+        { "id": "b", "text": "Batch processing" },
+        { "id": "c", "text": "Extract, load, transform (ELT) on a nightly schedule" },
+        { "id": "d", "text": "Offline archival processing" }
+      ],
+      "correct": "a",
+      "explanation": "Streaming processing handles data continuously as it arrives, enabling near real-time insights, in contrast to batch processing which groups and processes data at scheduled intervals."
+    },
+    {
+      "id": "dp900-57",
+      "domain": "Describe core data concepts",
+      "question": "For a large analytical table that is frequently queried by aggregating just a few columns (e.g., summing sales by region), which file storage format is generally most efficient?",
+      "options": [
+        { "id": "a", "text": "A columnar format such as Parquet" },
+        { "id": "b", "text": "A row-based format such as CSV" },
+        { "id": "c", "text": "A binary image format" },
+        { "id": "d", "text": "An XML document" }
+      ],
+      "correct": "a",
+      "explanation": "Columnar formats like Parquet store data column-by-column, letting analytical queries read only the columns they need, which is far more efficient than row-based formats for aggregation-heavy workloads."
+    },
+    {
+      "id": "dp900-58",
+      "domain": "Identify considerations for relational data on Azure",
+      "question": "In a relational database, which type of key uniquely identifies each row in a table and cannot contain NULL values?",
+      "options": [
+        { "id": "a", "text": "Primary key" },
+        { "id": "b", "text": "Foreign key" },
+        { "id": "c", "text": "Composite index" },
+        { "id": "d", "text": "Candidate column" }
+      ],
+      "correct": "a",
+      "explanation": "A primary key uniquely identifies each row in a table and, by definition, must always contain a value (never NULL)."
+    },
+    {
+      "id": "dp900-59",
+      "domain": "Identify considerations for relational data on Azure",
+      "question": "A database designer splits a large, redundant Customers table into separate Customers and Addresses tables linked by a key, to reduce duplicate data. What is this process called?",
+      "options": [
+        { "id": "a", "text": "Normalization" },
+        { "id": "b", "text": "Denormalization" },
+        { "id": "c", "text": "Sharding" },
+        { "id": "d", "text": "Indexing" }
+      ],
+      "correct": "a",
+      "explanation": "Normalization organizes data into related tables to reduce redundancy and improve data integrity, typically by splitting data based on functional dependencies."
+    },
+    {
+      "id": "dp900-60",
+      "domain": "Identify considerations for relational data on Azure",
+      "question": "Which category of T-SQL statements is used to define and modify the structure of database objects, such as CREATE TABLE and ALTER TABLE?",
+      "options": [
+        { "id": "a", "text": "Data Definition Language (DDL)" },
+        { "id": "b", "text": "Data Manipulation Language (DML)" },
+        { "id": "c", "text": "Data Control Language (DCL)" },
+        { "id": "d", "text": "Transaction Control Language (TCL)" }
+      ],
+      "correct": "a",
+      "explanation": "DDL statements (CREATE, ALTER, DROP) define and modify database object structure, while DML statements (SELECT, INSERT, UPDATE, DELETE) manipulate the data itself."
+    },
+    {
+      "id": "dp900-61",
+      "domain": "Identify considerations for relational data on Azure",
+      "question": "A company wants a single, fully isolated Azure SQL database with its own dedicated resources and predictable performance for one specific application. Which deployment option best fits?",
+      "options": [
+        { "id": "a", "text": "A single database in Azure SQL Database" },
+        { "id": "b", "text": "An elastic pool" },
+        { "id": "c", "text": "Azure SQL Managed Instance" },
+        { "id": "d", "text": "SQL Server on an Azure VM" }
+      ],
+      "correct": "a",
+      "explanation": "A single database provides isolated compute and storage resources for one workload, which is appropriate when you don't need to share resources across multiple databases (as an elastic pool would allow)."
+    },
+    {
+      "id": "dp900-62",
+      "domain": "Identify considerations for relational data on Azure",
+      "question": "A workload has highly unpredictable, intermittent usage and the team wants Azure SQL Database to automatically pause and resume compute to save cost during idle periods. Which compute tier should they choose?",
+      "options": [
+        { "id": "a", "text": "Serverless compute tier" },
+        { "id": "b", "text": "Provisioned compute tier" },
+        { "id": "c", "text": "Business Critical service tier" },
+        { "id": "d", "text": "Hyperscale with fixed vCores" }
+      ],
+      "correct": "a",
+      "explanation": "The serverless compute tier automatically scales compute based on workload demand and can pause during inactive periods, billing only for compute used — ideal for intermittent, unpredictable workloads."
+    },
+    {
+      "id": "dp900-63",
+      "domain": "Describe considerations for working with non-relational data on Azure",
+      "question": "A team is migrating a MongoDB application and wants to keep using existing MongoDB drivers and tools while running on a fully managed Azure service. Which Azure Cosmos DB API should they use?",
+      "options": [
+        { "id": "a", "text": "The API for MongoDB" },
+        { "id": "b", "text": "The Core (SQL) API" },
+        { "id": "c", "text": "The API for Table" },
+        { "id": "d", "text": "The API for Cassandra" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Cosmos DB's API for MongoDB implements the MongoDB wire protocol, letting existing MongoDB drivers, SDKs, and tools work with minimal changes while data is stored in Cosmos DB."
+    },
+    {
+      "id": "dp900-64",
+      "domain": "Describe considerations for working with non-relational data on Azure",
+      "question": "An application needs extremely fast lookups of user session data by a single unique session ID, with no need for complex queries across other fields. Which NoSQL data model is best suited?",
+      "options": [
+        { "id": "a", "text": "Key-value store" },
+        { "id": "b", "text": "Graph database" },
+        { "id": "c", "text": "Columnar database" },
+        { "id": "d", "text": "Relational database" }
+      ],
+      "correct": "a",
+      "explanation": "Key-value stores are optimized for simple, extremely fast lookups by a unique key, making them ideal for use cases like session state or caching where queries are always by a single known key."
+    },
+    {
+      "id": "dp900-65",
+      "domain": "Describe considerations for working with non-relational data on Azure",
+      "question": "A content management system stores articles where each item can have a different, flexible set of fields (some have images, some have videos, some have neither), all serialized as JSON. Which data store type fits best?",
+      "options": [
+        { "id": "a", "text": "Document database" },
+        { "id": "b", "text": "Relational database with a fixed schema" },
+        { "id": "c", "text": "Block blob storage without indexing" },
+        { "id": "d", "text": "Graph database" }
+      ],
+      "correct": "a",
+      "explanation": "Document databases store semi-structured data (commonly JSON) where each document's schema can vary, making them well suited to content with flexible, evolving fields."
+    },
+    {
+      "id": "dp900-66",
+      "domain": "Describe considerations for working with non-relational data on Azure",
+      "question": "Which Azure storage service is purpose-built for storing large amounts of simple, schemaless key-attribute data (like NoSQL rows) at low cost, distinct from storing files or unstructured blobs?",
+      "options": [
+        { "id": "a", "text": "Azure Table Storage" },
+        { "id": "b", "text": "Azure Blob Storage" },
+        { "id": "c", "text": "Azure Files" },
+        { "id": "d", "text": "Azure Disk Storage" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Table Storage is a low-cost NoSQL key-value store for structured, schemaless data, whereas Blob Storage is designed for unstructured binary objects like documents, images, and videos."
+    },
+    {
+      "id": "dp900-67",
+      "domain": "Describe an analytics workload on Azure",
+      "question": "Which Azure service brings together big data exploration, data warehousing, and data integration into a single unified analytics platform?",
+      "options": [
+        { "id": "a", "text": "Azure Synapse Analytics" },
+        { "id": "b", "text": "Azure SQL Database" },
+        { "id": "c", "text": "Azure Table Storage" },
+        { "id": "d", "text": "Azure Cosmos DB" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Synapse Analytics combines data warehousing, big data analytics (via Spark), and data integration pipelines into one unified analytics service."
+    },
+    {
+      "id": "dp900-68",
+      "domain": "Describe an analytics workload on Azure",
+      "question": "An organization stores massive amounts of raw data in its native format at low cost, planning to define structure only when the data is later read for analysis. Which storage concept does this describe?",
+      "options": [
+        { "id": "a", "text": "A data lake" },
+        { "id": "b", "text": "A data warehouse" },
+        { "id": "c", "text": "A relational OLTP database" },
+        { "id": "d", "text": "An in-memory cache" }
+      ],
+      "correct": "a",
+      "explanation": "A data lake stores large volumes of raw data in its native format, applying schema only at read time (schema-on-read), unlike a data warehouse which enforces a defined schema upfront."
+    },
+    {
+      "id": "dp900-69",
+      "domain": "Describe an analytics workload on Azure",
+      "question": "A team loads raw data into a cloud data platform first, then uses the platform's own compute engine to transform it into a clean, query-ready form. Which pattern does this describe, as opposed to transforming data before loading it?",
+      "options": [
+        { "id": "a", "text": "Extract, Load, Transform (ELT)" },
+        { "id": "b", "text": "Extract, Transform, Load (ETL)" },
+        { "id": "c", "text": "Online transaction processing" },
+        { "id": "d", "text": "Data replication" }
+      ],
+      "correct": "a",
+      "explanation": "ELT loads raw data into the target platform first and transforms it there using the platform's compute power, whereas ETL transforms data before loading it into the destination."
+    },
+    {
+      "id": "dp900-70",
+      "domain": "Describe an analytics workload on Azure",
+      "question": "Which Azure service is primarily used to visually design and orchestrate data pipelines that move and transform data between various sources on a schedule?",
+      "options": [
+        { "id": "a", "text": "Azure Data Factory" },
+        { "id": "b", "text": "Power BI" },
+        { "id": "c", "text": "Azure Table Storage" },
+        { "id": "d", "text": "Azure SQL Database" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Data Factory is a cloud-based data integration service used to create, schedule, and orchestrate ETL/ELT pipelines that move and transform data across sources."
+    },
+    {
+      "id": "dp900-71",
+      "domain": "Describe an analytics workload on Azure",
+      "question": "In a data warehouse designed with a star schema, what role do dimension tables play?",
+      "options": [
+        { "id": "a", "text": "They provide descriptive attributes (like product name or region) used to filter and group the numeric data in fact tables" },
+        { "id": "b", "text": "They store only numeric measures such as sales totals" },
+        { "id": "c", "text": "They enforce transactional consistency for OLTP writes" },
+        { "id": "d", "text": "They replace the need for a fact table entirely" }
+      ],
+      "correct": "a",
+      "explanation": "In a star schema, dimension tables hold descriptive attributes (who, what, where, when) that surround a central fact table, which stores the numeric measures being analyzed, such as sales amounts."
+    },
+    {
+      "id": "dp900-72",
+      "domain": "Describe an analytics workload on Azure",
+      "question": "Which tool is most commonly used at the end of an analytics workload to create interactive reports and dashboards for business users?",
+      "options": [
+        { "id": "a", "text": "Power BI" },
+        { "id": "b", "text": "Azure Data Factory" },
+        { "id": "c", "text": "Azure Table Storage" },
+        { "id": "d", "text": "Azure Resource Manager" }
+      ],
+      "correct": "a",
+      "explanation": "Power BI is the business intelligence tool used to build interactive visualizations, reports, and dashboards that let business users explore and consume the results of an analytics workload."
+    }
+	,
     {
       "id": "dp900-52",
       "domain": "Describe core data concepts",
