@@ -26,6 +26,275 @@ export const PL_300 = {
       "correct": "a",
       "explanation": "Direct Lake reads Delta tables from OneLake directly, giving near-Import performance without requiring a separate data import step, unlike DirectQuery which queries the source live."
     },
+	
+	
+	
+	
+	// PL-300 — 20 new questions (pl300-53 through pl300-72)
+// Paste this block into src/lib/questionBank/pl300.js
+// Insert it right BEFORE the closing "  ]\n};" at the end of the file
+// (i.e., right after the pl300-52 question object, adding a comma after that object's closing "}")
+
+    {
+      "id": "pl300-53",
+      "domain": "Prepare the data",
+      "question": "In Power Query, each transformation you apply (filter rows, change type, split column) is recorded as a discrete, reorderable, and editable item. What are these called?",
+      "options": [
+        { "id": "a", "text": "Applied steps" },
+        { "id": "b", "text": "Measures" },
+        { "id": "c", "text": "Relationships" },
+        { "id": "d", "text": "Bookmarks" }
+      ],
+      "correct": "a",
+      "explanation": "Applied steps in Power Query represent each transformation in sequence, and because they're recorded individually, you can reorder, edit, or remove them, with the underlying M code updating automatically."
+    },
+    {
+      "id": "pl300-54",
+      "domain": "Prepare the data",
+      "question": "You try to combine data from two sources in Power Query, but the merge fails with a formula.firewall error. What is the most likely cause?",
+      "options": [
+        { "id": "a", "text": "The sources have conflicting privacy levels (e.g., one Private, one Public) that prevent data from being sent between them" },
+        { "id": "b", "text": "One of the tables has too many columns" },
+        { "id": "c", "text": "The report has not been published yet" },
+        { "id": "d", "text": "DAX measures haven't been created for either table" }
+      ],
+      "correct": "a",
+      "explanation": "Power Query's privacy levels (Public, Organizational, Private) control whether data can be combined between sources; conflicting privacy levels can trigger the formula firewall and block the operation to prevent unintended data leakage."
+    },
+    {
+      "id": "pl300-55",
+      "domain": "Model the data",
+      "question": "A data model has one central fact table connected directly to several dimension tables, each of which is a single flat table with no further branching. What is this modeling pattern called?",
+      "options": [
+        { "id": "a", "text": "A star schema" },
+        { "id": "b", "text": "A snowflake schema" },
+        { "id": "c", "text": "A many-to-many schema" },
+        { "id": "d", "text": "A composite model" }
+      ],
+      "correct": "a",
+      "explanation": "A star schema has a central fact table connected directly to flat, denormalized dimension tables, forming a shape like a star, in contrast to a snowflake schema where dimensions are further normalized into sub-tables."
+    },
+    {
+      "id": "pl300-56",
+      "domain": "Model the data",
+      "question": "A single row in a Customers table can relate to many rows in a Sales table, but each Sales row relates to only one customer. What relationship cardinality does this describe, from Customers to Sales?",
+      "options": [
+        { "id": "a", "text": "One-to-many" },
+        { "id": "b", "text": "Many-to-many" },
+        { "id": "c", "text": "One-to-one" },
+        { "id": "d", "text": "Many-to-one, from Customers' perspective" }
+      ],
+      "correct": "a",
+      "explanation": "A one-to-many relationship means one row on the 'one' side (Customers) can relate to many rows on the 'many' side (Sales), which is the most common and recommended relationship type in Power BI models."
+    },
+    {
+      "id": "pl300-57",
+      "domain": "Model the data",
+      "question": "Which statement correctly distinguishes a calculated column from a measure in Power BI?",
+      "options": [
+        { "id": "a", "text": "A calculated column is computed row-by-row and stored in the model, while a measure is calculated dynamically at query time based on the current filter context" },
+        { "id": "b", "text": "A measure is stored in the model and takes up storage space per row, while a calculated column is computed only when a visual requests it" },
+        { "id": "c", "text": "Calculated columns and measures are functionally identical in every way" },
+        { "id": "d", "text": "Measures cannot use DAX, only calculated columns can" }
+      ],
+      "correct": "a",
+      "explanation": "Calculated columns evaluate DAX for each row and are materialized (stored) in the model, increasing its size, whereas measures are calculated on the fly at query time using the current filter and row context, without being stored per row."
+    },
+    {
+      "id": "pl300-58",
+      "domain": "Model the data",
+      "question": "You write a DAX measure using CALCULATE to override the report's existing Year filter and always show sales for 2023 regardless of what year slicer value is selected. What is this technique called?",
+      "options": [
+        { "id": "a", "text": "Modifying filter context" },
+        { "id": "b", "text": "Creating a calculated column" },
+        { "id": "c", "text": "Defining a relationship" },
+        { "id": "d", "text": "Applying row-level security" }
+      ],
+      "correct": "a",
+      "explanation": "CALCULATE lets you modify the filter context that a DAX expression is evaluated in, such as overriding an existing filter (like the selected year) with a new one you specify directly in the formula."
+    },
+    {
+      "id": "pl300-59",
+      "domain": "Model the data",
+      "question": "Which DAX time intelligence function returns the value of a measure evaluated for the same period one year earlier, useful for year-over-year comparisons?",
+      "options": [
+        { "id": "a", "text": "SAMEPERIODLASTYEAR" },
+        { "id": "b", "text": "RELATED" },
+        { "id": "c", "text": "ALLEXCEPT" },
+        { "id": "d", "text": "SUMMARIZE" }
+      ],
+      "correct": "a",
+      "explanation": "SAMEPERIODLASTYEAR shifts the current filter context on a date column back by one year, making it a common building block for year-over-year comparison measures."
+    },
+    {
+      "id": "pl300-60",
+      "domain": "Model the data",
+      "question": "When a DAX measure iterates row-by-row inside a function like SUMX, evaluating an expression for each individual row before aggregating, what is that per-row evaluation environment called?",
+      "options": [
+        { "id": "a", "text": "Row context" },
+        { "id": "b", "text": "Filter context" },
+        { "id": "c", "text": "Query context" },
+        { "id": "d", "text": "Visual context" }
+      ],
+      "correct": "a",
+      "explanation": "Row context is the evaluation environment that exists when DAX processes one row at a time, such as inside iterator functions like SUMX, as distinct from filter context which comes from slicers, filters, and visuals."
+    },
+    {
+      "id": "pl300-61",
+      "domain": "Model the data",
+      "question": "A model combines an Import-mode table (fast, cached) with a DirectQuery table (always live against the source) in the same data model. What is this combination called?",
+      "options": [
+        { "id": "a", "text": "A composite model" },
+        { "id": "b", "text": "A snowflake schema" },
+        { "id": "c", "text": "Row-level security" },
+        { "id": "d", "text": "A paginated report" }
+      ],
+      "correct": "a",
+      "explanation": "A composite model mixes storage modes, such as Import and DirectQuery tables, within a single Power BI data model, letting you balance performance and data freshness across different tables."
+    },
+    {
+      "id": "pl300-62",
+      "domain": "Model the data",
+      "question": "You want users to be able to drill from Year down to Quarter down to Month down to Day on a single visual axis, using one field well entry. What model feature should you create?",
+      "options": [
+        { "id": "a", "text": "A hierarchy (e.g., a date hierarchy)" },
+        { "id": "b", "text": "A calculated table" },
+        { "id": "c", "text": "A many-to-many relationship" },
+        { "id": "d", "text": "A row-level security role" }
+      ],
+      "correct": "a",
+      "explanation": "A hierarchy groups related fields (like Year, Quarter, Month, Day) into a single drillable structure, letting users navigate between levels of detail directly within a visual."
+    },
+    {
+      "id": "pl300-63",
+      "domain": "Visualize and analyze the data",
+      "question": "A user right-clicks a data point in a summary chart and navigates to a detailed page filtered to just that context, such as clicking a region to see that region's individual transactions. What report feature enables this?",
+      "options": [
+        { "id": "a", "text": "A drillthrough page" },
+        { "id": "b", "text": "A bookmark" },
+        { "id": "c", "text": "A slicer" },
+        { "id": "d", "text": "A calculated column" }
+      ],
+      "correct": "a",
+      "explanation": "Drillthrough pages let users right-click a data point in one report page to navigate to a detail page that's automatically filtered to the context of what they clicked."
+    },
+    {
+      "id": "pl300-64",
+      "domain": "Visualize and analyze the data",
+      "question": "A report author wants to save the current state of filters, slicers, and visual visibility so a button can restore that exact view later, for guided data storytelling. Which feature should they use?",
+      "options": [
+        { "id": "a", "text": "Bookmarks" },
+        { "id": "b", "text": "Row-level security roles" },
+        { "id": "c", "text": "A composite model" },
+        { "id": "d", "text": "A calculated table" }
+      ],
+      "correct": "a",
+      "explanation": "Bookmarks capture the current state of a report page, including filters, slicer selections, and visual visibility, so that state can be restored later, commonly used to build guided, story-like navigation."
+    },
+    {
+      "id": "pl300-65",
+      "domain": "Visualize and analyze the data",
+      "question": "A business user wants to type a plain-language question like 'total sales by region last quarter' directly into a report and get an automatically generated visual as the answer. Which Power BI feature supports this?",
+      "options": [
+        { "id": "a", "text": "The Q&A visual" },
+        { "id": "b", "text": "A paginated report" },
+        { "id": "c", "text": "A DAX measure" },
+        { "id": "d", "text": "A gateway" }
+      ],
+      "correct": "a",
+      "explanation": "The Q&A visual uses natural language processing to interpret a typed question and automatically generate an appropriate visualization as the answer, without the user needing to build a chart manually."
+    },
+    {
+      "id": "pl300-66",
+      "domain": "Visualize and analyze the data",
+      "question": "In a matrix visual, you want cells with sales values above target to automatically appear in green and cells below target to appear in red, without manually coloring each cell. Which feature should you configure?",
+      "options": [
+        { "id": "a", "text": "Conditional formatting" },
+        { "id": "b", "text": "A bookmark" },
+        { "id": "c", "text": "A drillthrough filter" },
+        { "id": "d", "text": "A calculated column with fixed colors typed in" }
+      ],
+      "correct": "a",
+      "explanation": "Conditional formatting lets you apply rules or DAX-based color scales to a visual's cells, backgrounds, or data bars automatically based on the underlying values, such as highlighting values above or below a target."
+    },
+    {
+      "id": "pl300-67",
+      "domain": "Visualize and analyze the data",
+      "question": "When a user hovers over a data point, you want a mini report page with extra measures and a small chart to appear instead of the default single-value tooltip. What should you configure?",
+      "options": [
+        { "id": "a", "text": "A custom (report page) tooltip" },
+        { "id": "b", "text": "A drillthrough page" },
+        { "id": "c", "text": "A bookmark group" },
+        { "id": "d", "text": "A calculated table" }
+      ],
+      "correct": "a",
+      "explanation": "Custom (report page) tooltips let you design a dedicated small report page containing multiple visuals and measures, which then displays as a rich tooltip when a user hovers over a data point."
+    },
+    {
+      "id": "pl300-68",
+      "domain": "Visualize and analyze the data",
+      "question": "An analyst wants an AI-driven visual that automatically identifies the key drivers behind an increase in a metric, letting users expand branches to see which categories contribute most. Which visual should they use?",
+      "options": [
+        { "id": "a", "text": "The decomposition tree visual" },
+        { "id": "b", "text": "A basic bar chart" },
+        { "id": "c", "text": "A card visual" },
+        { "id": "d", "text": "A slicer" }
+      ],
+      "correct": "a",
+      "explanation": "The decomposition tree is an AI visual designed for root-cause and ad hoc exploration, letting users drill into a metric across multiple dimensions or use AI to automatically find the highest or lowest contributing values."
+    },
+    {
+      "id": "pl300-69",
+      "domain": "Manage and secure Power BI",
+      "question": "A workspace member should be able to publish reports and edit content, but must not be allowed to add or remove other members from the workspace. Which workspace role fits?",
+      "options": [
+        { "id": "a", "text": "Contributor" },
+        { "id": "b", "text": "Admin" },
+        { "id": "c", "text": "Viewer" },
+        { "id": "d", "text": "Member (with full admin rights)" }
+      ],
+      "correct": "a",
+      "explanation": "The Contributor role allows publishing and editing content within a workspace but does not grant permission to manage workspace access or membership, which is reserved for Admin (and, for member management, the Member role)."
+    },
+    {
+      "id": "pl300-70",
+      "domain": "Manage and secure Power BI",
+      "question": "An organization wants content to move through Dev, Test, and Production stages with controlled promotion and the ability to compare versions, rather than manually republishing to different workspaces. Which feature should they use?",
+      "options": [
+        { "id": "a", "text": "Deployment pipelines" },
+        { "id": "b", "text": "Row-level security roles" },
+        { "id": "c", "text": "A composite model" },
+        { "id": "d", "text": "A drillthrough page" }
+      ],
+      "correct": "a",
+      "explanation": "Deployment pipelines let organizations manage content through distinct Dev, Test, and Production stages, with the ability to compare stages and promote content in a controlled, repeatable way."
+    },
+    {
+      "id": "pl300-71",
+      "domain": "Manage and secure Power BI",
+      "question": "A report contains highly confidential financial data, and the organization wants a visible classification tag applied to it that also integrates with Microsoft Purview data protection policies. What should be applied?",
+      "options": [
+        { "id": "a", "text": "A sensitivity label" },
+        { "id": "b", "text": "A bookmark" },
+        { "id": "c", "text": "A calculated column" },
+        { "id": "d", "text": "A gateway" }
+      ],
+      "correct": "a",
+      "explanation": "Sensitivity labels classify and protect content based on its confidentiality level, integrating with Microsoft Purview information protection to enforce policies like encryption or access restrictions."
+    },
+    {
+      "id": "pl300-72",
+      "domain": "Manage and secure Power BI",
+      "question": "A dataset has been reviewed and approved by the organization's data governance team as an authoritative, trusted source for others to build reports on. Which action reflects this status in Power BI?",
+      "options": [
+        { "id": "a", "text": "Marking the dataset as Certified" },
+        { "id": "b", "text": "Applying a resource lock to the dataset" },
+        { "id": "c", "text": "Setting the dataset's storage mode to DirectQuery" },
+        { "id": "d", "text": "Deleting all existing relationships in the dataset" }
+      ],
+      "correct": "a",
+      "explanation": "Certification is an endorsement level (above Promoted) typically granted by a governance team, signaling to the organization that a dataset is a trusted, high-quality, authoritative source for building further content."
+    },
     {
       "id": "pl300-2",
       "domain": "Prepare the data",

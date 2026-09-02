@@ -1276,6 +1276,273 @@ export const AI_901 = {
       "correct": "a",
       "explanation": "Model training is the process where a machine learning algorithm iteratively adjusts internal parameters so its predictions increasingly align with the labeled training data provided."
     },
+	
+	
+	// AI-901 — 20 new questions (ai901-53 through ai901-72)
+// Paste this block into src/lib/questionBank/ai901.js
+// Insert it right BEFORE the closing "  ]\n};" at the end of the file
+// (i.e., right after the ai901-52 question object, adding a comma after that object's closing "}")
+
+    {
+      "id": "ai901-53",
+      "domain": "Identify AI concepts and capabilities",
+      "question": "A retailer wants a model that flags unusual spikes in transaction volume that don't match normal patterns, without being told in advance what a 'fraudulent' transaction looks like. Which AI workload category is this?",
+      "options": [
+        { "id": "a", "text": "Anomaly detection" },
+        { "id": "b", "text": "Knowledge mining" },
+        { "id": "c", "text": "Object detection" },
+        { "id": "d", "text": "Generative AI" }
+      ],
+      "correct": "a",
+      "explanation": "Anomaly detection workloads identify data points that deviate significantly from expected patterns, such as unusual transaction volumes, without needing predefined labels for what counts as anomalous."
+    },
+    {
+      "id": "ai901-54",
+      "domain": "Identify AI concepts and capabilities",
+      "question": "Which Responsible AI principle is primarily concerned with ensuring an AI system performs consistently and safely, including under unexpected conditions, and includes rigorous testing before deployment?",
+      "options": [
+        { "id": "a", "text": "Reliability and safety" },
+        { "id": "b", "text": "Inclusiveness" },
+        { "id": "c", "text": "Transparency" },
+        { "id": "d", "text": "Privacy and security" }
+      ],
+      "correct": "a",
+      "explanation": "Reliability and safety focuses on making sure AI systems operate as intended, handle edge cases and errors gracefully, and are thoroughly tested before and monitored after deployment."
+    },
+    {
+      "id": "ai901-55",
+      "domain": "Identify AI concepts and capabilities",
+      "question": "A model is trained on historical house sale prices to predict the sale price of a new listing, a continuous numeric value. Which type of machine learning task is this?",
+      "options": [
+        { "id": "a", "text": "Regression" },
+        { "id": "b", "text": "Classification" },
+        { "id": "c", "text": "Clustering" },
+        { "id": "d", "text": "Reinforcement learning" }
+      ],
+      "correct": "a",
+      "explanation": "Regression predicts a continuous numeric value, such as a price, whereas classification predicts a discrete category and clustering groups similar unlabeled items together."
+    },
+    {
+      "id": "ai901-56",
+      "domain": "Identify AI concepts and capabilities",
+      "question": "An analyst has customer purchase data with no labels and wants the algorithm to automatically group customers into segments with similar buying behavior. Which type of machine learning is this?",
+      "options": [
+        { "id": "a", "text": "Unsupervised learning (clustering)" },
+        { "id": "b", "text": "Supervised learning (classification)" },
+        { "id": "c", "text": "Supervised learning (regression)" },
+        { "id": "d", "text": "Reinforcement learning" }
+      ],
+      "correct": "a",
+      "explanation": "Unsupervised learning, such as clustering, finds structure and groupings in data without predefined labels, which fits the scenario of segmenting customers based on similarity alone."
+    },
+    {
+      "id": "ai901-57",
+      "domain": "Identify AI concepts and capabilities",
+      "question": "A classification model correctly predicts 90 out of 100 positive cases but also incorrectly flags 30 negative cases as positive. Which metric specifically measures the proportion of predicted positives that were actually correct?",
+      "options": [
+        { "id": "a", "text": "Precision" },
+        { "id": "b", "text": "Recall" },
+        { "id": "c", "text": "Overall accuracy" },
+        { "id": "d", "text": "Training loss" }
+      ],
+      "correct": "a",
+      "explanation": "Precision measures the proportion of positive predictions that were actually correct (true positives divided by all predicted positives), distinct from recall, which measures how many actual positives were correctly found."
+    },
+    {
+      "id": "ai901-58",
+      "domain": "Identify AI concepts and capabilities",
+      "question": "Which statement best describes the relationship between deep learning and traditional machine learning?",
+      "options": [
+        { "id": "a", "text": "Deep learning is a subset of machine learning that uses multi-layered neural networks to automatically learn complex patterns from large amounts of data" },
+        { "id": "b", "text": "Deep learning and machine learning are entirely unrelated fields" },
+        { "id": "c", "text": "Machine learning is a subset of deep learning" },
+        { "id": "d", "text": "Deep learning only applies to structured tabular data" }
+      ],
+      "correct": "a",
+      "explanation": "Deep learning is a specialized subset of machine learning that uses multi-layered (deep) neural networks, which are particularly effective at automatically learning complex patterns from large volumes of data such as images and text."
+    },
+    {
+      "id": "ai901-59",
+      "domain": "Identify AI concepts and capabilities",
+      "question": "A computer vision solution needs to locate and draw bounding boxes around every car in a photo, identifying where each one is, not just whether cars are present. Which computer vision task is this?",
+      "options": [
+        { "id": "a", "text": "Object detection" },
+        { "id": "b", "text": "Image classification" },
+        { "id": "c", "text": "Optical character recognition (OCR)" },
+        { "id": "d", "text": "Image generation" }
+      ],
+      "correct": "a",
+      "explanation": "Object detection identifies and locates multiple objects within an image, typically drawing bounding boxes around each one, unlike image classification which only assigns a single label to the whole image."
+    },
+    {
+      "id": "ai901-60",
+      "domain": "Identify AI concepts and capabilities",
+      "question": "A customer support tool automatically determines whether incoming chat messages express a positive, negative, or neutral tone. Which natural language processing capability is this?",
+      "options": [
+        { "id": "a", "text": "Sentiment analysis" },
+        { "id": "b", "text": "Key phrase extraction" },
+        { "id": "c", "text": "Language translation" },
+        { "id": "d", "text": "Speech-to-text transcription" }
+      ],
+      "correct": "a",
+      "explanation": "Sentiment analysis evaluates text to determine the emotional tone (positive, negative, or neutral) expressed within it, commonly used to gauge customer feedback or chat messages."
+    },
+    {
+      "id": "ai901-61",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "You want to browse a curated collection of foundation models from multiple providers (such as OpenAI and open-source models) and compare their capabilities before choosing one for your app. Which Microsoft Foundry feature should you use?",
+      "options": [
+        { "id": "a", "text": "The model catalog" },
+        { "id": "b", "text": "Prompt flow" },
+        { "id": "c", "text": "Content filtering settings" },
+        { "id": "d", "text": "A resource lock" }
+      ],
+      "correct": "a",
+      "explanation": "The model catalog in Microsoft Foundry provides a browsable collection of foundation models from various providers, letting you compare capabilities and deploy the model that best fits your scenario."
+    },
+    {
+      "id": "ai901-62",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "You need to design and orchestrate a multi-step workflow that chains together a prompt, a call to your own data source, and a post-processing step, then test it interactively. Which Foundry capability is designed for this?",
+      "options": [
+        { "id": "a", "text": "Prompt flow" },
+        { "id": "b", "text": "The model catalog" },
+        { "id": "c", "text": "Quota management" },
+        { "id": "d", "text": "Azure Monitor" }
+      ],
+      "correct": "a",
+      "explanation": "Prompt flow lets you visually design, orchestrate, and test multi-step workflows that combine prompts, data lookups, and custom logic into a single executable pipeline."
+    },
+    {
+      "id": "ai901-63",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "A generative AI application must automatically block responses containing hate speech, violence, or self-harm content before they reach the end user. Which Foundry capability provides this?",
+      "options": [
+        { "id": "a", "text": "Content filtering (content safety) system" },
+        { "id": "b", "text": "The model catalog" },
+        { "id": "c", "text": "Prompt flow variants" },
+        { "id": "d", "text": "Fine-tuning" }
+      ],
+      "correct": "a",
+      "explanation": "Microsoft Foundry's content filtering system screens both prompts and model outputs for harmful categories like hate, violence, and self-harm, and can block or flag content that violates configured thresholds."
+    },
+    {
+      "id": "ai901-64",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "A team wants a foundation model to better match their company's specific tone and domain terminology by further training it on their own labeled examples, rather than relying only on prompt engineering. What should they do?",
+      "options": [
+        { "id": "a", "text": "Fine-tune the model with their own training data" },
+        { "id": "b", "text": "Only adjust the model's temperature setting" },
+        { "id": "c", "text": "Apply a resource lock" },
+        { "id": "d", "text": "Switch to a smaller embedding model" }
+      ],
+      "correct": "a",
+      "explanation": "Fine-tuning further trains a foundation model on your own labeled examples, adapting its behavior, tone, and domain knowledge beyond what prompt engineering alone can achieve."
+    },
+    {
+      "id": "ai901-65",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "After selecting a model in the catalog, what must you do before your application code can send requests to it?",
+      "options": [
+        { "id": "a", "text": "Deploy the model to create a callable endpoint" },
+        { "id": "b", "text": "Delete the model from the catalog" },
+        { "id": "c", "text": "Convert the model to a relational database" },
+        { "id": "d", "text": "Apply an Azure resource lock to the model" }
+      ],
+      "correct": "a",
+      "explanation": "Selecting a model in the catalog only makes it available for use; you must deploy it to provision an endpoint that your application can call with API requests."
+    },
+    {
+      "id": "ai901-66",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "You want a chatbot to answer questions using the up-to-date content of your company's internal documents, rather than relying only on the model's built-in training knowledge. Which pattern should you implement?",
+      "options": [
+        { "id": "a", "text": "Retrieval-augmented generation (RAG), grounding the model with your own data" },
+        { "id": "b", "text": "Fine-tuning only, with no retrieval step" },
+        { "id": "c", "text": "Increasing the model's temperature setting" },
+        { "id": "d", "text": "Disabling content filtering" }
+      ],
+      "correct": "a",
+      "explanation": "Retrieval-augmented generation retrieves relevant content from your own data source at query time and includes it in the prompt, grounding the model's response in current, organization-specific information."
+    },
+    {
+      "id": "ai901-67",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "Before releasing a generative AI app, a team wants to systematically measure whether the model's answers are factually grounded in the source data and free of fabricated claims. Which type of Foundry capability addresses this?",
+      "options": [
+        { "id": "a", "text": "Built-in evaluation metrics such as groundedness and relevance" },
+        { "id": "b", "text": "The model catalog browsing UI" },
+        { "id": "c", "text": "Quota and rate limit settings" },
+        { "id": "d", "text": "Resource tagging" }
+      ],
+      "correct": "a",
+      "explanation": "Microsoft Foundry provides built-in evaluation metrics like groundedness, relevance, and coherence, which help teams systematically assess response quality, including whether answers are factually grounded in provided data, before release."
+    },
+    {
+      "id": "ai901-68",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "An application needs to accept both an image and a text question about that image (e.g., 'What is unusual in this picture?') and return a text answer. Which category of model is required?",
+      "options": [
+        { "id": "a", "text": "A multi-modal model that accepts both vision and language inputs" },
+        { "id": "b", "text": "A text-only embedding model" },
+        { "id": "c", "text": "A tabular regression model" },
+        { "id": "d", "text": "A speech-to-text model only" }
+      ],
+      "correct": "a",
+      "explanation": "Multi-modal models can process more than one type of input, such as both images and text together, enabling scenarios like answering questions about the content of an image."
+    },
+    {
+      "id": "ai901-69",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "A developer wants to quickly experiment with different prompts and system messages against a deployed model, seeing responses immediately, before writing any application code. Which Foundry feature supports this?",
+      "options": [
+        { "id": "a", "text": "The playground" },
+        { "id": "b", "text": "Quota management" },
+        { "id": "c", "text": "Content filtering configuration only" },
+        { "id": "d", "text": "Resource locks" }
+      ],
+      "correct": "a",
+      "explanation": "The playground provides an interactive interface to test prompts, system messages, and parameters against a deployed model in real time, without needing to write application code first."
+    },
+    {
+      "id": "ai901-70",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "To ground a generative AI app with your organization's documents using retrieval-augmented generation, which Azure service is commonly integrated with Foundry to index and search that content?",
+      "options": [
+        { "id": "a", "text": "Azure AI Search" },
+        { "id": "b", "text": "Azure Table Storage" },
+        { "id": "c", "text": "Azure Resource Manager" },
+        { "id": "d", "text": "Azure Advisor" }
+      ],
+      "correct": "a",
+      "explanation": "Azure AI Search is commonly connected to Foundry to index organizational content and perform the retrieval step in a RAG pattern, supplying relevant passages that ground the model's responses."
+    },
+    {
+      "id": "ai901-71",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "A team's model deployment is returning throttling errors under heavy load. What should they review and potentially increase?",
+      "options": [
+        { "id": "a", "text": "The deployment's quota and rate limits (tokens-per-minute / requests-per-minute)" },
+        { "id": "b", "text": "The model catalog listing" },
+        { "id": "c", "text": "The playground temperature setting" },
+        { "id": "d", "text": "A resource lock on the workspace" }
+      ],
+      "correct": "a",
+      "explanation": "Model deployments have configurable quota limits such as tokens-per-minute and requests-per-minute; throttling errors under load typically mean these limits need to be reviewed and increased if available capacity allows."
+    },
+    {
+      "id": "ai901-72",
+      "domain": "Implement AI solutions by using Microsoft Foundry",
+      "question": "After deploying a generative AI application to production, which practice helps ensure ongoing safety and reliability over time?",
+      "options": [
+        { "id": "a", "text": "Continuously monitoring usage, outputs, and safety signals for the deployed model" },
+        { "id": "b", "text": "Disabling content filtering to reduce false positives" },
+        { "id": "c", "text": "Never updating the deployment once it is live" },
+        { "id": "d", "text": "Removing all evaluation metrics after initial release" }
+      ],
+      "correct": "a",
+      "explanation": "Ongoing monitoring of a deployed model's usage patterns, output quality, and safety signals helps teams catch regressions, misuse, or drift in behavior after release, supporting Responsible AI principles like reliability and safety."
+    },
     {
       "id": "ai901-52",
       "domain": "Identify AI concepts and capabilities",
