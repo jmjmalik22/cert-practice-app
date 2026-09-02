@@ -1276,6 +1276,273 @@ export const AZ_104 = {
       "correct": "a",
       "explanation": "Azure Advisor analyzes your resource configuration and usage telemetry to provide personalized, actionable recommendations across several categories, including cost and security."
     },
+	
+	// AZ-104 — 20 new questions (az104-53 through az104-72)
+// Paste this block into src/lib/questionBank/az104.js
+// Insert it right BEFORE the closing "  ]\n};" at the end of the file
+// (i.e., right after the az104-52 question object, adding a comma after that object's closing "}")
+
+    {
+      "id": "az104-53",
+      "domain": "Manage Azure identities and governance",
+      "question": "A company wants to require multi-factor authentication only when a user signs in from an unfamiliar location or an unmanaged device, rather than every single time. Which Azure AD feature enables this risk-based enforcement?",
+      "options": [
+        { "id": "a", "text": "Conditional Access" },
+        { "id": "b", "text": "Azure Policy" },
+        { "id": "c", "text": "Resource locks" },
+        { "id": "d", "text": "Management groups" }
+      ],
+      "correct": "a",
+      "explanation": "Conditional Access lets you define policies that apply controls like MFA based on signals such as user location, device compliance, or sign-in risk, rather than applying the same rule universally."
+    },
+    {
+      "id": "az104-54",
+      "domain": "Manage Azure identities and governance",
+      "question": "None of the built-in Azure roles precisely match the narrow set of permissions your team needs (start/restart VMs but not delete them). What should you create?",
+      "options": [
+        { "id": "a", "text": "A custom RBAC role with only the required actions" },
+        { "id": "b", "text": "A new subscription" },
+        { "id": "c", "text": "A resource lock" },
+        { "id": "d", "text": "A new management group" }
+      ],
+      "correct": "a",
+      "explanation": "When built-in roles don't fit precisely, Azure lets you define a custom RBAC role specifying an exact set of allowed and denied actions, scoped to what your team actually needs."
+    },
+    {
+      "id": "az104-55",
+      "domain": "Manage Azure identities and governance",
+      "question": "You need to enforce a consistent set of compliance rules (allowed regions, required tags, allowed VM SKUs) across every subscription in your organization at once. Which combination of features should you use?",
+      "options": [
+        { "id": "a", "text": "An Azure Policy initiative applied at the management group scope" },
+        { "id": "b", "text": "A single resource lock on one resource group" },
+        { "id": "c", "text": "An RBAC role assignment on one VM" },
+        { "id": "d", "text": "A storage account access key rotation" }
+      ],
+      "correct": "a",
+      "explanation": "A policy initiative groups multiple related policy definitions together, and applying it at the management group scope lets the rules inherit down to every subscription and resource group beneath it."
+    },
+    {
+      "id": "az104-56",
+      "domain": "Implement and manage storage",
+      "question": "You need a storage account to survive the complete loss of an entire Azure region, with data still readable (though not writable) from a secondary region during an outage. Which replication option should you choose?",
+      "options": [
+        { "id": "a", "text": "Read-access geo-redundant storage (RA-GRS)" },
+        { "id": "b", "text": "Locally redundant storage (LRS)" },
+        { "id": "c", "text": "Zone-redundant storage (ZRS)" },
+        { "id": "d", "text": "Geo-redundant storage without read access (GRS) is sufficient, since read access isn't needed" }
+      ],
+      "correct": "a",
+      "explanation": "RA-GRS replicates data to a secondary region and allows read access to that secondary copy even during an outage of the primary region, meeting both the durability and availability requirements described."
+    },
+    {
+      "id": "az104-57",
+      "domain": "Implement and manage storage",
+      "question": "A company has large media files it accesses frequently for the first 30 days after upload, then almost never again but must retain for 7 years for compliance. Which blob storage lifecycle approach minimizes cost?",
+      "options": [
+        { "id": "a", "text": "A lifecycle management policy that moves blobs from Hot to Cool and then to Archive tier over time" },
+        { "id": "b", "text": "Keep all blobs in the Hot tier indefinitely" },
+        { "id": "c", "text": "Delete the blobs after 30 days" },
+        { "id": "d", "text": "Store all blobs in Azure Files instead" }
+      ],
+      "correct": "a",
+      "explanation": "Blob lifecycle management policies can automatically transition blobs to progressively cheaper tiers (Hot → Cool → Archive) based on age or last-access time, minimizing storage cost for data accessed less over time."
+    },
+    {
+      "id": "az104-58",
+      "domain": "Implement and manage storage",
+      "question": "You need to grant a third-party application temporary, limited access to a specific blob container for the next 4 hours, without sharing your storage account keys. What should you generate?",
+      "options": [
+        { "id": "a", "text": "A shared access signature (SAS) with an expiry time and scoped permissions" },
+        { "id": "b", "text": "A new storage account key" },
+        { "id": "c", "text": "A resource lock" },
+        { "id": "d", "text": "An Azure AD conditional access policy" }
+      ],
+      "correct": "a",
+      "explanation": "A SAS token grants time-limited, permission-scoped access to storage resources without exposing the account's master keys, and can be configured to expire after a set duration like 4 hours."
+    },
+    {
+      "id": "az104-59",
+      "domain": "Implement and manage storage",
+      "question": "A branch office needs its on-premises file server to keep a cached, locally accessible copy of files that are centrally stored and synchronized in an Azure file share. Which service should you deploy?",
+      "options": [
+        { "id": "a", "text": "Azure File Sync" },
+        { "id": "b", "text": "Azure Backup" },
+        { "id": "c", "text": "Azure Site Recovery" },
+        { "id": "d", "text": "Storage account lifecycle management" }
+      ],
+      "correct": "a",
+      "explanation": "Azure File Sync lets an on-premises Windows Server cache Azure file share content locally, synchronizing changes centrally while providing fast local access to frequently used files."
+    },
+    {
+      "id": "az104-60",
+      "domain": "Implement and manage storage",
+      "question": "Which statement about Azure Blob storage access tiers is correct?",
+      "options": [
+        { "id": "a", "text": "The Archive tier has the lowest storage cost but the highest cost and latency to retrieve data" },
+        { "id": "b", "text": "The Hot tier has the lowest storage cost of all tiers" },
+        { "id": "c", "text": "Data in the Archive tier is available for immediate read access" },
+        { "id": "d", "text": "The Cool tier is intended for data accessed multiple times per day" }
+      ],
+      "correct": "a",
+      "explanation": "The Archive tier offers the cheapest storage but data must be rehydrated before it can be read, resulting in higher retrieval costs and latency compared to the Hot and Cool tiers."
+    },
+    {
+      "id": "az104-61",
+      "domain": "Deploy and manage Azure compute resources",
+      "question": "You want to protect a set of VMs from a single hardware rack failure within one datacenter by spreading them across fault domains and update domains. Which feature should you use?",
+      "options": [
+        { "id": "a", "text": "An availability set" },
+        { "id": "b", "text": "Availability zones" },
+        { "id": "c", "text": "A virtual machine scale set with zero instances" },
+        { "id": "d", "text": "A single VM with premium disks" }
+      ],
+      "correct": "a",
+      "explanation": "An availability set distributes VMs across multiple fault domains (separate hardware racks) and update domains within a single datacenter, protecting against rack-level hardware failures and planned maintenance."
+    },
+    {
+      "id": "az104-62",
+      "domain": "Deploy and manage Azure compute resources",
+      "question": "A web application needs to automatically add or remove identical VM instances behind a load balancer based on current CPU load. Which Azure feature is designed for this?",
+      "options": [
+        { "id": "a", "text": "A virtual machine scale set with autoscale rules" },
+        { "id": "b", "text": "A single VM resized manually" },
+        { "id": "c", "text": "An availability set" },
+        { "id": "d", "text": "A resource lock" }
+      ],
+      "correct": "a",
+      "explanation": "Virtual machine scale sets let you deploy and manage a group of identical, load-balanced VMs that can automatically scale in or out based on defined metrics like CPU usage."
+    },
+    {
+      "id": "az104-63",
+      "domain": "Deploy and manage Azure compute resources",
+      "question": "You need to run a simple, single containerized task without managing any orchestration, cluster nodes, or Kubernetes complexity. Which service is the simplest fit?",
+      "options": [
+        { "id": "a", "text": "Azure Container Instances (ACI)" },
+        { "id": "b", "text": "Azure Kubernetes Service (AKS)" },
+        { "id": "c", "text": "Azure Virtual Machine Scale Sets" },
+        { "id": "d", "text": "Azure Batch" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Container Instances lets you run individual containers directly without provisioning VMs or managing a Kubernetes cluster, making it the fastest and simplest option for isolated container workloads, whereas AKS is intended for orchestrating many containers at scale."
+    },
+    {
+      "id": "az104-64",
+      "domain": "Deploy and manage Azure compute resources",
+      "question": "A VM is consistently running out of CPU capacity during business hours. You want to move it to a larger size in the same series. What should you consider before resizing?",
+      "options": [
+        { "id": "a", "text": "The VM typically needs to be deallocated (stopped) first if the target size isn't available on the current hardware cluster" },
+        { "id": "b", "text": "Resizing always requires deleting and recreating the VM from scratch" },
+        { "id": "c", "text": "Resizing is not possible once a VM has been deployed" },
+        { "id": "d", "text": "Resizing automatically changes the VM's operating system" }
+      ],
+      "correct": "a",
+      "explanation": "Resizing a VM to a size not supported on its current hardware cluster typically requires stopping (deallocating) the VM first; some resizes within the same cluster can be done without downtime, but this isn't guaranteed."
+    },
+    {
+      "id": "az104-65",
+      "domain": "Deploy and manage Azure compute resources",
+      "question": "To reduce cost, an organization wants non-production VMs to automatically shut down every evening and start again each weekday morning. Which approach should they use?",
+      "options": [
+        { "id": "a", "text": "Configure the Start/Stop VMs during off-hours feature or an Azure Automation runbook on a schedule" },
+        { "id": "b", "text": "Apply a resource lock to the VMs" },
+        { "id": "c", "text": "Move the VMs to a different availability zone" },
+        { "id": "d", "text": "Change the VMs' replication type" }
+      ],
+      "correct": "a",
+      "explanation": "Azure provides scheduling capabilities, such as the Start/Stop VMs during off-hours feature or custom Azure Automation runbooks, to automatically start and stop VMs on a defined schedule and reduce compute costs."
+    },
+    {
+      "id": "az104-66",
+      "domain": "Implement and manage virtual networking",
+      "question": "A VNet subnet has two network security group (NSG) rules: one at priority 100 that allows inbound traffic on port 443, and one at priority 200 that denies all inbound traffic. What happens to an inbound request on port 443?",
+      "options": [
+        { "id": "a", "text": "It is allowed, because the lower-numbered priority (100) rule is evaluated first and wins" },
+        { "id": "b", "text": "It is denied, because deny rules always take precedence" },
+        { "id": "c", "text": "Both rules are merged and the request is dropped" },
+        { "id": "d", "text": "NSG rule priority has no effect on evaluation order" }
+      ],
+      "correct": "a",
+      "explanation": "NSG rules are evaluated in order of priority number, with lower numbers evaluated first; once a matching rule is found, evaluation stops, so the priority-100 allow rule takes effect before the priority-200 deny rule is reached."
+    },
+    {
+      "id": "az104-67",
+      "domain": "Implement and manage virtual networking",
+      "question": "Two VNets in different Azure regions need to communicate with each other using private IP addresses, without traffic going over the public internet. What should you configure?",
+      "options": [
+        { "id": "a", "text": "VNet peering" },
+        { "id": "b", "text": "A public load balancer" },
+        { "id": "c", "text": "A shared access signature" },
+        { "id": "d", "text": "A resource lock" }
+      ],
+      "correct": "a",
+      "explanation": "VNet peering connects two virtual networks so resources in each can communicate using private IP addresses, with traffic routed through Microsoft's backbone network rather than the public internet."
+    },
+    {
+      "id": "az104-68",
+      "domain": "Implement and manage virtual networking",
+      "question": "You need to distribute HTTP traffic across web servers based on the URL path (e.g., /images/* goes to one pool, /api/* to another), with SSL termination. Which service fits best?",
+      "options": [
+        { "id": "a", "text": "Azure Application Gateway" },
+        { "id": "b", "text": "Azure Load Balancer (Layer 4)" },
+        { "id": "c", "text": "Azure Bastion" },
+        { "id": "d", "text": "Azure ExpressRoute" }
+      ],
+      "correct": "a",
+      "explanation": "Application Gateway is a Layer 7 (application-layer) load balancer that supports URL-based routing, SSL termination, and web application firewall capabilities, unlike the Layer 4 Azure Load Balancer, which only routes based on IP and port."
+    },
+    {
+      "id": "az104-69",
+      "domain": "Implement and manage virtual networking",
+      "question": "An administrator needs secure RDP/SSH access to VMs inside a VNet without exposing any public IP addresses or opening inbound ports 3389/22 to the internet. Which service should they use?",
+      "options": [
+        { "id": "a", "text": "Azure Bastion" },
+        { "id": "b", "text": "A public IP address with an open NSG rule" },
+        { "id": "c", "text": "Azure Front Door" },
+        { "id": "d", "text": "Azure Content Delivery Network" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Bastion provides secure RDP and SSH connectivity to VMs directly through the Azure portal over SSL, without requiring a public IP on the VM or opening inbound management ports to the internet."
+    },
+    {
+      "id": "az104-70",
+      "domain": "Implement and manage virtual networking",
+      "question": "A VM needs a stable IP address that stays the same when the VM is stopped and restarted, so external DNS records referencing it remain valid. Which type of public IP allocation should you assign?",
+      "options": [
+        { "id": "a", "text": "A Static public IP address" },
+        { "id": "b", "text": "A Dynamic public IP address" },
+        { "id": "c", "text": "No public IP, using only a private IP" },
+        { "id": "d", "text": "A Basic SKU load balancer front-end IP only" }
+      ],
+      "correct": "a",
+      "explanation": "A Static public IP address remains fixed for the lifetime of the resource, even across stop/start cycles, whereas a Dynamic public IP can change when the VM is deallocated and restarted."
+    },
+    {
+      "id": "az104-71",
+      "domain": "Monitor and maintain Azure resources",
+      "question": "You want to run custom Kusto Query Language (KQL) queries across log and performance data collected from multiple Azure resources, and build alerts based on those queries. Which component should you use?",
+      "options": [
+        { "id": "a", "text": "A Log Analytics workspace in Azure Monitor" },
+        { "id": "b", "text": "Azure Advisor" },
+        { "id": "c", "text": "A resource lock" },
+        { "id": "d", "text": "Azure Cost Management" }
+      ],
+      "correct": "a",
+      "explanation": "A Log Analytics workspace stores log and performance data collected by Azure Monitor and lets you query it using KQL, as well as build alert rules from those queries."
+    },
+    {
+      "id": "az104-72",
+      "domain": "Monitor and maintain Azure resources",
+      "question": "You want to be proactively notified about ongoing Azure service outages or planned maintenance that could affect your specific subscriptions and resources, distinct from alerts on your own resource metrics. Which service should you check?",
+      "options": [
+        { "id": "a", "text": "Azure Service Health" },
+        { "id": "b", "text": "Azure Monitor metric alerts" },
+        { "id": "c", "text": "Azure Advisor" },
+        { "id": "d", "text": "Azure Policy compliance" }
+      ],
+      "correct": "a",
+      "explanation": "Azure Service Health provides personalized alerts about Azure service issues, planned maintenance, and health advisories that specifically affect the resources and regions you use, separate from custom metric-based alerts you configure yourself."
+    }
+,
     {
       "id": "az104-52",
       "domain": "Deploy and manage Azure compute resources",
