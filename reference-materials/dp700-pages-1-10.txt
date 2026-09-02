@@ -1,0 +1,188 @@
+1. Ingest Data with Microsoft Fabric
+
+-- 1 of 118 --
+
+
+
+-- 2 of 118 --
+
+Ingest Data with Dataflows Gen2
+
+-- 3 of 118 --
+
+📘 Unit 1: Dataflows Gen2
+Core Definition: A low-code, cloud-based tool used for ETL (Extract, Transform, Load)
+using the visual Power Query Online interface.
+Best Use Cases:
+● Reusable ETL Logic: Prep data once for multiple users.
+● Curated Semantic Models: Prepare data specifically for Power BI.
+● Standardization: Creating universal tables (like a Master Date Table).
+The Workflow:
+1. Connect (Source) → 2. Transform (Clean) → 3. Land (Destination)
+Comparison: Pros vs. Cons
+Strengths 	Weaknesses
+Consistency: Promotes "extract once, reuse
+many times."
+Not a Warehouse: For prep, not
+long-term storage.
+Performance: Reduces load on source
+systems.
+No RLS: Does not support row-level
+security.
+Accessibility: Low-code for non-engineers. Requirements: Needs a Fabric capacity
+workspace.
+📘 Unit 3: Exploring the Dataflows Gen2 Interface
+Core Definition: Dataflows Gen2 uses Power Query Online, providing a visual environment
+to build data transformations without writing code, while the M language runs in the
+background.
+🖥 The 5 Key Interface Areas
+Area 	Purpose 	Key Features
+
+-- 4 of 118 --
+
+1. Power Query
+Ribbon
+The "Toolbox" Access connectors, transformations (Pivot/Unpivot),
+and set the Data Destination.
+2. Queries Pane The
+"Navigator"
+Lists all data sources. Use Duplicate or Reference
+to create Star Schemas.
+3. Diagram View The "Map" 	A visual flowchart showing how data flows from
+source to transformation steps.
+4. Data Preview The "Sample" Shows a subset of data to preview how
+transformations affect the results.
+5. Query
+Settings
+The "History" Lists Applied Steps. Allows you to rename, reorder,
+or delete specific transformations.
+🛠 Key Capabilities
+● Data Destinations: Land data directly in a Lakehouse, Warehouse, or SQL
+Database.
+● Advanced Editor: Access and edit the underlying M code for complex logic.
+● Query Folding: Pushes the transformation work back to the source database for
+significantly faster performance.
+💡 Pro-Tip for Review: Use the Reference option in the Queries Pane when you need to
+use one source for multiple tables. It avoids loading the raw data multiple times and keeps
+your workflow efficient!
+📘 Unit 4: Orchestrating with Data Pipelines
+Core Definition: While a Dataflow is the "worker" that cleans data, a Data Pipeline is the
+"manager" that schedules, triggers, and connects multiple workers together into a single
+automated workflow.
+🏗 The Role of Pipelines
+Pipelines provide a visual way to chain activities in a specific order. You use them when your
+process requires more than just a simple data load.
+Common Pipeline Activities:
+● Incorporate Dataflow: Trigger a Dataflow Gen2 to refresh and land data.
+
+-- 5 of 118 --
+
+● Copy Data: Move large volumes of data quickly between sources.
+● Add Notebook: Run complex Python/Spark code.
+● Execute Script: Run SQL stored procedures or scripts after the data lands.
+● Get Metadata: Check if a file exists before trying to process it.
+⚡ Why Combine Dataflows + Pipelines?
+1. Automation: Instead of manual refreshes, use Schedules or Triggers (e.g., run
+every morning at 8 AM).
+2. Sequential Logic: Ensure the "Clean Data" step (Dataflow) finishes successfully
+before the "Update Report" step (Script) begins.
+3. Error Handling: Set up notifications if a Dataflow fails so you can fix it immediately.
+⚖ Summary: Worker vs. Manager
+Feature 	Dataflow Gen2 (The Worker) Data Pipeline (The Manager)
+Main Goal Transforming & cleaning data. Orchestrating & scheduling tasks.
+Interface 	Power Query (Low-code). 	Pipeline Canvas (Drag-and-drop).
+Logic 	Data-centric (Joins, Pivots). 	Task-centric (Wait, If/Else, Loops).
+Capability Can land data in a Lakehouse. Can trigger Dataflows, Notebooks, &
+Scripts.
+💡 Pro-Tip for Review: For the exam, remember that Dataflows are best for transforming
+data, but Pipelines are required for automation and complex sequencing. Always "wrap"
+your Dataflow in a Pipeline for enterprise-grade solutions.
+
+-- 6 of 118 --
+
+Orchestrate processes with Pipelines
+
+-- 7 of 118 --
+
+Unit 1 Introduction
+Definition: A data pipeline is a defined sequence of activities used to orchestrate an overall
+process—primarily extracting data from sources and loading it into a destination.
+Core Function (ETL): Pipelines are most commonly used to automate Extract, Transform,
+and Load (ETL) processes. This involves taking transactional data from operational stores
+and moving it into analytical stores like a lakehouse, data warehouse, or SQL database.
+Architecture: If you are familiar with Azure Data Factory, the architecture in Fabric will be
+identical. It uses connected activities to manage data processing tasks and control flow logic.
+Execution: Pipelines can be initiated manually (interactively) through the user interface or
+set to run on a specific schedule.
+1. Activities: The Building Blocks
+Activities are the individual steps in your workflow. They are divided into two main types:
+● Data Transformation Activities: These do the "heavy lifting" of moving or changing
+data.
+○ Copy Data: The most common task—extracting from a source and loading to
+a destination.
+○ Notebook / Stored Procedure: Running custom Spark or SQL code for
+complex logic.
+○ Data Flow (Gen2): Using a Power Query-like interface for visual
+transformations.
+● Control Flow Activities: These act as the "logic" or "brain" of the pipeline.
+○ Loops & Conditionals: Creating "If" statements or "For Each" loops to
+repeat tasks.
+○ Variables/Parameters: Storing and updating values during the run.
+2. Parameters: Flexibility & Reusability
+Instead of creating a new pipeline for every single folder or file, you use Parameters.
+Example: You create one pipeline to move "Sales Data," but use a parameter to
+specify the Month. This allows you to reuse the same pipeline for January,
+February, and March just by changing the input value at runtime.
+3. Pipeline Runs
+A "run" is a specific execution of your pipeline.
+● On-Demand: You trigger it manually (often during testing).
+● Scheduled: You set it to run automatically (e.g., every night at 2:00 AM).
+
+-- 8 of 118 --
+
+● Monitoring: Every run gets a unique Run ID, which you use to check if the process
+succeeded or failed and to troubleshoot errors.
+Unit 3: Use the Copy Data Activity
+The Core Function
+The primary purpose of this activity is to ingest data from an external source and land it in
+OneLake (typically into a Lakehouse file or table). It is designed for "straight" moves where
+the data doesn't need to be changed during the transfer.
+● Standalone Use: Moving a single file from a cloud provider into your Lakehouse.
+● Orchestrated Use: Part of a larger chain. For example:
+1. Delete Data activity: Clears old records.
+2. Copy Data activity: Brings in the new batch of raw data.
+3. Notebook activity: Runs Spark code to transform that raw data into a
+structured table.
+Key Features
+● Copy Data Tool: A guided, graphical wizard that simplifies the process of connecting
+to a source and choosing a destination.
+● Wide Compatibility: It supports a vast range of connections, including external SQL
+databases, cloud storage, and internal Fabric items like the Data Warehouse or SQL
+Database.
+● Configuration Pane: After placement on the canvas, you can use the settings pane
+to map columns, set retry logic, and define performance settings.
+Strategic Choice: Copy Data vs. Dataflow
+The unit provides a clear rule for when to choose this activity over others:
+Use Copy Data If... 	Use Dataflow (Gen2) If...
+You want to move data "as-is" with no
+changes.
+You need to transform, clean, or filter data
+during ingestion.
+You plan to transform the data later (e.g.,
+using a Notebook).
+You need to merge data from multiple
+different sources into one.
+
+-- 9 of 118 --
+
+You need a high-performance, simple
+move.
+You prefer a Power Query-style interface for
+visual editing.
+Summary
+With Microsoft Fabric, you can create pipelines that encapsulate complex data ingestion and
+transformation processes. Pipelines provide an effective way to orchestrate data processing
+tasks that can be run on-demand or at scheduled intervals.
+
+-- 10 of 118 --
+

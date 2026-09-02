@@ -488,6 +488,24 @@ export function StudyGuideDetail() {
           </>
         )}
 
+        {(code === "DP-700" || code === "DP-600") && (
+          <div className="rounded-xl p-5 mt-6" style={{ background: `${TOKENS.azure}10`, border: `1px solid ${TOKENS.azure}35` }}>
+            <h2 className="text-base font-semibold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              In-Depth Fabric Learning Path
+            </h2>
+            <p className="text-sm mb-3" style={{ color: TOKENS.inkMuted }}>
+              Build your knowledge step by step, starting with Dataflows Gen2, pipelines, and Copy Data before moving to Spark, Delta, Eventhouse, and KQL.
+            </p>
+            <Link
+              to="/study-guides/shared"
+              className="inline-flex items-center gap-2 text-sm font-medium"
+              style={{ color: TOKENS.azure }}
+            >
+              Start the learning path <ChevronLeft size={14} style={{ transform: "rotate(180deg)" }} />
+            </Link>
+          </div>
+        )}
+
         <h2 className="text-sm font-semibold mt-10 mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
           Prerequisites
         </h2>
