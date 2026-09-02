@@ -9,19 +9,34 @@ import { Footer, MedallionMotif } from "../components/Shared.jsx";
 export function Login() {
   const TOKENS = useTheme();
   const navigate = useNavigate();
-  const { login, signup, resendVerificationEmail, refreshUser } = useAuth();
+  const { login, signup, resendVerificationEmail, refreshUser, resetPassword } = useAuth();
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
   const [verificationPending, setVerificationPending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
 
+  function getAuthErrorMessage(err) {
+    const messages = {
+      "auth/invalid-credential": "The email or password is incorrect.",
+      "auth/user-not-found": "The email or password is incorrect.",
+      "auth/wrong-password": "The email or password is incorrect.",
+      "auth/email-already-in-use": "An account already exists with this email.",
+      "auth/weak-password": "Your password must be at least 6 characters.",
+      "auth/invalid-email": "Enter a valid email address.",
+      "auth/too-many-requests": "Too many attempts. Please try again later.",
+    };
+    return messages[err.code] || "Authentication failed. Please try again.";
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+    setNotice("");
     setLoading(true);
 
     try {
@@ -39,7 +54,7 @@ export function Login() {
         }
       }
     } catch (err) {
-      setError(err.message || "Authentication failed");
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -59,7 +74,7 @@ export function Login() {
         });
       }, 1000);
     } catch (err) {
-      setError(err.message || "Failed to resend email");
+      setError(getAuthErrorMessage(err));
     }
   }
 
@@ -75,7 +90,24 @@ export function Login() {
         setError("Email not verified yet. Please check your inbox and click the verification link.");
       }
     } catch (err) {
-      setError(err.message || "Failed to check verification");
+      setError(getAuthErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handlePasswordReset() {
+    if (!email.trim()) {
+      setError("Enter your email address first.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await resetPassword(email.trim());
+      setNotice("Password reset email sent. Check your inbox.");
+    } catch (err) {
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -111,6 +143,16 @@ export function Login() {
               style={{ background: `${TOKENS.red}20`, color: TOKENS.red, border: `1px solid ${TOKENS.red}40` }}
             >
               {error}
+            </div>
+          )}
+
+          {notice && (
+            <div
+              className="w-full p-3 rounded-lg mb-4 text-sm"
+              role="status"
+              style={{ background: `${TOKENS.green}20`, color: TOKENS.green, border: `1px solid ${TOKENS.green}40` }}
+            >
+              {notice}
             </div>
           )}
 
@@ -176,6 +218,7 @@ export function Login() {
         {error && (
           <div
             className="w-full p-3 rounded-lg mb-4 text-sm"
+            role="alert"
             style={{ background: `${TOKENS.red}20`, color: TOKENS.red, border: `1px solid ${TOKENS.red}40` }}
           >
             {error}
@@ -251,6 +294,18 @@ export function Login() {
           >
             {loading ? "Please wait..." : isSignup ? "Create Account" : "Sign In"}
           </button>
+
+          {!isSignup && (
+            <button
+              type="button"
+              onClick={handlePasswordReset}
+              disabled={loading}
+              className="w-full text-xs mt-3 disabled:opacity-50"
+              style={{ color: TOKENS.azure }}
+            >
+              Forgot password?
+            </button>
+          )}
         </form>
 
         <div className="mt-6 text-center">
@@ -258,6 +313,7 @@ export function Login() {
             onClick={() => {
               setIsSignup(!isSignup);
               setError("");
+              setNotice("");
             }}
             className="text-sm"
             style={{ color: TOKENS.azure }}

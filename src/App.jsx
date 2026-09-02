@@ -15,12 +15,14 @@ import { UserProfileModal } from "./components/UserProfile.jsx";
 import { Header } from "./components/Shared.jsx";
 
 export default function App() {
+  const [hasMounted, setHasMounted] = useState(false);
   const [theme, setTheme] = useState(() => getStoredTheme());
   const [streak, setStreak] = useState(0);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const { user, logout, isAuthenticated, isEmailVerified } = useAuth();
+  const { user, logout, isAuthenticated, isEmailVerified, loading: authLoading } = useAuth();
 
   useEffect(() => {
+    setHasMounted(true);
     setStreak(updateStreak());
     const localUser = getUser();
     if (!localUser.name && !user) {
@@ -35,6 +37,16 @@ export default function App() {
   }
 
   const tokens = theme === "dark" ? DARK_TOKENS : LIGHT_TOKENS;
+
+  if (hasMounted && authLoading) {
+    return (
+      <ThemeContext.Provider value={tokens}>
+        <div className="min-h-screen flex items-center justify-center" style={{ background: tokens.bg, color: tokens.ink }}>
+          <span className="text-sm" role="status" aria-live="polite">Loading FabricPrep...</span>
+        </div>
+      </ThemeContext.Provider>
+    );
+  }
 
   return (
     <ThemeContext.Provider value={tokens}>
