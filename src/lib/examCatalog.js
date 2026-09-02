@@ -207,6 +207,7 @@ export const SSG_ROUTES = Object.freeze([
   "/study-guides",
   "/study-guides/shared",
   "/study-guides/shared/dataflows-pipelines",
+  "/study-guides/shared/spark-notebooks-delta",
   ...EXAM_CODES.map((code) => `/${EXAM_META[code].slug}`),
   ...STUDY_GUIDE_EXAM_CODES.map((code) => `/study-guides/${EXAM_META[code].slug}`),
   ...DP700_TOPIC_IDS.map((topicId) => `/study-guides/dp-700/${topicId}`),
@@ -217,6 +218,7 @@ export const SITEMAP_ROUTES = Object.freeze([
   { path: "/study-guides", priority: "0.9", changefreq: "weekly" },
   { path: "/study-guides/shared", priority: "0.8", changefreq: "monthly" },
   { path: "/study-guides/shared/dataflows-pipelines", priority: "0.8", changefreq: "monthly" },
+  { path: "/study-guides/shared/spark-notebooks-delta", priority: "0.8", changefreq: "monthly" },
   ...EXAM_CODES.map((code) => ({
     path: `/${EXAM_META[code].slug}`,
     priority: "0.9",

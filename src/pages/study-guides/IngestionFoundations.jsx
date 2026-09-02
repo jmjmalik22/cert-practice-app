@@ -161,9 +161,9 @@ export function IngestionFoundations() {
           <Link to="/study-guides/shared" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}>
             <ArrowLeft size={14} /> All shared topics
           </Link>
-          <span className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: TOKENS.panelBorder, color: TOKENS.inkMuted }}>
-            Next topic coming soon <ArrowRight size={14} />
-          </span>
+          <Link to="/study-guides/shared/spark-notebooks-delta" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>
+            Next topic: Spark and Delta <ArrowRight size={14} />
+          </Link>
         </div>
 
         <div className="flex flex-wrap gap-3 mt-5">

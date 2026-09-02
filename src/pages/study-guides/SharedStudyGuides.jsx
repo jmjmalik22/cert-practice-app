@@ -17,8 +17,9 @@ const TOPICS = [
     number: "02",
     title: "Spark Notebooks and Delta",
     description: "Spark pools, DataFrames, schemas, partitioning, Spark SQL, and Delta tables.",
+    path: "/study-guides/shared/spark-notebooks-delta",
     icon: Sparkles,
-    available: false,
+    available: true,
   },
   {
     number: "03",
