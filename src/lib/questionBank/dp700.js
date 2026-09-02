@@ -1300,6 +1300,396 @@ export const DP_700 = {
       ],
       "correct": "a",
       "explanation": "When one task runs far longer than others while executors sit idle, it usually points to data skew — an uneven distribution of data across partitions — which can be addressed with better partitioning or salting keys."
+    },
+    {
+      "id": "700-53",
+      "domain": "Implement and manage an analytics solution",
+      "question": "You need to move data between two Fabric workspaces that are in different development stages (Dev, Test, Prod) while keeping item names consistent and swapping only environment-specific connections. What should you use?",
+      "options": [
+        { "id": "a", "text": "Deployment pipelines" },
+        { "id": "b", "text": "A Dataflow Gen2" },
+        { "id": "c", "text": "OneLake shortcuts" },
+        { "id": "d", "text": "Data Activator" }
+      ],
+      "correct": "a",
+      "explanation": "Fabric deployment pipelines move content across Dev/Test/Prod stages, and deployment rules let you swap environment-specific connections while keeping item names the same."
+    },
+    {
+      "id": "700-54",
+      "domain": "Implement and manage an analytics solution",
+      "question": "Your organization wants every workspace change to be tracked in version control and deployed through pull requests instead of manual promotion. Which Fabric capability should you configure?",
+      "options": [
+        { "id": "a", "text": "Git integration for the workspace" },
+        { "id": "b", "text": "A Lakehouse shortcut" },
+        { "id": "c", "text": "A Capacity Metrics app alert" },
+        { "id": "d", "text": "Row-level security on a semantic model" }
+      ],
+      "correct": "a",
+      "explanation": "Git integration connects a Fabric workspace to a repository (such as Azure DevOps or GitHub), so changes are tracked as commits and can flow through branches and pull requests."
+    },
+    {
+      "id": "700-55",
+      "domain": "Implement and manage an analytics solution",
+      "question": "You want to programmatically create and update Fabric items (like Lakehouses and Pipelines) as part of an automated provisioning script rather than clicking through the portal. What should you use?",
+      "options": [
+        { "id": "a", "text": "The Fabric REST API" },
+        { "id": "b", "text": "The Capacity Metrics app" },
+        { "id": "c", "text": "Data Activator" },
+        { "id": "d", "text": "A KQL queryset" }
+      ],
+      "correct": "a",
+      "explanation": "The Fabric REST API exposes item-level operations (create, update, delete) so item provisioning and management can be automated outside the portal UI."
+    },
+    {
+      "id": "700-56",
+      "domain": "Implement and manage an analytics solution",
+      "question": "Two workspaces need to query the same underlying Delta table in OneLake without duplicating the data or setting up a separate ingestion pipeline. What should you create?",
+      "options": [
+        { "id": "a", "text": "A OneLake shortcut" },
+        { "id": "b", "text": "A Dataflow Gen2 with staging" },
+        { "id": "c", "text": "A Data Activator reflex" },
+        { "id": "d", "text": "A deployment pipeline rule" }
+      ],
+      "correct": "a",
+      "explanation": "OneLake shortcuts create a virtual reference to data stored elsewhere in OneLake (or external storage), letting multiple items or workspaces access the same data without copying it."
+    },
+    {
+      "id": "700-57",
+      "domain": "Implement and manage an analytics solution",
+      "question": "You need to grant a specific team read access to only certain tables and rows in a Lakehouse, without giving them workspace-level admin rights. Which capability fits best?",
+      "options": [
+        { "id": "a", "text": "OneLake data access roles" },
+        { "id": "b", "text": "A workspace Admin role assignment" },
+        { "id": "c", "text": "A deployment pipeline stage" },
+        { "id": "d", "text": "A capacity smoothing policy" }
+      ],
+      "correct": "a",
+      "explanation": "OneLake data access roles let you define fine-grained, table- and folder-level (and with additional configuration, row-level) permissions without granting broader workspace roles."
+    },
+    {
+      "id": "700-58",
+      "domain": "Implement and manage an analytics solution",
+      "question": "Your Fabric capacity is regularly hitting throttling during peak ingestion windows even though average utilization looks fine. Which capacity behavior explains smoothing out short bursts over time?",
+      "options": [
+        { "id": "a", "text": "Capacity smoothing and bursting" },
+        { "id": "b", "text": "Row-level security evaluation" },
+        { "id": "c", "text": "Git branch merging" },
+        { "id": "d", "text": "Shortcut caching" }
+      ],
+      "correct": "a",
+      "explanation": "Fabric capacities use smoothing to spread compute consumption over a rolling window and allow bursting for short spikes, which is why average utilization can look fine while peak windows still trigger throttling."
+    },
+    {
+      "id": "700-59",
+      "domain": "Implement and manage an analytics solution",
+      "question": "You want a workspace administrator to be alerted automatically before a capacity is projected to run out of available compute for the day. What should you configure?",
+      "options": [
+        { "id": "a", "text": "An alert in the Capacity Metrics app" },
+        { "id": "b", "text": "A Data Activator reflex on a semantic model" },
+        { "id": "c", "text": "A deployment pipeline rule" },
+        { "id": "d", "text": "A OneLake shortcut" }
+      ],
+      "correct": "a",
+      "explanation": "The Capacity Metrics app provides visibility into capacity consumption trends and lets admins set alerts before compute is exhausted, so they can act proactively."
+    },
+    {
+      "id": "700-60",
+      "domain": "Implement and manage an analytics solution",
+      "question": "A dataset column contains customer national ID numbers, and you need to prevent even workspace viewers from seeing the raw values in Power BI reports built on a Direct Lake semantic model. Which control should you apply?",
+      "options": [
+        { "id": "a", "text": "Column-level or object-level security on the semantic model" },
+        { "id": "b", "text": "A OneLake shortcut" },
+        { "id": "c", "text": "A Dataflow Gen2 staging area" },
+        { "id": "d", "text": "Capacity bursting" }
+      ],
+      "correct": "a",
+      "explanation": "Object-level (including column-level) security on the semantic model restricts which fields are visible to report viewers, regardless of their broader workspace access."
+    },
+    {
+      "id": "700-61",
+      "domain": "Implement and manage an analytics solution",
+      "question": "You need to classify a Lakehouse containing regulated financial data so downstream sharing and export are governed automatically according to your organization's data protection policy. What should you apply?",
+      "options": [
+        { "id": "a", "text": "A sensitivity label" },
+        { "id": "b", "text": "A OneLake shortcut" },
+        { "id": "c", "text": "A capacity smoothing rule" },
+        { "id": "d", "text": "A deployment pipeline stage" }
+      ],
+      "correct": "a",
+      "explanation": "Sensitivity labels, integrated with Microsoft Purview, classify items like Lakehouses so protection and governance policies (such as restricting export) are enforced automatically."
+    },
+    {
+      "id": "700-62",
+      "domain": "Ingest and transform data",
+      "question": "You need a low-code, visual way to connect to dozens of source systems, apply Power Query transformations, and land the result in a Lakehouse table on a schedule. Which item should you use?",
+      "options": [
+        { "id": "a", "text": "A Dataflow Gen2" },
+        { "id": "b", "text": "A Spark notebook" },
+        { "id": "c", "text": "An Eventstream" },
+        { "id": "d", "text": "A KQL queryset" }
+      ],
+      "correct": "a",
+      "explanation": "Dataflow Gen2 provides a low-code, Power Query-based experience for connecting to many source types, transforming data visually, and loading it into a Lakehouse or Warehouse."
+    },
+    {
+      "id": "700-63",
+      "domain": "Ingest and transform data",
+      "question": "You need to orchestrate a sequence of activities — copy data, then run a notebook, then refresh a semantic model — with conditional branching and scheduling. What should you build?",
+      "options": [
+        { "id": "a", "text": "A Data Pipeline" },
+        { "id": "b", "text": "A single Dataflow Gen2" },
+        { "id": "c", "text": "A KQL Database" },
+        { "id": "d", "text": "A Data Activator reflex" }
+      ],
+      "correct": "a",
+      "explanation": "Data Pipelines orchestrate multiple activities — copy, notebook execution, dataflow runs, semantic model refresh — with control flow, conditions, and scheduling."
+    },
+    {
+      "id": "700-64",
+      "domain": "Ingest and transform data",
+      "question": "You need to write custom, highly performant transformation logic against a very large dataset using distributed processing, including complex joins and window functions on DataFrames. What should you use?",
+      "options": [
+        { "id": "a", "text": "A Spark notebook using PySpark or Spark SQL" },
+        { "id": "b", "text": "A Dataflow Gen2 only" },
+        { "id": "c", "text": "A KQL queryset" },
+        { "id": "d", "text": "A Data Activator rule" }
+      ],
+      "correct": "a",
+      "explanation": "Spark notebooks give you full programmatic control with PySpark or Spark SQL for complex, large-scale distributed transformations that go beyond what a low-code dataflow easily supports."
+    },
+    {
+      "id": "700-65",
+      "domain": "Ingest and transform data",
+      "question": "A Lakehouse table has accumulated thousands of small Parquet files from frequent small writes, slowing down read performance. Which command should you run to compact them?",
+      "options": [
+        { "id": "a", "text": "OPTIMIZE" },
+        { "id": "b", "text": "VACUUM" },
+        { "id": "c", "text": "MERGE" },
+        { "id": "d", "text": "DESCRIBE HISTORY" }
+      ],
+      "correct": "a",
+      "explanation": "The Delta Lake OPTIMIZE command compacts many small files into larger ones, improving read performance for tables that receive frequent small writes."
+    },
+    {
+      "id": "700-66",
+      "domain": "Ingest and transform data",
+      "question": "After running OPTIMIZE on a Delta table repeatedly, storage costs keep climbing because old file versions are retained. What should you run to remove files no longer referenced beyond the retention window?",
+      "options": [
+        { "id": "a", "text": "VACUUM" },
+        { "id": "b", "text": "OPTIMIZE" },
+        { "id": "c", "text": "ALTER TABLE" },
+        { "id": "d", "text": "CREATE SHORTCUT" }
+      ],
+      "correct": "a",
+      "explanation": "VACUUM removes stale, unreferenced Delta files beyond the configured retention period, reclaiming storage after operations like OPTIMIZE leave old versions behind."
+    },
+    {
+      "id": "700-67",
+      "domain": "Ingest and transform data",
+      "question": "You want writes to a Delta table to automatically use an optimized file layout that improves downstream Power BI Direct Lake query performance, without manually scheduling maintenance jobs. Which Fabric capability should you rely on?",
+      "options": [
+        { "id": "a", "text": "V-Order write optimization" },
+        { "id": "b", "text": "A OneLake shortcut" },
+        { "id": "c", "text": "A capacity smoothing rule" },
+        { "id": "d", "text": "A deployment pipeline rule" }
+      ],
+      "correct": "a",
+      "explanation": "V-Order applies a special sort and compression optimization to Parquet files as they're written in Fabric, improving read performance for Direct Lake and other Fabric engines without extra jobs."
+    },
+    {
+      "id": "700-68",
+      "domain": "Ingest and transform data",
+      "question": "You are merging daily incremental customer updates into a Delta table, matching on customer ID and updating changed rows while inserting new ones. Which Delta Lake statement is designed for this?",
+      "options": [
+        { "id": "a", "text": "MERGE INTO" },
+        { "id": "b", "text": "TRUNCATE TABLE" },
+        { "id": "c", "text": "CREATE SHORTCUT" },
+        { "id": "d", "text": "DESCRIBE DETAIL" }
+      ],
+      "correct": "a",
+      "explanation": "MERGE INTO (upsert) matches incoming rows against existing rows on a key and applies inserts, updates, or deletes in a single atomic operation — exactly the pattern for incremental change application."
+    },
+    {
+      "id": "700-69",
+      "domain": "Ingest and transform data",
+      "question": "You need to ingest a continuous stream of IoT sensor readings, apply light filtering, and route the results to both a Lakehouse for storage and an Eventhouse for real-time querying. What should you use?",
+      "options": [
+        { "id": "a", "text": "An Eventstream" },
+        { "id": "b", "text": "A Dataflow Gen2" },
+        { "id": "c", "text": "A Data Pipeline Copy activity" },
+        { "id": "d", "text": "A semantic model refresh" }
+      ],
+      "correct": "a",
+      "explanation": "Eventstream ingests continuous streaming data, applies transformations, and routes it to multiple destinations such as a Lakehouse and an Eventhouse simultaneously."
+    },
+    {
+      "id": "700-70",
+      "domain": "Ingest and transform data",
+      "question": "You need to write and run ad hoc analytical queries against high-volume, time-series event data stored in an Eventhouse. Which query language should you use?",
+      "options": [
+        { "id": "a", "text": "Kusto Query Language (KQL)" },
+        { "id": "b", "text": "DAX" },
+        { "id": "c", "text": "Power Query M" },
+        { "id": "d", "text": "MDX" }
+      ],
+      "correct": "a",
+      "explanation": "KQL is the query language for Eventhouse (KQL Database), purpose-built for fast, ad hoc analysis of high-volume time-series and log-style event data."
+    },
+    {
+      "id": "700-71",
+      "domain": "Ingest and transform data",
+      "question": "You need to append complex, nested Spark transformation logic that reads from one Lakehouse and writes curated output to another within the same pipeline run. Which pipeline activity should you use?",
+      "options": [
+        { "id": "a", "text": "A Notebook activity" },
+        { "id": "b", "text": "A Copy activity only" },
+        { "id": "c", "text": "A Web activity" },
+        { "id": "d", "text": "A Wait activity" }
+      ],
+      "correct": "a",
+      "explanation": "A Notebook activity in a Data Pipeline runs a Spark notebook as an orchestrated step, letting you embed complex transformation logic within the broader pipeline flow."
+    },
+    {
+      "id": "700-72",
+      "domain": "Ingest and transform data",
+      "question": "You need each stage of a multi-step pipeline to only run if the prior stage succeeded, and to send a notification if any stage fails. What should you configure?",
+      "options": [
+        { "id": "a", "text": "Activity dependencies (success/failure conditions) with a notification activity" },
+        { "id": "b", "text": "A single Dataflow Gen2 with no branching" },
+        { "id": "c", "text": "A OneLake shortcut" },
+        { "id": "d", "text": "A capacity smoothing policy" }
+      ],
+      "correct": "a",
+      "explanation": "Data Pipeline activities support success, failure, and completion dependency conditions, and can be paired with notification activities (such as Teams or Outlook) to alert on failure."
+    },
+    {
+      "id": "700-73",
+      "domain": "Ingest and transform data",
+      "question": "A source table only exposes a last-modified timestamp column, and you want each pipeline run to pull only rows changed since the previous run. Which pattern should you implement?",
+      "options": [
+        { "id": "a", "text": "Incremental (watermark-based) ingestion using the timestamp column" },
+        { "id": "b", "text": "A full table reload on every run" },
+        { "id": "c", "text": "A OneLake shortcut" },
+        { "id": "d", "text": "A capacity bursting policy" }
+      ],
+      "correct": "a",
+      "explanation": "Watermark-based incremental ingestion tracks the last processed value of a change-indicating column (like a modified timestamp) and only pulls rows newer than that on each run."
+    },
+    {
+      "id": "700-74",
+      "domain": "Ingest and transform data",
+      "question": "You need to reshape a wide table with one column per month into a long, normalized format with a 'month' and 'value' column for downstream analysis. Which Power Query transformation fits?",
+      "options": [
+        { "id": "a", "text": "Unpivot columns" },
+        { "id": "b", "text": "Merge queries" },
+        { "id": "c", "text": "Append queries" },
+        { "id": "d", "text": "Group by" }
+      ],
+      "correct": "a",
+      "explanation": "Unpivot columns transforms wide, column-per-category data into a long, normalized format, which is the standard shape for further modeling and analysis."
+    },
+    {
+      "id": "700-75",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "You need a single place to see the recent run history, status, and duration of every pipeline, notebook, and dataflow run across a workspace. Which Fabric feature should you use?",
+      "options": [
+        { "id": "a", "text": "The Monitoring hub" },
+        { "id": "b", "text": "Query Store" },
+        { "id": "c", "text": "A deployment pipeline" },
+        { "id": "d", "text": "A OneLake shortcut" }
+      ],
+      "correct": "a",
+      "explanation": "The Fabric Monitoring hub centralizes run history and status across pipelines, notebooks, dataflows, and other items, giving a single place to check recent activity."
+    },
+    {
+      "id": "700-76",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "A Data Pipeline run failed partway through. What should you check first to identify which specific activity failed and why?",
+      "options": [
+        { "id": "a", "text": "The pipeline run's activity-level output and error details" },
+        { "id": "b", "text": "The Capacity Metrics app trend chart" },
+        { "id": "c", "text": "The workspace Git history" },
+        { "id": "d", "text": "The semantic model's refresh schedule" }
+      ],
+      "correct": "a",
+      "explanation": "Drilling into a specific pipeline run shows per-activity status and output, including the error message from the activity that failed, which is the fastest way to diagnose it."
+    },
+    {
+      "id": "700-77",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "A Dataflow Gen2 that used to run in minutes now times out on a specific query step after a source schema change. What is the most direct next step to identify the issue?",
+      "options": [
+        { "id": "a", "text": "Review the query diagnostics for that specific step" },
+        { "id": "b", "text": "Delete and recreate the entire workspace" },
+        { "id": "c", "text": "Increase the Fabric capacity SKU without investigating" },
+        { "id": "d", "text": "Disable Git integration" }
+      ],
+      "correct": "a",
+      "explanation": "Query diagnostics in Dataflow Gen2 show step-by-step timing and row counts, letting you pinpoint exactly which transformation step is now slow or failing after a schema change."
+    },
+    {
+      "id": "700-78",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "You need to be notified in near real time if a streaming metric from an Eventhouse crosses a threshold, without building a separate polling pipeline. Which Fabric item should you use?",
+      "options": [
+        { "id": "a", "text": "Data Activator" },
+        { "id": "b", "text": "A Dataflow Gen2" },
+        { "id": "c", "text": "A deployment pipeline" },
+        { "id": "d", "text": "A capacity smoothing rule" }
+      ],
+      "correct": "a",
+      "explanation": "Data Activator monitors data (including from Eventhouse/Eventstream) for defined conditions and triggers actions or notifications automatically when thresholds are crossed."
+    },
+    {
+      "id": "700-79",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "A notebook error message references a Py4JJavaError originating deep in the Spark executor logs. Where should you look to get the full underlying stack trace?",
+      "options": [
+        { "id": "a", "text": "The Spark application's driver and executor logs" },
+        { "id": "b", "text": "The Capacity Metrics app" },
+        { "id": "c", "text": "The Git commit history" },
+        { "id": "d", "text": "A sensitivity label audit log" }
+      ],
+      "correct": "a",
+      "explanation": "Spark driver and executor logs contain the full stack trace behind a Py4JJavaError, which is typically only summarized in the notebook cell output."
+    },
+    {
+      "id": "700-80",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "You want a T-SQL query against a Fabric Warehouse to reuse a previously computed, up-to-date row count and column statistics instead of scanning the full table for cardinality estimates. What should you make sure is current?",
+      "options": [
+        { "id": "a", "text": "Table statistics" },
+        { "id": "b", "text": "The deployment pipeline stage" },
+        { "id": "c", "text": "The OneLake shortcut cache" },
+        { "id": "d", "text": "The sensitivity label" }
+      ],
+      "correct": "a",
+      "explanation": "Up-to-date table statistics let the query optimizer make accurate cardinality estimates and choose efficient plans, without needing to scan the full table at query time."
+    },
+    {
+      "id": "700-81",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "A shared Fabric capacity is being consumed heavily by one workspace's background jobs, starving interactive Power BI users in other workspaces. What should you investigate first?",
+      "options": [
+        { "id": "a", "text": "Per-workspace and per-operation consumption in the Capacity Metrics app" },
+        { "id": "b", "text": "The Git branch protection rules" },
+        { "id": "c", "text": "The Dataflow Gen2 staging lakehouse only" },
+        { "id": "d", "text": "The sensitivity label taxonomy" }
+      ],
+      "correct": "a",
+      "explanation": "The Capacity Metrics app breaks down consumption by workspace and operation, letting you identify which background jobs are consuming shared capacity and starving other users."
+    },
+    {
+      "id": "700-82",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "You want historical Delta table versions to remain queryable with time travel for the next 30 days, but not longer, to control storage growth. What should you configure?",
+      "options": [
+        { "id": "a", "text": "The Delta table's retention/VACUUM settings" },
+        { "id": "b", "text": "A OneLake shortcut expiration" },
+        { "id": "c", "text": "A deployment pipeline stage rule" },
+        { "id": "d", "text": "A capacity bursting window" }
+      ],
+      "correct": "a",
+      "explanation": "Delta Lake retention settings determine how long old file versions are kept before VACUUM can remove them, directly controlling how far back time travel queries can go."
     }
   ]
 };
