@@ -1,5 +1,6 @@
+import { useMemo } from "react";
 import { Bookmark, CheckCircle2, XCircle } from "lucide-react";
-import { useTheme } from "../lib/theme.jsx";
+import { useTheme, shuffle } from "../lib/theme.jsx";
 
 export function TopBar({ left, right }) {
   return (
@@ -12,6 +13,13 @@ export function TopBar({ left, right }) {
 
 export function QuestionCard({ q, selected, revealed, onChoose, bookmarked, onToggleBookmark }) {
   const TOKENS = useTheme();
+  // Question banks were authored with the correct option consistently placed
+  // first (or otherwise unevenly distributed), which let users pattern-match
+  // "the correct answer is always A" instead of learning the material.
+  // Shuffle the *display* order per question (stable across re-renders via
+  // useMemo keyed on q.id), while opt.id / q.correct keep working exactly
+  // as before since each option carries its own id with it.
+  const displayOptions = useMemo(() => shuffle(q.options), [q.id]);
   return (
     <div className="rounded-2xl p-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
       <div className="flex items-start justify-between gap-3 mb-5">
@@ -23,7 +31,7 @@ export function QuestionCard({ q, selected, revealed, onChoose, bookmarked, onTo
         )}
       </div>
       <div className="space-y-2.5">
-        {q.options.map((opt) => {
+        {displayOptions.map((opt) => {
           const isSelected = selected === opt.id;
           const isCorrectOpt = opt.id === q.correct;
           let border = TOKENS.panelBorder;
