@@ -19,6 +19,7 @@ const examFiles = {
   "AZ-104": { fileName: "az104.js", varName: "AZ_104" },
   "AI-901": { fileName: "ai901.js", varName: "AI_901" },
   "PL-300": { fileName: "pl300.js", varName: "PL_300" },
+  "DP-800": { fileName: "dp800.js", varName: "DP_800" },
 };
 
 function readLegacyQuestionBank(filePath) {

@@ -91,6 +91,18 @@ const GUIDES = {
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/pl-300",
     docsUrl: "https://learn.microsoft.com/en-us/power-bi/",
   },
+  "DP-800": {
+    prereq: "No strict prerequisites, but the exam assumes subject matter expertise designing and developing AI-enabled database solutions across Microsoft SQL Server, Azure SQL, and SQL databases in Microsoft Fabric. You should be comfortable writing T-SQL, familiar with CI/CD in GitHub, and know AI concepts such as embeddings, vectors, and models.",
+    background: [
+      "T-SQL fundamentals — tables, constraints, views, stored procedures, and CTEs",
+      "Core database security concepts — encryption, masking, and row-level security",
+      "Basic familiarity with AI concepts like embeddings, vector search, and RAG",
+      "Comfort with GitHub-based CI/CD and Copilot-assisted development",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-800",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/dp-800",
+    docsUrl: "https://learn.microsoft.com/en-us/sql/",
+  },
 };
 
 function buildSteps(code, meta, guide) {

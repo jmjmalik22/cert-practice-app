@@ -35,7 +35,7 @@ export function getProgress() {
 // Import old progress data and merge with new
 export function migrateOldProgress() {
   const progress = getProgress();
-  const exams = ["DP-700", "DP-600", "AZ-900", "DP-900", "AZ-104", "AI-901", "PL-300"];
+  const exams = ["DP-700", "DP-600", "AZ-900", "DP-900", "AZ-104", "AI-901", "PL-300", "DP-800"];
   let migrated = false;
 
   exams.forEach((examCode) => {
