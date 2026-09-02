@@ -1,6 +1,6 @@
 import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
-import { BookOpen, ChevronLeft, Database, GitBranch, Layers, Workflow } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, Database, GitBranch, Layers, Workflow } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
 import { Footer } from "../../components/Shared.jsx";
 
@@ -46,8 +46,8 @@ export function IngestionFoundations() {
       </Helmet>
 
       <main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full">
-        <Link to="/study-guides" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>
-          <ChevronLeft size={14} /> All study guides
+        <Link to="/study-guides/shared" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>
+          <ChevronLeft size={14} /> Shared Fabric foundations
         </Link>
 
         <div
@@ -157,7 +157,16 @@ export function IngestionFoundations() {
           </ul>
         </div>
 
-        <div className="flex flex-wrap gap-3 mt-8">
+        <div className="flex items-center justify-between gap-3 mt-8 pt-6" style={{ borderTop: `1px solid ${TOKENS.panelBorder}` }}>
+          <Link to="/study-guides/shared" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}>
+            <ArrowLeft size={14} /> All shared topics
+          </Link>
+          <span className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: TOKENS.panelBorder, color: TOKENS.inkMuted }}>
+            Next topic coming soon <ArrowRight size={14} />
+          </span>
+        </div>
+
+        <div className="flex flex-wrap gap-3 mt-5">
           <Link to="/dp-700" className="rounded-full px-4 py-2 text-sm font-medium" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>
             Practice DP-700
           </Link>

@@ -73,6 +73,7 @@ assert(GUEST_MOCK_CONFIG.timeMinutes === 5, "Guest mock exam should stay at 5 mi
 const expectedStaticRoutes = new Set([
   "/",
   "/study-guides",
+  "/study-guides/shared",
   "/study-guides/shared/dataflows-pipelines",
   ...EXAM_CODES.map((code) => `/${EXAM_META[code].slug}`),
   ...STUDY_GUIDE_EXAM_CODES.map((code) => `/study-guides/${EXAM_META[code].slug}`),

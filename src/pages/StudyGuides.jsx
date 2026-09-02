@@ -163,11 +163,11 @@ export function StudyGuides() {
             Dataflows Gen2, pipelines, and Copy Data are useful across both DP-700 and DP-600 preparation.
           </p>
           <Link
-            to="/study-guides/shared/dataflows-pipelines"
+            to="/study-guides/shared"
             className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm"
             style={{ background: TOKENS.bg, color: TOKENS.ink, border: `1px solid ${TOKENS.panelBorder}` }}
           >
-            Read the shared topic <ChevronRight size={14} />
+            Browse shared topics <ChevronRight size={14} />
           </Link>
         </div>
 

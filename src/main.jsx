@@ -7,6 +7,7 @@ import { StudyGuides } from "./pages/StudyGuides.jsx";
 import { StudyGuideDetail } from "./pages/StudyGuideDetail.jsx";
 import { DP700StudyGuide } from "./pages/study-guides/DP700StudyGuide.jsx";
 import { IngestionFoundations } from "./pages/study-guides/IngestionFoundations.jsx";
+import { SharedStudyGuides } from "./pages/study-guides/SharedStudyGuides.jsx";
 import { Login } from "./pages/Login.jsx";
 import { NotFound } from "./pages/NotFound.jsx";
 import { AuthProvider } from "./lib/authContext.jsx";
@@ -40,6 +41,7 @@ const routes = [
       { path: ROUTE_PATHS.studyGuides, element: <StudyGuides /> },
       { path: ROUTE_PATHS.dp700StudyGuideTopic, element: <DP700StudyGuide /> },
       { path: "study-guides/shared/dataflows-pipelines", element: <IngestionFoundations /> },
+      { path: "study-guides/shared", element: <SharedStudyGuides /> },
       { path: ROUTE_PATHS.studyGuideDetail, element: <StudyGuideDetail /> },
       { path: ROUTE_PATHS.exam, element: <ExamPage /> },
       { path: "*", element: <NotFound /> },
