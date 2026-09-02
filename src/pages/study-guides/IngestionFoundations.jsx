@@ -47,7 +47,7 @@ export function IngestionFoundations() {
 
       <main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full">
         <Link to="/study-guides/shared" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>
-          <ChevronLeft size={14} /> Shared Fabric foundations
+          <ChevronLeft size={14} /> In-Depth Fabric Learning Path
         </Link>
 
         <div

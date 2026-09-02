@@ -35,9 +35,9 @@ export function SharedStudyGuides() {
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
-        <title>Shared Fabric Study Guides | DP-700 & DP-600 | FabricPrep</title>
+        <title>In-Depth Fabric Learning Path | DP-700 & DP-600 | FabricPrep</title>
         <link rel="canonical" href="https://fabricprep.com/study-guides/shared" />
-        <meta name="description" content="Shared Microsoft Fabric study topics for DP-700 and DP-600, organized as a guided learning sequence." />
+        <meta name="description" content="A step-by-step Microsoft Fabric learning path for DP-700 and DP-600, covering ingestion, Spark, Delta, Eventhouse, and KQL." />
       </Helmet>
 
       <main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full">
@@ -45,10 +45,10 @@ export function SharedStudyGuides() {
           ← All study guides
         </Link>
         <h1 className="text-2xl sm:text-3xl font-semibold mt-6" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-          Shared Fabric foundations
+          In-Depth Fabric Learning Path
         </h1>
         <p className="mt-3 text-sm" style={{ color: TOKENS.inkMuted }}>
-          Work through these common topics once, then apply them while preparing for DP-700 and DP-600.
+          Follow the topics in order to build your Microsoft Fabric knowledge from ingestion fundamentals to advanced real-time analytics for DP-700 and DP-600.
         </p>
 
         <nav aria-label="Shared study topics" className="mt-8 space-y-3">

@@ -157,17 +157,17 @@ export function StudyGuides() {
 
         <div className="rounded-xl p-5 mb-10" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
           <h2 className="text-lg font-semibold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            Shared Fabric foundations
+            In-Depth Fabric Learning Path
           </h2>
           <p className="text-sm mb-4" style={{ color: TOKENS.inkMuted }}>
-            Dataflows Gen2, pipelines, and Copy Data are useful across both DP-700 and DP-600 preparation.
+            Follow a step-by-step progression through Dataflows Gen2, pipelines, Spark, Delta, Eventhouse, and KQL for DP-700 and DP-600.
           </p>
           <Link
             to="/study-guides/shared"
             className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm"
             style={{ background: TOKENS.bg, color: TOKENS.ink, border: `1px solid ${TOKENS.panelBorder}` }}
           >
-            Browse shared topics <ChevronRight size={14} />
+            Start the learning path <ChevronRight size={14} />
           </Link>
         </div>
 
