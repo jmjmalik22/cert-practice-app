@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   updateProfile,
   sendEmailVerification,
+  sendPasswordResetEmail,
   reload,
 } from "firebase/auth";
 import { auth } from "./firebase";
@@ -34,7 +35,7 @@ export function AuthProvider({ children }) {
     // Send verification email
     try {
       await sendEmailVerification(userCredential.user);
-      console.log("Verification email sent successfully to:", email);
+      // Verification delivery is handled by Firebase; do not log user emails.
     } catch (error) {
       console.error("Error sending verification email:", error.message, error.code);
       // Don't throw - let user continue even if email fails
@@ -57,6 +58,10 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const resetPassword = async (email) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
   // Refresh user data (to check if email is verified)
   const refreshUser = async () => {
     if (auth.currentUser) {
@@ -77,6 +82,7 @@ export function AuthProvider({ children }) {
     login,
     logout,
     resendVerificationEmail,
+    resetPassword,
     refreshUser,
     isAuthenticated: !!user && user.emailVerified, // Require email verification for full access
     isEmailVerified: user?.emailVerified ?? false,

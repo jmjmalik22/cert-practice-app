@@ -7,7 +7,9 @@ import { StudyGuides } from "./pages/StudyGuides.jsx";
 import { StudyGuideDetail } from "./pages/StudyGuideDetail.jsx";
 import { DP700StudyGuide } from "./pages/study-guides/DP700StudyGuide.jsx";
 import { Login } from "./pages/Login.jsx";
+import { NotFound } from "./pages/NotFound.jsx";
 import { AuthProvider } from "./lib/authContext.jsx";
+import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 import { ROUTE_PATHS } from "./lib/examCatalog.js";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -16,11 +18,13 @@ import "./index.css";
 // Wrap the App with AuthProvider
 function AppWithAuth() {
   return (
-    <AuthProvider>
-      <App />
-      <Analytics />
-      <SpeedInsights />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <App />
+        <Analytics />
+        <SpeedInsights />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
@@ -36,6 +40,7 @@ const routes = [
       { path: ROUTE_PATHS.dp700StudyGuideTopic, element: <DP700StudyGuide /> },
       { path: ROUTE_PATHS.studyGuideDetail, element: <StudyGuideDetail /> },
       { path: ROUTE_PATHS.exam, element: <ExamPage /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ];

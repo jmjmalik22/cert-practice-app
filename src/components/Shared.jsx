@@ -181,6 +181,8 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
             className="p-2 rounded-lg"
             style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
           >
@@ -192,6 +194,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div
+          id="mobile-navigation"
           className="sm:hidden px-4 pb-4"
           style={{ borderBottom: `1px solid ${TOKENS.panelBorder}` }}
         >
@@ -230,6 +233,18 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
                   {streak} day{streak === 1 ? "" : "s"} streak
                 </span>
               </div>
+            )}
+            {user && (
+              <button
+                onClick={() => {
+                  onLogout();
+                  setMobileMenuOpen(false);
+                }}
+                className="px-4 py-3 rounded-lg text-sm text-left"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.inkMuted }}
+              >
+                Log out
+              </button>
             )}
             <div className="flex items-center justify-between px-4 py-3">
               <span className="text-xs" style={{ color: TOKENS.inkMuted }}>Theme</span>

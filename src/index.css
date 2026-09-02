@@ -5,3 +5,15 @@
 html, body, #root {
   height: 100%;
 }
+
+:focus-visible {
+  outline: 3px solid #3FA7FF;
+  outline-offset: 3px;
+}
+
+button,
+a,
+input,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
