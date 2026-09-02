@@ -1,4 +1,16 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/ai-900",
+      "destination": "/ai-901",
+      "permanent": true
+    },
+    {
+      "source": "/study-guides/ai-900",
+      "destination": "/study-guides/ai-901",
+      "permanent": true
+    }
+  ]
 }

@@ -129,10 +129,10 @@ export const EXAM_CATALOG = {
   },
   "DP-800": {
     slug: "dp-800",
-    title: "Microsoft DP-800 Practice Exam",
+    title: "Microsoft Certified: SQL AI Developer Associate (DP-800)",
     metaTitle: "DP-800 Practice Exams | FabricPrep",
     metaDescription:
-      "Free DP-800 practice questions for the Developing AI-Enabled Database Solutions exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free DP-800 practice questions for the Microsoft SQL AI Developer Associate certification, based on the official Developing AI-Enabled Database Solutions study guide.",
     studyGuide: true,
     mock: {
       caseStudyQuestions: 0,
