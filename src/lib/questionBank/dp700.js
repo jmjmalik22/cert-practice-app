@@ -1690,6 +1690,136 @@ export const DP_700 = {
       ],
       "correct": "a",
       "explanation": "Delta Lake retention settings determine how long old file versions are kept before VACUUM can remove them, directly controlling how far back time travel queries can go."
+    },
+    {
+      "id": "700-83",
+      "domain": "Ingest and transform data",
+      "question": "A Spark notebook processes a complex CSV feed whose column types must remain stable between runs. Which approach should you prefer?",
+      "options": [
+        { "id": "a", "text": "Infer the schema on every run" },
+        { "id": "b", "text": "Define an explicit StructType schema" },
+        { "id": "c", "text": "Convert the file to an image first" },
+        { "id": "d", "text": "Use a KQL materialized view" }
+      ],
+      "correct": "b",
+      "explanation": "An explicit schema makes the expected column names and data types predictable and avoids incorrect inference when source data varies between batches."
+    },
+    {
+      "id": "700-84",
+      "domain": "Ingest and transform data",
+      "question": "A Spark notebook needs to query a DataFrame with SQL only for the current notebook session. Which object should you create?",
+      "options": [
+        { "id": "a", "text": "A temporary view" },
+        { "id": "b", "text": "A deployment pipeline" },
+        { "id": "c", "text": "A semantic model" },
+        { "id": "d", "text": "A OneLake shortcut" }
+      ],
+      "correct": "a",
+      "explanation": "A temporary view exposes a DataFrame to Spark SQL for the current session. It is not a persistent table and disappears when the session ends."
+    },
+    {
+      "id": "700-85",
+      "domain": "Ingest and transform data",
+      "question": "You write a large Spark DataFrame to a Lakehouse and most future queries filter by date. Which design can reduce the amount of data read?",
+      "options": [
+        { "id": "a", "text": "Partition the output by the date column" },
+        { "id": "b", "text": "Store every row in one unpartitioned CSV file" },
+        { "id": "c", "text": "Remove the date column" },
+        { "id": "d", "text": "Disable predicate filtering" }
+      ],
+      "correct": "a",
+      "explanation": "Partitioning by a commonly filtered column can allow the engine to skip unrelated directories and reduce data scanned, provided the partition column has appropriate cardinality."
+    },
+    {
+      "id": "700-86",
+      "domain": "Ingest and transform data",
+      "question": "A team needs ACID transactions and the ability to query earlier versions of a Lakehouse table. Which storage choice is most appropriate?",
+      "options": [
+        { "id": "a", "text": "A Delta table" },
+        { "id": "b", "text": "A raw CSV folder" },
+        { "id": "c", "text": "A temporary Spark view" },
+        { "id": "d", "text": "A pipeline parameter" }
+      ],
+      "correct": "a",
+      "explanation": "Delta tables provide transaction logs and versioned data files, supporting reliable updates and time-travel queries in Lakehouse workloads."
+    },
+    {
+      "id": "700-87",
+      "domain": "Ingest and transform data",
+      "question": "You are optimizing a KQL query over billions of time-series records. Which change should generally be made first?",
+      "options": [
+        { "id": "a", "text": "Apply a selective time or row filter early" },
+        { "id": "b", "text": "Project every available column" },
+        { "id": "c", "text": "Sort all records before filtering" },
+        { "id": "d", "text": "Convert the Eventhouse table to CSV" }
+      ],
+      "correct": "a",
+      "explanation": "Filtering early reduces the amount of data subsequent KQL operators must process. Time filters are especially useful for time-series workloads."
+    },
+    {
+      "id": "700-88",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "A KQL query needs only three columns from a very wide table. Which operator should you use to reduce the result shape?",
+      "options": [
+        { "id": "a", "text": "project" },
+        { "id": "b", "text": "extend with every column" },
+        { "id": "c", "text": "union" },
+        { "id": "d", "text": "render only" }
+      ],
+      "correct": "a",
+      "explanation": "The project operator selects the columns needed for the result, reducing unnecessary data carried through later operators and improving query clarity."
+    },
+    {
+      "id": "700-89",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "When optimizing a KQL join, which table is commonly placed on the left when one input is much smaller than the other?",
+      "options": [
+        { "id": "a", "text": "The smaller input table" },
+        { "id": "b", "text": "The table with the most columns" },
+        { "id": "c", "text": "The table with the oldest records" },
+        { "id": "d", "text": "The table with no join key" }
+      ],
+      "correct": "a",
+      "explanation": "Putting the smaller input on the left can reduce the amount of data held for matching and is a useful starting point when tuning a KQL join."
+    },
+    {
+      "id": "700-90",
+      "domain": "Monitor and optimize an analytics solution",
+      "question": "A dashboard repeatedly calculates the same expensive aggregation over historical Eventhouse data. Which feature is designed to improve this pattern?",
+      "options": [
+        { "id": "a", "text": "A materialized view" },
+        { "id": "b", "text": "A pipeline parameter" },
+        { "id": "c", "text": "A temporary Spark view" },
+        { "id": "d", "text": "A file shortcut only" }
+      ],
+      "correct": "a",
+      "explanation": "A materialized view precomputes supported aggregations so repeated queries can reuse summarized results instead of recalculating the full history each time."
+    },
+    {
+      "id": "700-91",
+      "domain": "Implement and manage an analytics solution",
+      "question": "Several teams must call the same parameterized KQL logic consistently. What should you create?",
+      "options": [
+        { "id": "a", "text": "A stored function" },
+        { "id": "b", "text": "A separate copy of every query" },
+        { "id": "c", "text": "A browser bookmark" },
+        { "id": "d", "text": "A Power BI theme" }
+      ],
+      "correct": "a",
+      "explanation": "Stored functions encapsulate reusable KQL logic and can accept parameters, helping teams apply consistent filtering and transformation rules."
+    },
+    {
+      "id": "700-92",
+      "domain": "Ingest and transform data",
+      "question": "You are designing a workload for continuously arriving, mostly append-only telemetry. Which Fabric workload is the best fit for KQL-based real-time analysis?",
+      "options": [
+        { "id": "a", "text": "An Eventhouse with a KQL database" },
+        { "id": "b", "text": "A static Power BI theme" },
+        { "id": "c", "text": "A temporary DataFrame view only" },
+        { "id": "d", "text": "A deployment pipeline without a data store" }
+      ],
+      "correct": "a",
+      "explanation": "Eventhouse and KQL databases are designed for high-volume real-time and time-series analytics over continuously arriving event data."
     }
   ]
 };
