@@ -100,8 +100,8 @@ const GUIDES = {
       "Comfort with GitHub-based CI/CD and Copilot-assisted development",
     ],
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-800",
-    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/dp-800",
-    docsUrl: "https://learn.microsoft.com/en-us/sql/",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/developing-ai-enabled-database-solutions/",
+    docsUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-800",
   },
 };
 
