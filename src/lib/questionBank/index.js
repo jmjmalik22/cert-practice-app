@@ -5,6 +5,7 @@ import { DP_600 } from "./dp600.js";
 import { DP_700 } from "./dp700.js";
 import { DP_900 } from "./dp900.js";
 import { PL_300 } from "./pl300.js";
+import { DP_800 } from "./dp800.js";
 import { EXAM_CODES, EXAM_META, SLUG_TO_EXAM } from "../examCatalog.js";
 
 export const QUESTION_BANK = {
@@ -15,6 +16,7 @@ export const QUESTION_BANK = {
   "AZ-104": AZ_104,
   "AI-901": AI_901,
   "PL-300": PL_300,
+  "DP-800": DP_800,
 };
 
 export { EXAM_CODES, EXAM_META, SLUG_TO_EXAM };

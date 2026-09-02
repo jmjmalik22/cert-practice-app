@@ -42,6 +42,11 @@ const STUDY_RESOURCES = [
     title: "PL-300: Power BI Data Analyst Associate",
     description: "A step-by-step study path for the Microsoft Power BI Data Analyst Associate certification.",
   },
+  {
+    examCode: "DP-800",
+    title: "DP-800: Developing AI-Enabled Database Solutions",
+    description: "A step-by-step study path for the Microsoft DP-800 AI-enabled database solutions certification.",
+  },
 ];
 
 const EXTERNAL_RESOURCES = [

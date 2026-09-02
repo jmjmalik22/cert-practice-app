@@ -127,6 +127,24 @@ export const EXAM_CATALOG = {
       timeLimit: "Untimed",
     },
   },
+  "DP-800": {
+    slug: "dp-800",
+    title: "Microsoft DP-800 Practice Exam",
+    metaTitle: "DP-800 Practice Exams | FabricPrep",
+    metaDescription:
+      "Free DP-800 practice questions for the Developing AI-Enabled Database Solutions exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+    studyGuide: true,
+    mock: {
+      caseStudyQuestions: 0,
+      standaloneQuestions: 30,
+      totalQuestions: 30,
+      timeMinutes: 60,
+    },
+    practice: {
+      caseStudyCount: 0,
+      timeLimit: "Untimed",
+    },
+  },
 };
 
 export const EXAM_CODES = Object.freeze(Object.keys(EXAM_CATALOG));
