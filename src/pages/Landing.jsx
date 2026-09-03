@@ -3,7 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { RotateCcw, Clock, Bookmark, Flag, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
-import { EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
+import { COMING_SOON_EXAMS, EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 
 export function Landing() {
@@ -22,16 +22,16 @@ export function Landing() {
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
-        <title>Fabric Certification & Azure Certification Practice | FabricPrep</title>
+        <title>Fabric Prep | Microsoft Fabric & Azure Certification Practice</title>
         <link rel="canonical" href="https://fabricprep.com/" />
         <meta
           name="description"
-          content={`${totalQuestions}+ free certification prep practice questions for DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, DP-800. Fabric prep and Azure prep with realistic mock exams sourced from official Microsoft Learn docs.`}
+          content={`${totalQuestions}+ free Fabric Prep certification practice questions for DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, and DP-800. Prepare for Microsoft Fabric and Azure exams with realistic mock exams sourced from official Microsoft Learn documentation.`}
         />
         <meta name="keywords" content="fabric certification, microsoft fabric certification, fabric certification exam, fabric prep, fabricprep, dp 700 prep, dp 600 prep, dp 900 prep, az 900 prep, certification prep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, azure certification, fabric data engineer, fabric analytics engineer, data engineer prep, analytics engineer prep, fabric study guide, azure study guide" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fabricprep.com/" />
-        <meta property="og:title" content="Microsoft Fabric & Azure Certification Practice Questions | FabricPrep" />
+        <meta property="og:title" content="Fabric Prep | Microsoft Fabric & Azure Certification Practice" />
         <meta
           property="og:description"
           content={`${totalQuestions}+ free practice questions across ${examCount} Microsoft certifications, sourced from official Microsoft Learn docs.`}
@@ -44,17 +44,35 @@ export function Landing() {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "FabricPrep - Fabric Prep",
+            name: "Fabric Prep",
             url: "https://fabricprep.com/",
             description: "Free Fabric prep and Microsoft certification practice exams for DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, DP-800, and other Azure certifications.",
             alternateName: ["Fabric Prep", "fabric prep", "FabricPrep"],
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://fabricprep.com/?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SiteNavigationElement",
+            name: ["Fabric Prep Home", "Microsoft Fabric Study Guides", "About Fabric Prep"],
+            url: [
+              "https://fabricprep.com/",
+              "https://fabricprep.com/study-guides",
+              "https://fabricprep.com/about",
+            ],
           })}
         </script>
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "FabricPrep",
+            name: "Fabric Prep",
+            alternateName: ["FabricPrep", "fabric prep"],
             url: "https://fabricprep.com/",
             logo: "https://fabricprep.com/icon-512.png",
             description: "Free Microsoft certification practice platform for Fabric and Azure exams, built and maintained by Jitendra Singh Malik.",
@@ -64,8 +82,13 @@ export function Landing() {
         </script>
       </Helmet>
 
-      <div className="px-6 sm:px-10 pt-16 pb-20 text-center flex flex-col items-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
+      <div
+        className="px-6 sm:px-10 pt-16 pb-20 text-center flex flex-col items-center relative overflow-hidden"
+        style={{
+          background: `radial-gradient(circle at 50% -20%, ${TOKENS.azure}18 0%, transparent 42%), linear-gradient(180deg, ${TOKENS.bgDeep}70 0%, transparent 72%)`,
+        }}
+      >
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full" style={{ background: TOKENS.azure, filter: "blur(80px)" }} />
           <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full" style={{ background: TOKENS.green, filter: "blur(60px)" }} />
         </div>
@@ -84,7 +107,7 @@ export function Landing() {
           Bronze → Silver → Gold
         </div>
         <MedallionMotif />
-        <h1 className="text-4xl sm:text-5xl font-bold mt-4 max-w-2xl relative z-10" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+        <h1 className="text-4xl sm:text-5xl font-bold mt-4 max-w-2xl relative z-10" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY, textShadow: `0 0 32px ${TOKENS.azure}18` }}>
           Pass your Microsoft certification exam with <span style={{ color: TOKENS.azure }}>confidence</span>.
         </h1>
         <p className="mt-4 text-base max-w-lg relative z-10" style={{ color: TOKENS.inkMuted }}>
@@ -109,8 +132,8 @@ export function Landing() {
           />
           
           <div
-            className="text-left rounded-2xl p-5 relative"
-            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+            className="text-left rounded-2xl p-5 relative shadow-xl"
+            style={{ background: `${TOKENS.panel}F2`, border: `1px solid ${TOKENS.azure}35`, boxShadow: `0 18px 50px ${TOKENS.bgDeep}50` }}
           >
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>DP-700 · sample question</span>
@@ -130,7 +153,7 @@ export function Landing() {
                 key={opt.label}
                 className="text-xs px-3 py-2 rounded-lg"
                 style={{
-                  background: opt.correct ? `${TOKENS.green}15` : TOKENS.bg,
+                  background: opt.correct ? `${TOKENS.green}15` : `${TOKENS.bg}B8`,
                   border: `1px solid ${opt.correct ? TOKENS.green : TOKENS.panelBorder}`,
                   color: opt.correct ? TOKENS.green : TOKENS.inkMuted,
                 }}
@@ -216,12 +239,47 @@ export function Landing() {
                       border: `1px solid ${TOKENS.azure}30`
                     }}
                   >
-                    Start practicing →
+                    Practice {code} →
                   </span>
                 </div>
               </Link>
             );
           })}
+        </div>
+
+        <h2 className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
+          More exams coming soon
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14" aria-label="Exams coming soon">
+          {COMING_SOON_EXAMS.map(({ code, label }) => (
+            <div
+              key={code}
+              aria-disabled="true"
+              className="rounded-xl p-5 opacity-75"
+              style={{ background: `${TOKENS.panel}90`, border: `1px dashed ${TOKENS.panelBorder}` }}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center font-bold text-sm"
+                    style={{ background: `${TOKENS.inkMuted}15`, color: TOKENS.inkMuted, fontFamily: FONT_MONO }}
+                  >
+                    {code.split("-")[1]}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-base" style={{ color: TOKENS.inkMuted }}>{code}</div>
+                    <div className="text-xs mt-0.5" style={{ color: TOKENS.inkMuted }}>{label}</div>
+                  </div>
+                </div>
+                <span
+                  className="text-xs font-medium px-3 py-1.5 rounded-full flex-shrink-0"
+                  style={{ background: `${TOKENS.amber}15`, color: TOKENS.amber, border: `1px solid ${TOKENS.amber}35` }}
+                >
+                  Coming soon
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
@@ -285,7 +343,7 @@ export function Landing() {
             </ul>
           </div>
           <div className="rounded-2xl p-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.azure}` }}>
-            <div className="text-xs font-medium mb-3" style={{ color: TOKENS.azure }}>FabricPrep</div>
+            <div className="text-xs font-medium mb-3" style={{ color: TOKENS.azure }}>Fabric Prep</div>
             <ul className="flex flex-col gap-2.5">
               {[
                 "Every question sourced from official Microsoft Learn docs",
@@ -318,7 +376,7 @@ export function Landing() {
               <img
                 src="/CoverPic_Face.jpg"
                 alt="Jitendra Singh Malik"
-                className="w-40 h-40 rounded-full object-cover"
+                className="w-40 h-40 rounded-2xl object-cover"
                 style={{ 
                   border: `3px solid ${TOKENS.azure}`,
                   boxShadow: `0 8px 24px ${TOKENS.azure}40`
@@ -328,7 +386,7 @@ export function Landing() {
                 className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs"
                 style={{ 
                   background: TOKENS.green, 
-                  color: "#04101F",
+                  color: TOKENS.bgDeep,
                   border: `2px solid ${TOKENS.panel}`
                 }}
               >

@@ -1,7 +1,7 @@
 {
-  "name": "FabricPrep - Microsoft Certification Practice",
-  "short_name": "FabricPrep",
-  "description": "Interactive practice questions for Microsoft Fabric & Azure certifications",
+  "name": "Fabric Prep - Microsoft Certification Practice",
+  "short_name": "Fabric Prep",
+  "description": "Interactive Fabric Prep practice questions for Microsoft Fabric and Azure certifications",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e40af",

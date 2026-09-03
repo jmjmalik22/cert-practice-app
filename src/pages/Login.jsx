@@ -9,7 +9,7 @@ import { Footer, MedallionMotif } from "../components/Shared.jsx";
 export function Login() {
   const TOKENS = useTheme();
   const navigate = useNavigate();
-  const { login, signup, resendVerificationEmail, refreshUser, resetPassword } = useAuth();
+  const { login, signup, loginWithGoogle, resendVerificationEmail, refreshUser, resetPassword } = useAuth();
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,8 +29,32 @@ export function Login() {
       "auth/weak-password": "Your password must be at least 6 characters.",
       "auth/invalid-email": "Enter a valid email address.",
       "auth/too-many-requests": "Too many attempts. Please try again later.",
+      "auth/popup-closed-by-user": "The Google sign-in window was closed before sign-in completed.",
+      "auth/popup-blocked": "Your browser blocked the Google sign-in window. Allow pop-ups and try again.",
+      "auth/unauthorized-domain": "This website is not authorized for Google Sign-In. Add its domain in Firebase Authentication settings.",
+      "auth/account-exists-with-different-credential": "An account already exists with this email. Sign in with email and password instead.",
+      "auth/operation-not-allowed": "Google Sign-In is not enabled in Firebase. Enable Google under Authentication → Sign-in providers.",
+      "auth/cancelled-popup-request": "Another Google sign-in window is already open. Finish it or close it and try again.",
+      "auth/network-request-failed": "Network error while contacting Google. Check your connection and try again.",
+      "auth/invalid-api-key": "The Firebase web configuration is invalid. Check the Firebase project configuration.",
+      "auth/app-not-authorized": "This app is not authorized for Firebase Authentication. Check the Firebase web app configuration.",
     };
     return messages[err.code] || "Authentication failed. Please try again.";
+  }
+
+  async function handleGoogleSignIn() {
+    setError("");
+    setNotice("");
+    setLoading(true);
+
+    try {
+      await loginWithGoogle();
+      navigate("/");
+    } catch (err) {
+      setError(getAuthErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSubmit(e) {
@@ -294,6 +318,27 @@ export function Login() {
           >
             {loading ? "Please wait..." : isSignup ? "Create Account" : "Sign In"}
           </button>
+
+          {!isSignup && (
+            <>
+              <div className="flex items-center gap-3 py-1" aria-hidden="true">
+                <div className="h-px flex-1" style={{ background: TOKENS.panelBorder }} />
+                <span className="text-xs" style={{ color: TOKENS.inkMuted }}>OR</span>
+                <div className="h-px flex-1" style={{ background: TOKENS.panelBorder }} />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+                className="w-full py-3 rounded-full font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-3"
+                style={{ background: TOKENS.panel, color: TOKENS.ink, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <span className="font-bold text-base" aria-hidden="true">G</span>
+                Continue with Google
+              </button>
+            </>
+          )}
 
           {!isSignup && (
             <button

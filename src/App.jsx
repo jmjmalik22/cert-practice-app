@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import {
   ThemeContext,
   DARK_TOKENS,
@@ -11,6 +11,17 @@ import {
 } from "./lib/theme.jsx";
 import { useAuth } from "./lib/authContext.jsx";
 import { Header } from "./components/Shared.jsx";
+
+function ScrollToTop() {
+  const { pathname, search, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname, search, hash]);
+
+  return null;
+}
 
 export default function App() {
   const [hasMounted, setHasMounted] = useState(false);
@@ -44,6 +55,7 @@ export default function App() {
   return (
     <ThemeContext.Provider value={tokens}>
       <div className="min-h-screen w-full flex flex-col" style={{ background: tokens.bg, fontFamily: FONT_BODY }}>
+        <ScrollToTop />
         <Header 
           theme={theme} 
           onToggleTheme={toggleTheme} 

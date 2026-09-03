@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, Home, BookOpen, Menu, X, Lock } from "lucide-react";
+import { LayoutDashboard, Home, BookOpen, Info, Menu, X, Lock } from "lucide-react";
 import { useState } from "react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
@@ -52,6 +52,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
   const navItems = [
     { to: "/", label: "Home", icon: Home, public: true },
     { to: "/study-guides", label: "Study Guides", icon: BookOpen, public: true },
+    { to: "/about", label: "About", icon: Info, public: true },
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, public: false },
   ];
 
@@ -65,6 +66,11 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
 
   return (
     <>
+      <nav aria-label="Primary navigation" className="sr-only">
+        {navItems.filter((item) => item.public).map((item) => (
+          <Link key={item.to} to={item.to}>{item.label}</Link>
+        ))}
+      </nav>
       <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4 sm:py-5">
         <button
           onClick={onLogoClick}
@@ -79,7 +85,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
             FP
           </div>
           <span className="text-sm font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            FabricPrep
+            Fabric Prep
           </span>
         </button>
 
@@ -158,9 +164,6 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
               }}
             />
           </button>
-          <span className="text-xs hidden lg:block" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
-            by Jitendra Singh Malik
-          </span>
         </div>
 
         {/* Mobile Menu Button */}
@@ -320,14 +323,19 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
 export function Footer() {
   const TOKENS = useTheme();
   return (
-    <div className="text-center py-8 px-6">
+    <footer className="text-center py-8 px-6">
+      <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4 text-xs">
+        <Link to="/">Fabric Prep Home</Link>
+        <Link to="/study-guides">Microsoft Fabric Study Guides</Link>
+        <Link to="/about">About Fabric Prep</Link>
+      </nav>
       <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
         Built by <span style={{ color: TOKENS.azure }}>Jitendra Singh Malik</span>
       </p>
       <p className="text-xs mt-1" style={{ color: TOKENS.inkMuted, opacity: 0.6 }}>
         Not affiliated with or endorsed by Microsoft.
       </p>
-    </div>
+    </footer>
   );
 }
 

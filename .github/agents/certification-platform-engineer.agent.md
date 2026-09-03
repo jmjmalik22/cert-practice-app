@@ -34,6 +34,19 @@ You are the primary engineering agent for FabricPrep, a React/Vite certification
 9. Before finishing, run the relevant tests and `npm run build`; inspect warnings and fix errors introduced by the change.
 10. Review `git diff`, `git diff --check`, and `git status` before committing. Report validation results and remaining non-blocking limitations.
 
+## Token-efficiency practices
+
+The question-bank files (e.g. `src/lib/questionBank/*.js`) and generated build output are large. Default to the cheapest tool that answers the question, and never load more than the task needs.
+
+- **Never `cat`/open a whole question-bank file to make a small change.** Use `grep -n`, `rg`, or a targeted line-range read to locate the exact question/ID block first, then edit with a scoped diff (`str_replace`-style patch), not a full-file rewrite.
+- **Batch new questions per exam in one pass.** Draft all new questions for a batch locally, validate the batch once, then write it in a single edit instead of many small round-trips to the same file.
+- **Prefer `git diff`/`git status` over re-reading files** to confirm what changed; don't re-open a file just verified by diff.
+- **Read Microsoft Learn pages only for facts actually needed**, one fetch per distinct exam/skill area, and reuse what was already fetched earlier in the same task instead of re-fetching. Extract only the specific facts required (exam code, title, status, skills measured) rather than pulling full page content into context.
+- **Run `npm run build` / tests once per logical change**, not after every small edit — batch related edits, then validate.
+- **Avoid dumping full validator or build output.** Grep or tail the output for errors/warnings and report only the relevant lines, not the entire log.
+- **Don't re-summarize unchanged files.** If a file wasn't touched this session, don't re-describe its contents in the completion report — reference it by name only.
+- **Keep the completion report terse**: changed files, validation result, and any blocker — no restatement of full diffs or full question text already visible in the change itself.
+
 ## Question-bank requirements
 
 Every question must have:

@@ -165,6 +165,21 @@ export const EXAM_CATALOG = {
 
 export const EXAM_CODES = Object.freeze(Object.keys(EXAM_CATALOG));
 
+// Exams planned for future question-bank releases. These are intentionally
+// separate from EXAM_CATALOG so they cannot create routes or appear in SEO
+// sitemaps before content is available.
+export const COMING_SOON_EXAMS = Object.freeze([
+  { code: "AI-103", label: "Azure AI Apps and Agents Developer Associate" },
+  { code: "AI-200", label: "Azure AI Cloud Developer Associate" },
+  { code: "AI-300", label: "Machine Learning Operations Engineer Associate" },
+  { code: "AZ-305", label: "Azure Solutions Architect Expert" },
+  { code: "AZ-400", label: "DevOps Engineer Expert" },
+  { code: "DP-750", label: "Azure Databricks Data Engineer Associate" },
+  { code: "SC-900", label: "Security, Compliance, and Identity Fundamentals" },
+  { code: "SC-300", label: "Identity and Access Administrator Associate" },
+  { code: "SC-500", label: "Cloud and AI Security Engineer Associate" },
+]);
+
 export const EXAM_META = Object.freeze(
   Object.fromEntries(
     Object.entries(EXAM_CATALOG).map(([code, { studyGuide, mock, practice, ...meta }]) => [code, meta])
@@ -220,6 +235,7 @@ export const ROUTE_PATHS = Object.freeze({
 
 export const SSG_ROUTES = Object.freeze([
   "/",
+  "/about",
   "/study-guides",
   "/study-guides/shared",
   "/study-guides/shared/dataflows-pipelines",
@@ -236,6 +252,7 @@ export const SSG_ROUTES = Object.freeze([
 
 export const SITEMAP_ROUTES = Object.freeze([
   { path: "/", priority: "1.0", changefreq: "weekly" },
+  { path: "/about", priority: "0.7", changefreq: "monthly" },
   { path: "/study-guides", priority: "0.9", changefreq: "weekly" },
   { path: "/study-guides/shared", priority: "0.8", changefreq: "monthly" },
   { path: "/study-guides/shared/dataflows-pipelines", priority: "0.8", changefreq: "monthly" },
