@@ -271,8 +271,8 @@ export function Practice({ exam, onExit }) {
                   : flaggedQuestions.has(qq.id)
                   ? TOKENS.amber
                   : i === idx
-                  ? TOKENS.panelBorder
-                  : "#1B2740",
+                  ? TOKENS.inkMuted
+                  : TOKENS.panelBorder,
               }}
             />
           ))}

@@ -3,6 +3,8 @@ export const SITE_ORIGIN = "https://fabricprep.com";
 export const EXAM_CATALOG = {
   "DP-700": {
     slug: "dp-700",
+    label: "Fabric Data Engineer Associate",
+    questionCount: 92,
     title: "Microsoft Fabric DP-700 Practice Exam",
     metaTitle: "DP-700 Practice Exams | FabricPrep",
     metaDescription:
@@ -21,6 +23,8 @@ export const EXAM_CATALOG = {
   },
   "DP-600": {
     slug: "dp-600",
+    label: "Fabric Analytics Engineer Associate",
+    questionCount: 76,
     title: "Microsoft Fabric DP-600 Practice Exam",
     metaTitle: "DP-600 Practice Exams | FabricPrep",
     metaDescription:
@@ -39,6 +43,8 @@ export const EXAM_CATALOG = {
   },
   "AZ-900": {
     slug: "az-900",
+    label: "Azure Fundamentals",
+    questionCount: 72,
     title: "Microsoft Azure AZ-900 Practice Exam",
     metaTitle: "AZ-900 Practice Exams | FabricPrep",
     metaDescription:
@@ -57,6 +63,8 @@ export const EXAM_CATALOG = {
   },
   "DP-900": {
     slug: "dp-900",
+    label: "Azure Data Fundamentals",
+    questionCount: 72,
     title: "Microsoft Azure DP-900 Practice Exam",
     metaTitle: "DP-900 Practice Exams | FabricPrep",
     metaDescription:
@@ -75,6 +83,8 @@ export const EXAM_CATALOG = {
   },
   "AZ-104": {
     slug: "az-104",
+    label: "Azure Administrator Associate",
+    questionCount: 72,
     title: "Microsoft Azure AZ-104 Practice Exam",
     metaTitle: "AZ-104 Practice Exams | FabricPrep",
     metaDescription:
@@ -93,6 +103,8 @@ export const EXAM_CATALOG = {
   },
   "AI-901": {
     slug: "ai-901",
+    label: "Azure AI Fundamentals (Foundry)",
+    questionCount: 72,
     title: "Microsoft Azure AI-901 Practice Exam",
     metaTitle: "AI-901 Practice Exams | FabricPrep",
     metaDescription:
@@ -111,6 +123,8 @@ export const EXAM_CATALOG = {
   },
   "PL-300": {
     slug: "pl-300",
+    label: "Power BI Data Analyst Associate",
+    questionCount: 72,
     title: "Microsoft Power BI PL-300 Practice Exam",
     metaTitle: "PL-300 Practice Exams | FabricPrep",
     metaDescription:
@@ -129,6 +143,8 @@ export const EXAM_CATALOG = {
   },
   "DP-800": {
     slug: "dp-800",
+    label: "Developing AI-Enabled Database Solutions",
+    questionCount: 90,
     title: "Microsoft Certified: SQL AI Developer Associate (DP-800)",
     metaTitle: "DP-800 Practice Exams | FabricPrep",
     metaDescription:

@@ -1,21 +1,6 @@
 import { ViteReactSSG } from "vite-react-ssg";
 import App from "./App.jsx";
 import { Landing } from "./pages/Landing.jsx";
-import { ExamPage } from "./pages/ExamPage.jsx";
-import { Dashboard } from "./pages/Dashboard.jsx";
-import { StudyGuides } from "./pages/StudyGuides.jsx";
-import { StudyGuideDetail } from "./pages/StudyGuideDetail.jsx";
-import { DP700StudyGuide } from "./pages/study-guides/DP700StudyGuide.jsx";
-import { IngestionFoundations } from "./pages/study-guides/IngestionFoundations.jsx";
-import { SharedStudyGuides } from "./pages/study-guides/SharedStudyGuides.jsx";
-import { SparkDeltaFoundations } from "./pages/study-guides/SparkDeltaFoundations.jsx";
-import { EventhouseFoundations } from "./pages/study-guides/EventhouseFoundations.jsx";
-import { WarehouseFoundations } from "./pages/study-guides/WarehouseFoundations.jsx";
-import { MonitoringFoundations } from "./pages/study-guides/MonitoringFoundations.jsx";
-import { SecurityFoundations } from "./pages/study-guides/SecurityFoundations.jsx";
-import { LifecycleFoundations } from "./pages/study-guides/LifecycleFoundations.jsx";
-import { Login } from "./pages/Login.jsx";
-import { NotFound } from "./pages/NotFound.jsx";
 import { AuthProvider } from "./lib/authContext.jsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 import { ROUTE_PATHS } from "./lib/examCatalog.js";
@@ -42,21 +27,111 @@ const routes = [
     element: <AppWithAuth />,
     children: [
       { index: true, element: <Landing /> },
-      { path: ROUTE_PATHS.dashboard, element: <Dashboard /> },
-      { path: ROUTE_PATHS.login, element: <Login /> },
-      { path: ROUTE_PATHS.studyGuides, element: <StudyGuides /> },
-      { path: ROUTE_PATHS.dp700StudyGuideTopic, element: <DP700StudyGuide /> },
-      { path: "study-guides/shared/dataflows-pipelines", element: <IngestionFoundations /> },
-      { path: "study-guides/shared", element: <SharedStudyGuides /> },
-      { path: "study-guides/shared/spark-notebooks-delta", element: <SparkDeltaFoundations /> },
-      { path: "study-guides/shared/eventhouse-kql", element: <EventhouseFoundations /> },
-      { path: "study-guides/shared/warehouse-dimensional-modeling", element: <WarehouseFoundations /> },
-      { path: "study-guides/shared/monitoring-optimization", element: <MonitoringFoundations /> },
-      { path: "study-guides/shared/security-governance", element: <SecurityFoundations /> },
-      { path: "study-guides/shared/lifecycle-orchestration", element: <LifecycleFoundations /> },
-      { path: ROUTE_PATHS.studyGuideDetail, element: <StudyGuideDetail /> },
-      { path: ROUTE_PATHS.exam, element: <ExamPage /> },
-      { path: "*", element: <NotFound /> },
+      {
+        path: ROUTE_PATHS.dashboard,
+        lazy: async () => {
+          const { Dashboard } = await import("./pages/Dashboard.jsx");
+          return { Component: Dashboard };
+        },
+      },
+      {
+        path: ROUTE_PATHS.login,
+        lazy: async () => {
+          const { Login } = await import("./pages/Login.jsx");
+          return { Component: Login };
+        },
+      },
+      {
+        path: ROUTE_PATHS.studyGuides,
+        lazy: async () => {
+          const { StudyGuides } = await import("./pages/StudyGuides.jsx");
+          return { Component: StudyGuides };
+        },
+      },
+      {
+        path: ROUTE_PATHS.dp700StudyGuideTopic,
+        lazy: async () => {
+          const { DP700StudyGuide } = await import("./pages/study-guides/DP700StudyGuide.jsx");
+          return { Component: DP700StudyGuide };
+        },
+      },
+      {
+        path: "study-guides/shared/dataflows-pipelines",
+        lazy: async () => {
+          const { IngestionFoundations } = await import("./pages/study-guides/IngestionFoundations.jsx");
+          return { Component: IngestionFoundations };
+        },
+      },
+      {
+        path: "study-guides/shared",
+        lazy: async () => {
+          const { SharedStudyGuides } = await import("./pages/study-guides/SharedStudyGuides.jsx");
+          return { Component: SharedStudyGuides };
+        },
+      },
+      {
+        path: "study-guides/shared/spark-notebooks-delta",
+        lazy: async () => {
+          const { SparkDeltaFoundations } = await import("./pages/study-guides/SparkDeltaFoundations.jsx");
+          return { Component: SparkDeltaFoundations };
+        },
+      },
+      {
+        path: "study-guides/shared/eventhouse-kql",
+        lazy: async () => {
+          const { EventhouseFoundations } = await import("./pages/study-guides/EventhouseFoundations.jsx");
+          return { Component: EventhouseFoundations };
+        },
+      },
+      {
+        path: "study-guides/shared/warehouse-dimensional-modeling",
+        lazy: async () => {
+          const { WarehouseFoundations } = await import("./pages/study-guides/WarehouseFoundations.jsx");
+          return { Component: WarehouseFoundations };
+        },
+      },
+      {
+        path: "study-guides/shared/monitoring-optimization",
+        lazy: async () => {
+          const { MonitoringFoundations } = await import("./pages/study-guides/MonitoringFoundations.jsx");
+          return { Component: MonitoringFoundations };
+        },
+      },
+      {
+        path: "study-guides/shared/security-governance",
+        lazy: async () => {
+          const { SecurityFoundations } = await import("./pages/study-guides/SecurityFoundations.jsx");
+          return { Component: SecurityFoundations };
+        },
+      },
+      {
+        path: "study-guides/shared/lifecycle-orchestration",
+        lazy: async () => {
+          const { LifecycleFoundations } = await import("./pages/study-guides/LifecycleFoundations.jsx");
+          return { Component: LifecycleFoundations };
+        },
+      },
+      {
+        path: ROUTE_PATHS.studyGuideDetail,
+        lazy: async () => {
+          const { StudyGuideDetail } = await import("./pages/StudyGuideDetail.jsx");
+          return { Component: StudyGuideDetail };
+        },
+      },
+      {
+        path: ROUTE_PATHS.exam,
+        lazy: async () => {
+          const { ExamPage } = await import("./pages/ExamPage.jsx");
+          return { Component: ExamPage };
+        },
+      },
+      {
+        path: "*",
+        lazy: async () => {
+          const { NotFound } = await import("./pages/NotFound.jsx");
+          return { Component: NotFound };
+        },
+      },
     ],
   },
 ];

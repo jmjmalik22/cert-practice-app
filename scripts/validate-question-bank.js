@@ -1,4 +1,4 @@
-import { GUEST_MOCK_CONFIG, SITEMAP_ROUTES, SSG_ROUTES, SITE_ORIGIN, STUDY_GUIDE_EXAM_CODES, getMockConfig } from "../src/lib/examCatalog.js";
+import { EXAM_CATALOG, GUEST_MOCK_CONFIG, SITEMAP_ROUTES, SSG_ROUTES, SITE_ORIGIN, STUDY_GUIDE_EXAM_CODES, getMockConfig } from "../src/lib/examCatalog.js";
 import { EXAM_CODES, EXAM_META, QUESTION_BANK, SLUG_TO_EXAM } from "../src/lib/questionBank/index.js";
 
 const errors = [];
@@ -29,6 +29,8 @@ for (const code of EXAM_CODES) {
 
   assert(typeof exam.label === "string" && exam.label.length > 0, `${code} is missing a label`);
   assert(Array.isArray(exam.questions) && exam.questions.length > 0, `${code} has no questions`);
+  assert(exam.label === EXAM_CATALOG[code].label, `${code} catalog label does not match question bank label`);
+  assert(exam.questions.length === EXAM_CATALOG[code].questionCount, `${code} catalog questionCount does not match question bank`);
   assert(typeof meta.slug === "string" && meta.slug.length > 0, `${code} is missing a slug`);
   assert(SLUG_TO_EXAM[meta.slug] === code, `${code} slug does not resolve back through SLUG_TO_EXAM`);
 
