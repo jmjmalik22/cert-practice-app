@@ -1,6 +1,7 @@
 import { ViteReactSSG } from "vite-react-ssg";
 import App from "./App.jsx";
 import { Landing } from "./pages/Landing.jsx";
+import { About } from "./pages/About.jsx";
 import { AuthProvider } from "./lib/authContext.jsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 import { ROUTE_PATHS } from "./lib/examCatalog.js";
@@ -27,6 +28,7 @@ const routes = [
     element: <AppWithAuth />,
     children: [
       { index: true, element: <Landing /> },
+      { path: "about", element: <About /> },
       {
         path: ROUTE_PATHS.dashboard,
         lazy: async () => {
