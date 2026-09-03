@@ -105,7 +105,7 @@ export function EventhouseFoundations() {
 
         <div className="flex items-center justify-between gap-3 mt-8 pt-6" style={{ borderTop: `1px solid ${TOKENS.panelBorder}` }}>
           <Link to="/study-guides/shared/spark-notebooks-delta" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}><ArrowLeft size={14} /> Previous topic</Link>
-          <span className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: TOKENS.panelBorder, color: TOKENS.inkMuted }}>Next shared topic coming soon <ArrowRight size={14} /></span>
+          <Link to="/study-guides/shared/warehouse-dimensional-modeling" className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>Next topic <ArrowRight size={14} /></Link>
         </div>
       </main>
       <Footer />
