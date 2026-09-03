@@ -2,7 +2,7 @@ import { Head as Helmet } from "vite-react-ssg";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ChevronLeft, BookOpen, Database, Shield, Activity, Layers, Code2, Droplets, Warehouse, Zap, GitBranch, ListChecks } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
-import { EXAM_META } from "../../lib/questionBank/index.js";
+import { EXAM_META } from "../../lib/examCatalog.js";
 import { buildBreadcrumbSchema } from "../../lib/examCatalog.js";
 import { Footer } from "../../components/Shared.jsx";
 

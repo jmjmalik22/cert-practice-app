@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
-import { EXAM_META } from "../lib/questionBank/index.js";
+import { EXAM_META } from "../lib/examCatalog.js";
 import { buildBreadcrumbSchema, SITE_ORIGIN } from "../lib/examCatalog.js";
 
 const STUDY_RESOURCES = [

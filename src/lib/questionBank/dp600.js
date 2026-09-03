@@ -26,6 +26,326 @@ export const DP_600 = {
       "correct": "b",
       "explanation": "Fabric workloads are enabled by purchasing a Fabric capacity (an F SKU), which provides the compute pool shared across all Fabric items in assigned workspaces."
     },
+	
+	
+	// DP-600 — batch 1 of 2: 24 new questions (600-53 through 600-76)
+// Note: this file's id prefix is "600-", NOT "dp600-" (confirmed from existing 600-52 etc.)
+// Paste this block into src/lib/questionBank/dp600.js
+// Insert it right BEFORE the closing "  ]\n};" at the end of the file
+// (i.e., right after the 600-52 question object, adding a comma after that object's closing "}")
+
+    {
+      "id": "600-53",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "An organization is deciding between Power BI Pro workspaces and a dedicated Fabric capacity (e.g., an F64 SKU) for a large analytics rollout. What is a key advantage of a Fabric capacity over Pro-only workspaces?",
+      "options": [
+        { "id": "a", "text": "It provides dedicated, shared compute for all Fabric workloads (not just Power BI) and doesn't require every content consumer to have a Pro license for viewing" },
+        { "id": "b", "text": "It removes the need for any workspace roles" },
+        { "id": "c", "text": "It disables row-level security" },
+        { "id": "d", "text": "It only supports DirectQuery, never Import mode" }
+      ],
+      "correct": "a",
+      "explanation": "A Fabric capacity provides dedicated compute shared across all Fabric workloads (Data Engineering, Data Factory, Power BI, etc.), and content published to a capacity-backed workspace can typically be viewed by users with free licenses, unlike Pro-only workspaces."
+    },
+    {
+      "id": "600-54",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "A team is evaluating a Fabric trial capacity before committing budget to a paid SKU. What should they keep in mind about trial capacities?",
+      "options": [
+        { "id": "a", "text": "They are time-limited and intended for evaluation, so items should be migrated to a paid capacity before the trial expires" },
+        { "id": "b", "text": "Trial capacities never expire" },
+        { "id": "c", "text": "Trial capacities support unlimited concurrent users with no throttling" },
+        { "id": "d", "text": "Trial capacities cannot host any Power BI content" }
+      ],
+      "correct": "a",
+      "explanation": "Fabric trial capacities are time-limited evaluation offerings; content and workloads should be planned to migrate to a paid capacity before the trial period ends to avoid disruption."
+    },
+    {
+      "id": "600-55",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "A Fabric administrator wants to monitor how much of a capacity's compute resources are being consumed by different workloads over time, to decide whether to scale up. Which tool should they use?",
+      "options": [
+        { "id": "a", "text": "The Microsoft Fabric Capacity Metrics app" },
+        { "id": "b", "text": "A calculated column" },
+        { "id": "c", "text": "A bookmark" },
+        { "id": "d", "text": "A drillthrough page" }
+      ],
+      "correct": "a",
+      "explanation": "The Fabric Capacity Metrics app gives administrators visibility into capacity utilization across workloads over time, helping inform decisions about scaling capacity up or down."
+    },
+    {
+      "id": "600-56",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "A workspace needs someone who can add and remove other members and manage workspace-level settings, but that person should not necessarily be able to modify every report's content directly. Which role grants membership management without requiring full content edit rights be their primary duty?",
+      "options": [
+        { "id": "a", "text": "Admin" },
+        { "id": "b", "text": "Viewer" },
+        { "id": "c", "text": "A read-only build permission on a single semantic model" },
+        { "id": "d", "text": "No role can manage members without being an Admin" }
+      ],
+      "correct": "a",
+      "explanation": "The Admin role in a Fabric/Power BI workspace can manage workspace membership and settings, in addition to having full content permissions; it is the role responsible for controlling who else has access."
+    },
+    {
+      "id": "600-57",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "A large enterprise wants to organize dozens of Fabric workspaces by business unit, applying consistent governance policies and making it easier for users to discover relevant content. Which Fabric feature supports this?",
+      "options": [
+        { "id": "a", "text": "Domains" },
+        { "id": "b", "text": "Bookmarks" },
+        { "id": "c", "text": "Calculation groups" },
+        { "id": "d", "text": "Dataflows" }
+      ],
+      "correct": "a",
+      "explanation": "Fabric domains let organizations group related workspaces (e.g., by business unit), apply consistent governance settings, and improve content discoverability across the organization."
+    },
+    {
+      "id": "600-58",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "An admin wants a single place to see the status, duration, and errors of recent refreshes, pipeline runs, and other operations across items they have access to in Fabric. Which feature should they use?",
+      "options": [
+        { "id": "a", "text": "The Monitoring hub" },
+        { "id": "b", "text": "A sensitivity label" },
+        { "id": "c", "text": "A calculated table" },
+        { "id": "d", "text": "A custom tooltip" }
+      ],
+      "correct": "a",
+      "explanation": "The Monitoring hub provides a centralized view of activities across Fabric items — such as refreshes, pipeline runs, and other operations — including their status and any errors."
+    },
+    {
+      "id": "600-59",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "A development team wants to track version history of their Fabric items, collaborate using feature branches, and review changes before merging, similar to standard software development practice. Which capability should they connect their workspace to?",
+      "options": [
+        { "id": "a", "text": "Git integration (source control)" },
+        { "id": "b", "text": "A deployment pipeline only, with no source control" },
+        { "id": "c", "text": "A sensitivity label" },
+        { "id": "d", "text": "Row-level security" }
+      ],
+      "correct": "a",
+      "explanation": "Fabric's Git integration connects a workspace to a source control repository, enabling version history, branching, and pull-request based collaboration on workspace items."
+    },
+    {
+      "id": "600-60",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "When promoting content through a deployment pipeline from Test to Production, a connection string needs to point to a different database than in Test. How should this be handled without manually editing the item after each deployment?",
+      "options": [
+        { "id": "a", "text": "Configure deployment rules (e.g., parameter rules) that automatically apply the correct value for the target stage" },
+        { "id": "b", "text": "Manually edit the connection after every single deployment" },
+        { "id": "c", "text": "Disable the deployment pipeline and publish directly instead" },
+        { "id": "d", "text": "Apply a sensitivity label to override the connection" }
+      ],
+      "correct": "a",
+      "explanation": "Deployment pipelines support deployment rules, such as parameter or data source rules, that automatically substitute stage-specific values (like connection strings) each time content is deployed to that stage."
+    },
+    {
+      "id": "600-61",
+      "domain": "Plan, implement, and manage a solution for data analytics",
+      "question": "During peak hours, a Fabric capacity's compute usage spikes above 100%, causing interactive operations to slow down noticeably before eventually being throttled further. Which Fabric mechanism is designed to absorb short-term bursts before throttling kicks in?",
+      "options": [
+        { "id": "a", "text": "Smoothing (bursting), which spreads background operation costs over a longer window" },
+        { "id": "b", "text": "Row-level security" },
+        { "id": "c", "text": "Deployment pipelines" },
+        { "id": "d", "text": "Sensitivity labels" }
+      ],
+      "correct": "a",
+      "explanation": "Fabric capacities use smoothing to spread the compute cost of background operations over a rolling time window, absorbing short bursts of demand before interactive delay or rejection throttling is applied."
+    },
+    {
+      "id": "600-62",
+      "domain": "Explore and analyze data",
+      "question": "A report author wants to write and test standalone DAX queries against a semantic model, inspecting the raw tabular results, without building a visual first. Which tool should they use?",
+      "options": [
+        { "id": "a", "text": "DAX query view" },
+        { "id": "b", "text": "The decomposition tree visual" },
+        { "id": "c", "text": "A bookmark" },
+        { "id": "d", "text": "Row-level security editor" }
+      ],
+      "correct": "a",
+      "explanation": "DAX query view lets authors write and run DAX queries directly against the model and see the resulting table output, useful for testing and debugging measures outside of a visual."
+    },
+    {
+      "id": "600-63",
+      "domain": "Explore and analyze data",
+      "question": "An analyst wants Power BI to automatically suggest a starting visual layout and generate initial narrative summaries for a report, based on a natural-language description of what they want. Which capability provides this?",
+      "options": [
+        { "id": "a", "text": "Copilot in Power BI" },
+        { "id": "b", "text": "A resource lock" },
+        { "id": "c", "text": "A gateway" },
+        { "id": "d", "text": "A calculated column" }
+      ],
+      "correct": "a",
+      "explanation": "Copilot in Power BI uses generative AI to help authors create report pages, suggest visuals, and generate narrative summaries based on natural-language prompts."
+    },
+    {
+      "id": "600-64",
+      "domain": "Explore and analyze data",
+      "question": "A user browsing a report wants a simple sum or average of a field without writing DAX themselves. Which Power BI feature suggests common aggregate calculations automatically when a field is dragged into the right area?",
+      "options": [
+        { "id": "a", "text": "Quick measures" },
+        { "id": "b", "text": "A deployment pipeline" },
+        { "id": "c", "text": "A sensitivity label" },
+        { "id": "d", "text": "A gateway" }
+      ],
+      "correct": "a",
+      "explanation": "Quick measures provide a guided dialog for common calculation patterns (running totals, percent of total, etc.), generating the underlying DAX automatically without the user writing it by hand."
+    },
+    {
+      "id": "600-65",
+      "domain": "Explore and analyze data",
+      "question": "To improve the accuracy of the Q&A natural-language visual, a modeler adds synonyms and marks certain fields as featured tables. What is this process called?",
+      "options": [
+        { "id": "a", "text": "Configuring the linguistic schema" },
+        { "id": "b", "text": "Creating a deployment pipeline" },
+        { "id": "c", "text": "Applying a resource lock" },
+        { "id": "d", "text": "Enabling incremental refresh" }
+      ],
+      "correct": "a",
+      "explanation": "The linguistic schema defines synonyms, featured tables, and phrasing hints that improve how accurately the Q&A visual interprets natural-language questions against the model."
+    },
+    {
+      "id": "600-66",
+      "domain": "Explore and analyze data",
+      "question": "A finance team needs a fixed-layout, printable report that renders exact table structures across many pages, suitable for regulatory filings. Which Power BI report type fits best?",
+      "options": [
+        { "id": "a", "text": "A paginated report" },
+        { "id": "b", "text": "A standard interactive Power BI report" },
+        { "id": "c", "text": "A Q&A visual" },
+        { "id": "d", "text": "A decomposition tree" }
+      ],
+      "correct": "a",
+      "explanation": "Paginated reports are designed for pixel-perfect, print-ready output that renders consistently across pages, which is well suited to regulatory or tabular documents unlike standard interactive reports."
+    },
+    {
+      "id": "600-67",
+      "domain": "Explore and analyze data",
+      "question": "An ISV wants to embed Power BI reports into their own customer-facing application, without requiring each end customer to have a Power BI license. Which approach should they use?",
+      "options": [
+        { "id": "a", "text": "Embed for your customers (app-owns-data embedding)" },
+        { "id": "b", "text": "Publish to web (public embed)" },
+        { "id": "c", "text": "A drillthrough page" },
+        { "id": "d", "text": "A calculated column" }
+      ],
+      "correct": "a",
+      "explanation": "Embed for your customers (app-owns-data) lets an application authenticate using its own service identity so end customers can view embedded reports without needing individual Power BI licenses."
+    },
+    {
+      "id": "600-68",
+      "domain": "Explore and analyze data",
+      "question": "Leadership wants to track a handful of key business goals over time, with the ability to check them in at intervals and see progress trend lines, separate from a full analytical report. Which Power BI feature is designed for this?",
+      "options": [
+        { "id": "a", "text": "Metrics (scorecards)" },
+        { "id": "b", "text": "A dataflow" },
+        { "id": "c", "text": "A gateway" },
+        { "id": "d", "text": "Row-level security" }
+      ],
+      "correct": "a",
+      "explanation": "Metrics (scorecards) let organizations define and track key goals over time, with owners able to check in progress, independent of a full report's visuals."
+    },
+    {
+      "id": "600-69",
+      "domain": "Explore and analyze data",
+      "question": "A logistics company wants a dashboard that updates within seconds as new sensor events stream in from delivery trucks. Which Fabric capability chain best supports this near real-time visual experience?",
+      "options": [
+        { "id": "a", "text": "Eventstream and KQL Database feeding a Real-Time Dashboard" },
+        { "id": "b", "text": "A paginated report refreshed nightly" },
+        { "id": "c", "text": "A dataflow refreshed weekly" },
+        { "id": "d", "text": "A calculated column in Import mode" }
+      ],
+      "correct": "a",
+      "explanation": "Fabric's Real-Time Intelligence workload uses Eventstream to ingest streaming events and a KQL Database to store them, powering Real-Time Dashboards that update with very low latency as new data arrives."
+    },
+    {
+      "id": "600-70",
+      "domain": "Explore and analyze data",
+      "question": "A user wants to share a static snapshot of the current report page in a slide deck for an executive meeting. Which export option is most appropriate?",
+      "options": [
+        { "id": "a", "text": "Export the report to PowerPoint or PDF" },
+        { "id": "b", "text": "Create a new deployment pipeline" },
+        { "id": "c", "text": "Apply a sensitivity label" },
+        { "id": "d", "text": "Enable a gateway" }
+      ],
+      "correct": "a",
+      "explanation": "Power BI supports exporting reports to formats like PowerPoint and PDF, producing a static snapshot suitable for slide decks or offline sharing rather than the live interactive report."
+    },
+    {
+      "id": "600-71",
+      "domain": "Explore and analyze data",
+      "question": "A viewer wants to temporarily change a visual's chart type or add a field for their own exploration, without affecting what other viewers see or altering the underlying published report. Which feature supports this?",
+      "options": [
+        { "id": "a", "text": "Personalize visuals" },
+        { "id": "b", "text": "A deployment pipeline" },
+        { "id": "c", "text": "A calculated column" },
+        { "id": "d", "text": "A resource lock" }
+      ],
+      "correct": "a",
+      "explanation": "Personalize visuals lets individual viewers make temporary, session-specific changes to a visual (like chart type or fields) for their own exploration, without modifying the report for anyone else."
+    },
+    {
+      "id": "600-72",
+      "domain": "Prepare data",
+      "question": "A team wants a reusable set of ETL transformations that can feed multiple semantic models and reports, defined once in Fabric rather than duplicating Power Query logic in each item. Which Fabric item should they build?",
+      "options": [
+        { "id": "a", "text": "A Dataflow Gen2" },
+        { "id": "b", "text": "A calculated column" },
+        { "id": "c", "text": "A bookmark" },
+        { "id": "d", "text": "A resource lock" }
+      ],
+      "correct": "a",
+      "explanation": "Dataflow Gen2 lets you define reusable, centralized data preparation logic in Fabric that multiple downstream semantic models and reports can consume, avoiding duplicated transformation logic."
+    },
+    {
+      "id": "600-73",
+      "domain": "Prepare data",
+      "question": "A fact table has billions of rows, but only the last 30 days of data changes; historical partitions are static. Which technique lets refreshes touch only the recent data instead of reprocessing everything?",
+      "options": [
+        { "id": "a", "text": "Incremental refresh" },
+        { "id": "b", "text": "A calculated column" },
+        { "id": "c", "text": "A sensitivity label" },
+        { "id": "d", "text": "A resource lock" }
+      ],
+      "correct": "a",
+      "explanation": "Incremental refresh partitions a table by date ranges and refreshes only the partitions that fall within the defined refresh window, avoiding a full reload of historical data that hasn't changed."
+    },
+    {
+      "id": "600-74",
+      "domain": "Prepare data",
+      "question": "Before transforming a new dataset, an analyst wants to quickly see column data types, the percentage of null or error values, and value distributions to spot data quality issues. Which Power Query feature should they use?",
+      "options": [
+        { "id": "a", "text": "Column quality, column distribution, and column profile tools" },
+        { "id": "b", "text": "A deployment pipeline" },
+        { "id": "c", "text": "A resource lock" },
+        { "id": "d", "text": "A sensitivity label" }
+      ],
+      "correct": "a",
+      "explanation": "Power Query's column quality, column distribution, and column profile views give a quick visual summary of data quality (errors, nulls, distinct values) before committing to transformation steps."
+    },
+    {
+      "id": "600-75",
+      "domain": "Implement and manage semantic models",
+      "question": "A model has a Products table and a Stores table where each product can be sold at many stores and each store sells many products — a direct many-to-many relationship causes ambiguous filtering. Which pattern resolves this cleanly?",
+      "options": [
+        { "id": "a", "text": "Introduce a bridge (junction) table connecting Products and Stores through individual sales transactions" },
+        { "id": "b", "text": "Delete one of the two tables" },
+        { "id": "c", "text": "Apply a sensitivity label to both tables" },
+        { "id": "d", "text": "Convert both tables to calculated columns" }
+      ],
+      "correct": "a",
+      "explanation": "A bridge (junction) table sits between the two many-to-many tables, converting the relationship into two clean one-to-many relationships and avoiding ambiguous or incorrect filter propagation."
+    },
+    {
+      "id": "600-76",
+      "domain": "Maintain a data analytics solution",
+      "question": "A workspace admin wants to see which reports are viewed most often and by how many distinct users, to decide which content to prioritize for maintenance. Which built-in feature provides this?",
+      "options": [
+        { "id": "a", "text": "The usage metrics report" },
+        { "id": "b", "text": "A bridge table" },
+        { "id": "c", "text": "A calculated column" },
+        { "id": "d", "text": "A gateway" }
+      ],
+      "correct": "a",
+      "explanation": "The usage metrics report shows view counts, distinct viewers, and other adoption data for reports and dashboards, helping admins identify which content is most used and worth prioritizing."
+    },
     {
       "id": "600-2",
       "domain": "Prepare data",

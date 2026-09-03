@@ -10,25 +10,18 @@ import {
   updateStreak,
 } from "./lib/theme.jsx";
 import { useAuth } from "./lib/authContext.jsx";
-import { getUser } from "./lib/progress.jsx";
-import { UserProfileModal } from "./components/UserProfile.jsx";
 import { Header } from "./components/Shared.jsx";
 
 export default function App() {
   const [hasMounted, setHasMounted] = useState(false);
   const [theme, setTheme] = useState(() => getStoredTheme());
   const [streak, setStreak] = useState(0);
-  const [showProfileModal, setShowProfileModal] = useState(false);
   const { user, logout, isAuthenticated, isEmailVerified, loading: authLoading } = useAuth();
 
   useEffect(() => {
     setHasMounted(true);
     setStreak(updateStreak());
-    const localUser = getUser();
-    if (!localUser.name && !user) {
-      setShowProfileModal(true);
-    }
-  }, [user]);
+  }, []);
 
   function toggleTheme() {
     const next = theme === "dark" ? "light" : "dark";
@@ -62,9 +55,6 @@ export default function App() {
         <div className="flex-1 flex flex-col min-w-0">
           <Outlet context={{ theme, onToggleTheme: toggleTheme, streak, user, isAuthenticated, isEmailVerified }} />
         </div>
-        {showProfileModal && !user && (
-          <UserProfileModal onClose={() => setShowProfileModal(false)} />
-        )}
       </div>
     </ThemeContext.Provider>
   );

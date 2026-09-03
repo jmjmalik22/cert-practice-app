@@ -299,7 +299,13 @@ export function MockExam({ exam, onExit }) {
           <div
             key={qq.id}
             className="h-1.5 flex-1 rounded-full"
-            style={{ background: answers[qq.id] ? TOKENS.azure : i === idx ? TOKENS.panelBorder : "#1B2740" }}
+            style={{
+              background: answers[qq.id]
+                ? TOKENS.azure
+                : i === idx
+                ? TOKENS.inkMuted
+                : TOKENS.panelBorder,
+            }}
           />
         ))}
       </div>

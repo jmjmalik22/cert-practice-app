@@ -3,14 +3,14 @@ import { Link, useOutletContext } from "react-router-dom";
 import { RotateCcw, Clock, Bookmark, Flag, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
-import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
+import { EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 
 export function Landing() {
   const { isAuthenticated } = useOutletContext();
   const TOKENS = useTheme();
-  const totalQuestions = Object.values(QUESTION_BANK).reduce((sum, d) => sum + d.questions.length, 0);
-  const examCount = Object.keys(QUESTION_BANK).length;
+  const totalQuestions = EXAM_CODES.reduce((sum, code) => sum + EXAM_META[code].questionCount, 0);
+  const examCount = EXAM_CODES.length;
 
   const features = [
     { icon: RotateCcw, title: "Untimed practice", body: "Work through questions at your own pace, with instant explanations and domain filters." },
@@ -151,10 +151,10 @@ export function Landing() {
           Choose an exam
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14">
-          {Object.entries(QUESTION_BANK).map(([code, data]) => {
+          {EXAM_CODES.map((code) => {
             const meta = EXAM_META[code];
             const attempted = getAttempted(code).length;
-            const total = data.questions.length;
+            const total = meta.questionCount;
             const pct = total ? Math.min(100, Math.round((attempted / total) * 100)) : 0;
             const stats = getExamStats(code, total);
             const hasAttempts = stats.totalAttempts > 0;
@@ -183,7 +183,7 @@ export function Landing() {
                     </div>
                     <div>
                       <div className="font-bold text-base" style={{ color: TOKENS.ink }}>{code}</div>
-                      <div className="text-xs mt-0.5" style={{ color: TOKENS.inkMuted }}>{data.label}</div>
+                      <div className="text-xs mt-0.5" style={{ color: TOKENS.inkMuted }}>{meta.label}</div>
                     </div>
                   </div>
                   <div className="text-right">
