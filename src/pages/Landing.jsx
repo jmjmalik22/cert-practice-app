@@ -3,7 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { RotateCcw, Clock, Bookmark, Flag, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
-import { EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
+import { COMING_SOON_EXAMS, EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 
 export function Landing() {
@@ -245,6 +245,41 @@ export function Landing() {
               </Link>
             );
           })}
+        </div>
+
+        <h2 className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
+          More exams coming soon
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14" aria-label="Exams coming soon">
+          {COMING_SOON_EXAMS.map(({ code, label }) => (
+            <div
+              key={code}
+              aria-disabled="true"
+              className="rounded-xl p-5 opacity-75"
+              style={{ background: `${TOKENS.panel}90`, border: `1px dashed ${TOKENS.panelBorder}` }}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center font-bold text-sm"
+                    style={{ background: `${TOKENS.inkMuted}15`, color: TOKENS.inkMuted, fontFamily: FONT_MONO }}
+                  >
+                    {code.split("-")[1]}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-base" style={{ color: TOKENS.inkMuted }}>{code}</div>
+                    <div className="text-xs mt-0.5" style={{ color: TOKENS.inkMuted }}>{label}</div>
+                  </div>
+                </div>
+                <span
+                  className="text-xs font-medium px-3 py-1.5 rounded-full flex-shrink-0"
+                  style={{ background: `${TOKENS.amber}15`, color: TOKENS.amber, border: `1px solid ${TOKENS.amber}35` }}
+                >
+                  Coming soon
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">

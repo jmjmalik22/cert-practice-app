@@ -8,8 +8,9 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   reload,
+  signInWithPopup,
 } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth, googleProvider } from "./firebase";
 
 const AuthContext = createContext(null);
 
@@ -51,6 +52,19 @@ export function AuthProvider({ children }) {
     return userCredential.user;
   };
 
+  // Sign in with Google
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      // Reload to get latest emailVerified status
+      await reload(result.user);
+      return result.user;
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      throw error;
+    }
+  };
+
   // Resend verification email
   const resendVerificationEmail = async () => {
     if (auth.currentUser && !auth.currentUser.emailVerified) {
@@ -84,6 +98,7 @@ export function AuthProvider({ children }) {
     resendVerificationEmail,
     resetPassword,
     refreshUser,
+    loginWithGoogle, // Add this line
     isAuthenticated: !!user && user.emailVerified, // Require email verification for full access
     isEmailVerified: user?.emailVerified ?? false,
   };

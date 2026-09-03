@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
-import { EXAM_META } from "../lib/examCatalog.js";
+import { COMING_SOON_EXAMS, EXAM_META } from "../lib/examCatalog.js";
 import { buildBreadcrumbSchema, SITE_ORIGIN } from "../lib/examCatalog.js";
 
 const STUDY_RESOURCES = [
@@ -152,6 +152,41 @@ export function StudyGuides() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10 items-stretch">
           {STUDY_RESOURCES.map((resource) => (
             <ResourceCard key={resource.examCode} resource={resource} />
+          ))}
+        </div>
+
+        <h2 className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em" }}>
+          More study guides coming soon
+        </h2>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10" aria-label="Study guides coming soon">
+          {COMING_SOON_EXAMS.map(({ code, label }) => (
+            <div
+              key={code}
+              aria-disabled="true"
+              className="rounded-xl p-5 opacity-75"
+              style={{ background: `${TOKENS.panel}90`, border: `1px dashed ${TOKENS.panelBorder}` }}
+            >
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style={{ background: `${TOKENS.inkMuted}15` }}
+                >
+                  <BookOpen size={20} style={{ color: TOKENS.inkMuted }} />
+                </div>
+                <span
+                  className="text-xs font-medium px-2.5 py-1 rounded-full"
+                  style={{ background: `${TOKENS.amber}15`, color: TOKENS.amber, border: `1px solid ${TOKENS.amber}35` }}
+                >
+                  Coming soon
+                </span>
+              </div>
+              <h3 className="font-semibold mb-1" style={{ color: TOKENS.inkMuted, fontFamily: FONT_DISPLAY }}>
+                {code}: {label}
+              </h3>
+              <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                This study guide is being prepared and will be available soon.
+              </p>
+            </div>
           ))}
         </div>
 
