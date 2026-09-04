@@ -49,6 +49,8 @@ export function SponsorButton({ compact = false }) {
       href="https://github.com/sponsors/jmjmalik22"
       target="_blank"
       rel="noopener noreferrer"
+      aria-label="Support Fabric Prep on GitHub"
+      title="Support Fabric Prep on GitHub"
       className={
         compact
           ? "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
@@ -61,7 +63,7 @@ export function SponsorButton({ compact = false }) {
       }}
     >
       <Heart size={compact ? 18 : 14} fill={TOKENS.red} />
-      Sponsor
+      Support
     </a>
   );
 }
