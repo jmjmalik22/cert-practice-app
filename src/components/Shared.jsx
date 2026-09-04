@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, Home, BookOpen, Info, Menu, X, Lock } from "lucide-react";
+import { LayoutDashboard, Home, BookOpen, Info, Menu, X, Lock, Heart } from "lucide-react";
 import { useState } from "react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
@@ -39,6 +39,30 @@ export function MedallionMotif({ opacity = 1 }) {
         </g>
       ))}
     </svg>
+  );
+}
+
+export function SponsorButton({ compact = false }) {
+  const TOKENS = useTheme();
+  return (
+    <a
+      href="https://github.com/sponsors/jmjmalik22"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={
+        compact
+          ? "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
+          : "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+      }
+      style={{
+        color: TOKENS.red,
+        background: `${TOKENS.red}1A`,
+        border: `1px solid ${TOKENS.red}40`,
+      }}
+    >
+      <Heart size={compact ? 18 : 14} fill={TOKENS.red} />
+      Sponsor
+    </a>
   );
 }
 
@@ -113,6 +137,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
               </Link>
             );
           })}
+          <SponsorButton />
           {user ? (
             <div className="flex items-center gap-2">
               <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
@@ -227,6 +252,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
                 </Link>
               );
             })}
+            <SponsorButton compact />
             {streak > 0 && (
               <div
                 className="flex items-center gap-2 px-4 py-3 rounded-full"
