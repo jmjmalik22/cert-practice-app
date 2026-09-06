@@ -25,12 +25,16 @@ function ScrollToTop() {
 
 export default function App() {
   const [hasMounted, setHasMounted] = useState(false);
-  const [theme, setTheme] = useState(() => getStoredTheme());
+  // Use the same initial theme during SSG and browser hydration. Read the
+  // user's saved preference after mounting to avoid a mismatched color render
+  // when /login or another route is loaded directly.
+  const [theme, setTheme] = useState("light");
   const [streak, setStreak] = useState(0);
   const { user, logout, isAuthenticated, isEmailVerified, loading: authLoading } = useAuth();
 
   useEffect(() => {
     setHasMounted(true);
+    setTheme(getStoredTheme());
     setStreak(updateStreak());
   }, []);
 
