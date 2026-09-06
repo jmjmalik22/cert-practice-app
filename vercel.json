@@ -12,5 +12,11 @@
       "destination": "/study-guides/ai-901",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!.*\\.[^/]+$).*)",
+      "destination": "/index.html"
+    }
   ]
 }
