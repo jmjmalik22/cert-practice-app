@@ -15,7 +15,11 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!.*\\.[^/]+$).*)",
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dashboard",
       "destination": "/index.html"
     }
   ]
