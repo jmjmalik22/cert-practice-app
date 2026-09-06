@@ -97,7 +97,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
           <Link key={item.to} to={item.to}>{item.label}</Link>
         ))}
       </nav>
-      <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4 sm:py-5">
+      <div className="relative flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4 sm:py-5">
         <button
           onClick={onLogoClick}
           className="flex items-center gap-2.5"
@@ -139,7 +139,6 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
               </Link>
             );
           })}
-          <SponsorButton />
           {user ? (
             <div className="flex items-center gap-2">
               <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
@@ -191,6 +190,10 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
               }}
             />
           </button>
+        </div>
+
+        <div className="absolute right-1 top-1 hidden sm:block">
+          <SponsorButton />
         </div>
 
         {/* Mobile Menu Button */}

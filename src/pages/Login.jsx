@@ -224,20 +224,24 @@ export function Login() {
   }
 
   return (
-    <div className="min-h-full flex flex-col px-6 py-8 max-w-md mx-auto w-full">
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <MedallionMotif opacity={0.5} />
-        <h1
-          className="text-2xl sm:text-3xl font-semibold mt-4 mb-2 text-center"
-          style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
+    <div className="min-h-full flex flex-col px-4 sm:px-6 py-8 w-full">
+      <div className="flex-1 flex items-center justify-center">
+        <div
+          className="w-full max-w-md rounded-2xl p-6 sm:p-8"
+          style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, boxShadow: `0 16px 40px ${TOKENS.bgDeep}26` }}
         >
-          {isSignup ? "Create Account" : "Welcome Back"}
-        </h1>
-        <p className="text-sm text-center mb-8" style={{ color: TOKENS.inkMuted }}>
-          {isSignup
-            ? "Sign up to track your progress across devices"
-            : "Sign in to continue your certification journey"}
-        </p>
+          <MedallionMotif opacity={0.65} />
+          <h1
+            className="text-2xl sm:text-3xl font-semibold mt-4 mb-2 text-center"
+            style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
+          >
+            {isSignup ? "Create Account" : "Welcome Back"}
+          </h1>
+          <p className="text-sm text-center mb-8" style={{ color: TOKENS.inkMuted }}>
+            {isSignup
+              ? "Sign up to track your progress across devices"
+              : "Sign in to continue your certification journey"}
+          </p>
 
         {error && (
           <div
@@ -249,7 +253,7 @@ export function Login() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
+          <form onSubmit={handleSubmit} className="w-full space-y-4">
           {isSignup && (
             <div>
               <label className="block text-xs mb-1" style={{ color: TOKENS.inkMuted }}>
@@ -351,26 +355,27 @@ export function Login() {
               Forgot password?
             </button>
           )}
-        </form>
+          </form>
 
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => {
-              setIsSignup(!isSignup);
-              setError("");
-              setNotice("");
-            }}
-            className="text-sm"
-            style={{ color: TOKENS.azure }}
-          >
-            {isSignup ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
-          </button>
-        </div>
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => {
+                setIsSignup(!isSignup);
+                setError("");
+                setNotice("");
+              }}
+              className="text-sm"
+              style={{ color: TOKENS.azure }}
+            >
+              {isSignup ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
+            </button>
+          </div>
 
-        <div className="mt-4 text-center">
-          <Link to="/" className="text-xs" style={{ color: TOKENS.inkMuted }}>
-            Continue as guest
-          </Link>
+          <div className="mt-4 text-center">
+            <Link to="/" className="text-xs" style={{ color: TOKENS.inkMuted }}>
+              Continue as guest
+            </Link>
+          </div>
         </div>
       </div>
 
