@@ -116,7 +116,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
         </button>
 
         {/* Desktop Navigation */}
-        <div className="hidden sm:flex items-center gap-2.5">
+        <div className="hidden sm:flex items-center gap-2.5 pr-24">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isLocked = !item.public && !hasFullAccess;
@@ -192,7 +192,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
           </button>
         </div>
 
-        <div className="absolute right-0 top-1 hidden sm:block">
+        <div className="absolute right-4 sm:right-6 lg:right-10 top-1/2 -translate-y-1/2 hidden sm:block">
           <SponsorButton />
         </div>
 
