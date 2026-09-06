@@ -236,6 +236,8 @@ export const ROUTE_PATHS = Object.freeze({
 export const SSG_ROUTES = Object.freeze([
   "/",
   "/about",
+  "/login",
+  "/dashboard",
   "/study-guides",
   "/study-guides/shared",
   "/study-guides/shared/dataflows-pipelines",
