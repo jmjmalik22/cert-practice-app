@@ -192,7 +192,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
           </button>
         </div>
 
-        <div className="absolute right-1 top-1 hidden sm:block">
+        <div className="absolute right-0 top-1 hidden sm:block">
           <SponsorButton />
         </div>
 
