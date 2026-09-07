@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useParams, Link, Navigate, useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, Link, Navigate, useOutletContext, useSearchParams } from "react-router-dom";
 import { Head as Helmet } from "vite-react-ssg";
 import { RotateCcw, Clock, ChevronLeft, BookOpen, Lock } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
@@ -12,7 +12,7 @@ import { MockExam } from "../components/MockExam.jsx";
 function buildFaqs(code, meta, total) {
   return [
     { q: `How many questions are in the ${code} practice bank?`, a: `There are currently ${total} practice questions for ${code}, covering every domain in the official Microsoft exam skills outline.` },
-    { q: `Is FabricPrep's ${code} practice free?`, a: `Yes — all practice questions and mock exams on FabricPrep are free, with no account or credit card required.` },
+    { q: `Is FabricPrep's ${code} practice free?`, a: `Yes — all questions and mock exams are free. A free account is required for untimed practice, bookmarks, and saved progress; mock exams remain available without signing in.` },
     { q: `Where do the ${code} questions come from?`, a: `Questions are written from official Microsoft Learn documentation and the published exam skills outline for ${code}, not guesswork.` },
     { q: `What's the difference between Practice mode and Mock exam mode?`, a: `Practice mode is untimed with instant explanations and domain filters, so you can study one topic at a time. Mock exam mode is a timed, scored simulation of exam-day conditions.` },
     { q: `How hard is the ${code} exam?`, a: `Difficulty depends on your hands-on experience with the technology. Working through the full question bank in both modes is a good way to find your weak spots before exam day.` },
@@ -22,10 +22,21 @@ function buildFaqs(code, meta, total) {
 export function ExamPage() {
   const { examSlug } = useParams();
   const { isAuthenticated } = useOutletContext();
+  const [searchParams, setSearchParams] = useSearchParams();
   const TOKENS = useTheme();
   const [mode, setMode] = useState(null); // null | "practice" | "mock"
 
   const code = SLUG_TO_EXAM[examSlug];
+  const practiceDomain = searchParams.get("domain");
+  const autoPractice = searchParams.get("mode") === "practice";
+  const reviewWrongAnswers = searchParams.get("review") === "wrong";
+
+  useEffect(() => {
+    if (code && (autoPractice || reviewWrongAnswers) && isAuthenticated) {
+      setMode("practice");
+    }
+  }, [code, autoPractice, reviewWrongAnswers, isAuthenticated]);
+
   if (!code) return <Navigate to="/" replace />;
 
   const data = QUESTION_BANK[code];
@@ -36,7 +47,25 @@ export function ExamPage() {
   const faqs = buildFaqs(code, meta, total);
   const mockConfig = isAuthenticated ? getMockConfig(code) : GUEST_MOCK_CONFIG;
 
-  if (mode === "practice") return <Practice exam={code} onExit={() => setMode(null)} />;
+  function clearPracticeParams() {
+    setSearchParams({}, { replace: true });
+  }
+
+  function exitPractice() {
+    setMode(null);
+    clearPracticeParams();
+  }
+
+  if (mode === "practice") {
+    return (
+      <Practice
+        exam={code}
+        onExit={exitPractice}
+        initialDomain={practiceDomain}
+        reviewWrongAnswers={reviewWrongAnswers}
+      />
+    );
+  }
   if (mode === "mock") return <MockExam exam={code} onExit={() => setMode(null)} />;
 
   return (

@@ -48,11 +48,6 @@ export function Landing() {
             url: "https://fabricprep.com/",
             description: "Free Fabric prep and Microsoft certification practice exams for DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, DP-800, and other Azure certifications.",
             alternateName: ["Fabric Prep", "fabric prep", "FabricPrep"],
-            potentialAction: {
-              "@type": "SearchAction",
-              target: "https://fabricprep.com/?q={search_term_string}",
-              "query-input": "required name=search_term_string",
-            },
           })}
         </script>
         <script type="application/ld+json">

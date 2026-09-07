@@ -10,6 +10,7 @@ import {
   updateStreak,
 } from "./lib/theme.jsx";
 import { useAuth } from "./lib/authContext.jsx";
+import { useProgressSync } from "./lib/progressSyncProvider.jsx";
 import { Header } from "./components/Shared.jsx";
 
 function ScrollToTop() {
@@ -31,6 +32,7 @@ export default function App() {
   const [theme, setTheme] = useState("light");
   const [streak, setStreak] = useState(0);
   const { user, logout, isAuthenticated, isEmailVerified, loading: authLoading } = useAuth();
+  const { syncing: progressSyncing } = useProgressSync();
 
   useEffect(() => {
     setHasMounted(true);
@@ -46,11 +48,13 @@ export default function App() {
 
   const tokens = theme === "dark" ? DARK_TOKENS : LIGHT_TOKENS;
 
-  if (hasMounted && authLoading) {
+  if (hasMounted && (authLoading || (isAuthenticated && progressSyncing))) {
     return (
       <ThemeContext.Provider value={tokens}>
         <div className="min-h-screen flex items-center justify-center" style={{ background: tokens.bg, color: tokens.ink }}>
-          <span className="text-sm" role="status" aria-live="polite">Loading FabricPrep...</span>
+          <span className="text-sm" role="status" aria-live="polite">
+            {progressSyncing ? "Syncing your progress..." : "Loading FabricPrep..."}
+          </span>
         </div>
       </ThemeContext.Provider>
     );

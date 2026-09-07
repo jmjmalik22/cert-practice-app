@@ -4,21 +4,31 @@ import { useTheme, FONT_DISPLAY, FONT_MONO, getBookmarks, toggleBookmarkStorage,
 import { getPracticeConfig } from "../lib/examCatalog.js";
 import { QUESTION_BANK } from "../lib/questionBank/index.js";
 import { recordAttempt, toggleBookmark } from "../lib/progress.jsx";
+import { getWrongQuestionIds } from "../lib/progress.jsx";
 import { Chip } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
-export function Practice({ exam, onExit }) {
+export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswers = false }) {
   const TOKENS = useTheme();
-  const pool = QUESTION_BANK[exam].questions;
+  const allQuestions = QUESTION_BANK[exam].questions;
+  const wrongQuestionIds = useMemo(() => new Set(getWrongQuestionIds(exam)), [exam]);
+  const pool = useMemo(
+    () => reviewWrongAnswers
+      ? allQuestions.filter((question) => wrongQuestionIds.has(question.id))
+      : allQuestions,
+    [allQuestions, reviewWrongAnswers, wrongQuestionIds]
+  );
   const domains = useMemo(() => ["All", ...Array.from(new Set(pool.map((q) => q.domain)))], [pool]);
+  const resolvedInitialDomain =
+    initialDomain && domains.includes(initialDomain) ? initialDomain : "All";
   const practiceConfig = getPracticeConfig(exam);
   const config = {
     ...practiceConfig,
     totalQuestions: pool.length,
     domains: domains.length - 1,
   };
-  const [domainFilter, setDomainFilter] = useState("All");
-  const [showSetup, setShowSetup] = useState(true);
+  const [domainFilter, setDomainFilter] = useState(resolvedInitialDomain);
+  const [showSetup, setShowSetup] = useState(reviewWrongAnswers || resolvedInitialDomain === "All");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [flaggedQuestions, setFlaggedQuestions] = useState(new Set());
   const [answers, setAnswers] = useState({});
@@ -146,10 +156,12 @@ export function Practice({ exam, onExit }) {
 
         <div className="mt-8">
           <h1 className="text-2xl sm:text-3xl font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            {exam} Practice Mode
+            {reviewWrongAnswers ? `${exam} Wrong Answers` : `${exam} Practice Mode`}
           </h1>
           <p className="text-sm mb-8" style={{ color: TOKENS.inkMuted }}>
-            Study at your own pace with instant feedback and detailed explanations. Perfect for learning and reviewing concepts.
+            {reviewWrongAnswers
+              ? "Review the questions you most recently answered incorrectly and strengthen the concepts behind them."
+              : "Study at your own pace with instant feedback and detailed explanations. Perfect for learning and reviewing concepts."}
           </p>
 
           <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
@@ -159,6 +171,11 @@ export function Practice({ exam, onExit }) {
             <div className="text-sm mb-4" style={{ color: TOKENS.ink }}>
               {config.totalQuestions} questions · {config.timeLimit} · Domain filters available
             </div>
+            {reviewWrongAnswers && config.totalQuestions === 0 && (
+              <div className="mb-4 rounded-lg p-3 text-sm" style={{ background: `${TOKENS.green}15`, color: TOKENS.green }}>
+                No wrong answers to review for this exam yet.
+              </div>
+            )}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Total questions</span>
@@ -217,12 +234,39 @@ export function Practice({ exam, onExit }) {
             </div>
           </div>
 
+          <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            Focus area
+          </h2>
+          <div className="rounded-xl p-4 mb-8" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+            <div className="text-xs mb-3" style={{ color: TOKENS.inkMuted }}>
+              Choose a domain to focus on, or study all topics together.
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {domains.map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => setDomainFilter(d)}
+                  className="text-xs rounded-full px-3 py-1.5 flex-shrink-0 whitespace-nowrap transition-colors"
+                  style={{
+                    color: domainFilter === d ? TOKENS.bgDeep : TOKENS.inkMuted,
+                    background: domainFilter === d ? TOKENS.azure : "transparent",
+                    border: `1px solid ${domainFilter === d ? TOKENS.azure : TOKENS.panelBorder}`,
+                  }}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <button
             onClick={() => setShowSetup(false)}
+            disabled={config.totalQuestions === 0}
             className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-medium text-sm"
-            style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+            style={{ background: TOKENS.azure, color: TOKENS.bgDeep, opacity: config.totalQuestions === 0 ? 0.5 : 1 }}
           >
-            Start Practice <ArrowRight size={16} />
+            {config.totalQuestions === 0 ? "Nothing to review" : reviewWrongAnswers ? "Start Review" : "Start Practice"} <ArrowRight size={16} />
           </button>
         </div>
       </div>
