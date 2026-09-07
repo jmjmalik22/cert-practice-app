@@ -3,6 +3,7 @@ import App from "./App.jsx";
 import { Landing } from "./pages/Landing.jsx";
 import { About } from "./pages/About.jsx";
 import { AuthProvider } from "./lib/authContext.jsx";
+import { ProgressSyncProvider } from "./lib/progressSyncProvider.jsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 import { ROUTE_PATHS } from "./lib/examCatalog.js";
 import { Analytics } from "@vercel/analytics/react";
@@ -14,9 +15,11 @@ function AppWithAuth() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <App />
-        <Analytics />
-        <SpeedInsights />
+        <ProgressSyncProvider>
+          <App />
+          <Analytics />
+          <SpeedInsights />
+        </ProgressSyncProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

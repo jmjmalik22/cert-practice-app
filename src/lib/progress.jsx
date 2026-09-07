@@ -1,7 +1,7 @@
-// Progress tracking utilities - stores data in localStorage
-// No backend required - works entirely client-side
+// Progress tracking utilities - localStorage with optional cloud sync for signed-in users
 
 import { safeGet, safeSet } from "./theme.jsx";
+import { notifyProgressChanged } from "./progressSync.js";
 
 const PROGRESS_KEY = "fp_progress";
 const USER_KEY = "fp_user";
@@ -92,6 +92,7 @@ export function saveExamProgress(examCode, data) {
     lastUpdated: new Date().toISOString(),
   };
   safeSet(PROGRESS_KEY, progress);
+  notifyProgressChanged();
 }
 
 // Record a question attempt
@@ -126,6 +127,7 @@ export function recordAttempt(examCode, questionId, isCorrect, timeSpent = 0, is
   if (isCorrect) exam.correct += 1;
 
   safeSet(PROGRESS_KEY, progress);
+  notifyProgressChanged();
 }
 
 // Toggle bookmark for a question
@@ -145,6 +147,7 @@ export function toggleBookmark(examCode, questionId) {
   }
 
   safeSet(PROGRESS_KEY, progress);
+  notifyProgressChanged();
   return index === -1; // returns true if bookmarked, false if removed
 }
 
@@ -152,6 +155,32 @@ export function toggleBookmark(examCode, questionId) {
 export function getBookmarks(examCode) {
   const progress = getProgress();
   return progress[examCode]?.bookmarked || [];
+}
+
+// Return questions whose most recent practice attempt was incorrect.
+export function getWrongQuestionIds(examCode) {
+  migrateOldProgress();
+  const progress = getProgress();
+  const attempts = progress[examCode]?.attempts || [];
+  const latestByQuestion = new Map();
+
+  attempts
+    .filter((attempt) => !attempt.isMockExam)
+    .forEach((attempt) => latestByQuestion.set(attempt.questionId, attempt));
+
+  return [...latestByQuestion.entries()]
+    .filter(([, attempt]) => !attempt.isCorrect)
+    .map(([questionId]) => questionId);
+}
+
+export function getWrongAnswerSummary(questionBank) {
+  return Object.entries(questionBank)
+    .map(([examCode, bank]) => {
+      const questionIds = new Set((bank?.questions || []).map((question) => question.id));
+      const wrongQuestionIds = getWrongQuestionIds(examCode).filter((id) => questionIds.has(id));
+      return { examCode, count: wrongQuestionIds.length };
+    })
+    .filter((summary) => summary.count > 0);
 }
 
 // Calculate exam statistics
@@ -210,6 +239,101 @@ export function getExamStats(examCode, totalQuestions = 0) {
     dailyActivity,
     lastAttempt: exam.attempts[exam.attempts.length - 1]?.timestamp || null,
   };
+}
+
+function countWeakQuestionsInDomain(questions, attempts, domain) {
+  const domainQuestions = questions.filter((q) => q.domain === domain);
+  const attemptStats = {};
+
+  attempts.forEach((attempt) => {
+    if (attempt.isMockExam) return;
+    if (!domainQuestions.some((q) => q.id === attempt.questionId)) return;
+
+    if (!attemptStats[attempt.questionId]) {
+      attemptStats[attempt.questionId] = { correct: 0, incorrect: 0 };
+    }
+    if (attempt.isCorrect) attemptStats[attempt.questionId].correct += 1;
+    else attemptStats[attempt.questionId].incorrect += 1;
+  });
+
+  return domainQuestions.filter((question) => {
+    const stats = attemptStats[question.id];
+    return !stats || stats.incorrect >= stats.correct;
+  }).length;
+}
+
+export function getDomainStats(examCode, questions = []) {
+  migrateOldProgress();
+  const progress = getProgress();
+  const exam = progress[examCode] || { attempts: [] };
+  const questionDomain = new Map(questions.map((q) => [q.id, q.domain]));
+  const domainAttempts = {};
+  const bankCounts = {};
+
+  questions.forEach((q) => {
+    bankCounts[q.domain] = (bankCounts[q.domain] || 0) + 1;
+  });
+
+  exam.attempts.forEach((attempt) => {
+    const domain = questionDomain.get(attempt.questionId);
+    if (!domain) return;
+
+    if (!domainAttempts[domain]) {
+      domainAttempts[domain] = { correct: 0, total: 0, incorrect: 0 };
+    }
+
+    domainAttempts[domain].total += 1;
+    if (attempt.isCorrect) domainAttempts[domain].correct += 1;
+    else domainAttempts[domain].incorrect += 1;
+  });
+
+  return Object.entries(bankCounts).map(([domain, questionCount]) => {
+    const stats = domainAttempts[domain] || { correct: 0, total: 0, incorrect: 0 };
+    const weakQuestionCount = countWeakQuestionsInDomain(questions, exam.attempts, domain);
+
+    return {
+      domain,
+      questionCount,
+      attempts: stats.total,
+      correct: stats.correct,
+      incorrect: stats.incorrect,
+      accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : null,
+      weakQuestionCount,
+    };
+  });
+}
+
+export function getWeakDomainRecommendations(
+  questionBank,
+  { minAttempts = 2, maxAccuracy = 70, limit = 6 } = {}
+) {
+  const recommendations = [];
+
+  Object.entries(questionBank).forEach(([examCode, bank]) => {
+    const questions = bank?.questions || [];
+    if (!questions.length) return;
+
+    getDomainStats(examCode, questions).forEach((domainStat) => {
+      if (domainStat.attempts < minAttempts) return;
+      if (domainStat.accuracy === null || domainStat.accuracy >= maxAccuracy) return;
+
+      recommendations.push({
+        examCode,
+        domain: domainStat.domain,
+        accuracy: domainStat.accuracy,
+        attempts: domainStat.attempts,
+        questionCount: domainStat.questionCount,
+        practiceCount: Math.min(
+          10,
+          Math.max(1, domainStat.weakQuestionCount || domainStat.incorrect || 1)
+        ),
+      });
+    });
+  });
+
+  return recommendations
+    .sort((a, b) => a.accuracy - b.accuracy || b.attempts - a.attempts)
+    .slice(0, limit);
 }
 
 // Get overall stats across all exams
@@ -299,6 +423,7 @@ export function saveExamResult(examCode, result) {
     isMockExam: true, // Flag to identify mock exam attempts
   });
   safeSet(EXAM_RESULTS_KEY, results);
+  notifyProgressChanged();
 }
 
 // Get all exam results
@@ -330,4 +455,5 @@ export function getLatestResult(examCode = null) {
 export function clearProgress() {
   safeSet(PROGRESS_KEY, {});
   safeSet(EXAM_RESULTS_KEY, []);
+  notifyProgressChanged();
 }

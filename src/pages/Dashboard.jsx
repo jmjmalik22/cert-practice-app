@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, Navigate, useOutletContext } from "react-router-dom";
-import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight } from "lucide-react";
+import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight, AlertCircle } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
 import { Footer } from "../components/Shared.jsx";
-import { getOverallStats, getExamStats, getUser, getExamResults, getBestScore } from "../lib/progress.jsx";
+import { getOverallStats, getExamStats, getUser, getExamResults, getWeakDomainRecommendations, getWrongAnswerSummary } from "../lib/progress.jsx";
 import { getAttempted, updateStreak } from "../lib/theme.jsx";
 
 function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
@@ -54,6 +54,7 @@ function ProgressBar({ progress, color = "azure" }) {
     azure: TOKENS.azure,
     amber: TOKENS.amber,
     green: TOKENS.green,
+    red: TOKENS.red,
   };
 
   return (
@@ -149,7 +150,13 @@ function ExamResultsSection() {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    setResults(getExamResults());
+    function loadResults() {
+      setResults(getExamResults());
+    }
+
+    loadResults();
+    window.addEventListener("fp-progress-synced", loadResults);
+    return () => window.removeEventListener("fp-progress-synced", loadResults);
   }, []);
 
   if (results.length === 0) return null;
@@ -255,6 +262,123 @@ function ExamResultsSection() {
   );
 }
 
+function WeakDomainsSection({ recommendations }) {
+  const TOKENS = useTheme();
+
+  if (recommendations.length === 0) return null;
+
+  return (
+    <div className="mb-8">
+      <h2
+        className="text-lg font-semibold mb-2 flex items-center gap-2"
+        style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
+      >
+        <AlertCircle size={20} style={{ color: TOKENS.amber }} />
+        Focus your study
+      </h2>
+      <p className="text-sm mb-4" style={{ color: TOKENS.inkMuted }}>
+        These domains have the lowest accuracy based on your recent practice.
+      </p>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {recommendations.map((rec) => {
+          const meta = EXAM_META[rec.examCode];
+          const practiceUrl = `/${meta.slug}?mode=practice&domain=${encodeURIComponent(rec.domain)}`;
+          const accuracyColor =
+            rec.accuracy >= 50 ? TOKENS.amber : TOKENS.red;
+
+          return (
+            <Link
+              key={`${rec.examCode}:${rec.domain}`}
+              to={practiceUrl}
+              className="rounded-xl p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg block"
+              style={{
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.amber}35`,
+              }}
+            >
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="min-w-0">
+                  <div
+                    className="text-xs font-medium mb-1"
+                    style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}
+                  >
+                    {rec.examCode}
+                  </div>
+                  <h3 className="font-semibold text-sm leading-snug" style={{ color: TOKENS.ink }}>
+                    {rec.domain}
+                  </h3>
+                </div>
+                <div
+                  className="text-lg font-bold flex-shrink-0"
+                  style={{ color: accuracyColor, fontFamily: FONT_DISPLAY }}
+                >
+                  {rec.accuracy}%
+                </div>
+              </div>
+
+              <ProgressBar progress={rec.accuracy} color={rec.accuracy >= 50 ? "amber" : "red"} />
+
+              <p className="text-xs mt-3 mb-4" style={{ color: TOKENS.inkMuted }}>
+                {rec.attempts} attempts across {rec.questionCount} questions in this domain
+              </p>
+
+              <span
+                className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-full"
+                style={{
+                  background: `${TOKENS.azure}15`,
+                  color: TOKENS.azure,
+                  border: `1px solid ${TOKENS.azure}30`,
+                }}
+              >
+                Practice {rec.practiceCount} questions
+                <ChevronRight size={14} />
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function WrongAnswersSection() {
+  const TOKENS = useTheme();
+  const wrongAnswers = getWrongAnswerSummary(QUESTION_BANK);
+
+  if (wrongAnswers.length === 0) return null;
+
+  return (
+    <div className="mb-8 rounded-xl p-5" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.red}40` }}>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold mb-1" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            Review wrong answers
+          </h2>
+          <p className="text-sm" style={{ color: TOKENS.inkMuted }}>
+            Revisit questions you most recently answered incorrectly.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {wrongAnswers.map(({ examCode, count }) => {
+            const meta = EXAM_META[examCode];
+            return (
+              <Link
+                key={examCode}
+                to={`/${meta.slug}?mode=practice&review=wrong`}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium"
+                style={{ background: `${TOKENS.red}15`, color: TOKENS.red, border: `1px solid ${TOKENS.red}35` }}
+              >
+                {examCode} · {count} question{count === 1 ? "" : "s"}
+                <ChevronRight size={14} />
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ActivityChart({ data }) {
   const TOKENS = useTheme();
   const maxCount = Math.max(...data.map((d) => d.count), 1);
@@ -280,6 +404,20 @@ function ActivityChart({ data }) {
   );
 }
 
+function aggregateActivity(examStats) {
+  const byDate = new Map();
+
+  examStats.forEach(({ stats }) => {
+    (stats.dailyActivity || []).forEach(({ date, count }) => {
+      byDate.set(date, (byDate.get(date) || 0) + count);
+    });
+  });
+
+  return [...byDate.entries()]
+    .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+    .map(([date, count]) => ({ date, count }));
+}
+
 export function Dashboard() {
   const { user, isAuthenticated } = useOutletContext();
   const TOKENS = useTheme();
@@ -287,28 +425,35 @@ export function Dashboard() {
   const [examStats, setExamStats] = useState([]);
   const [visitStreak, setVisitStreak] = useState(0);
   const [localUser, setLocalUser] = useState(null);
+  const [weakDomains, setWeakDomains] = useState([]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const overall = getOverallStats();
-    const streakCount = updateStreak();
-    const userData = getUser();
-    setStats(overall);
-    setVisitStreak(streakCount);
-    setLocalUser(userData);
+    function loadStats() {
+      const overall = getOverallStats();
+      const streakCount = updateStreak();
+      const userData = getUser();
+      setStats(overall);
+      setVisitStreak(streakCount);
+      setLocalUser(userData);
+      setWeakDomains(getWeakDomainRecommendations(QUESTION_BANK));
 
-    // Get stats for each exam that has progress
-    const exams = Object.keys(QUESTION_BANK);
-    const examData = exams
-      .map((code) => ({
-        code,
-        stats: getExamStats(code, QUESTION_BANK[code]?.questions.length || 0),
-      }))
-      .filter((e) => e.stats.totalAttempts > 0)
-      .sort((a, b) => new Date(b.stats.lastAttempt || 0) - new Date(a.stats.lastAttempt || 0));
+      const exams = Object.keys(QUESTION_BANK);
+      const examData = exams
+        .map((code) => ({
+          code,
+          stats: getExamStats(code, QUESTION_BANK[code]?.questions.length || 0),
+        }))
+        .filter((e) => e.stats.totalAttempts > 0)
+        .sort((a, b) => new Date(b.stats.lastAttempt || 0) - new Date(a.stats.lastAttempt || 0));
 
-    setExamStats(examData);
+      setExamStats(examData);
+    }
+
+    loadStats();
+    window.addEventListener("fp-progress-synced", loadStats);
+    return () => window.removeEventListener("fp-progress-synced", loadStats);
   }, [isAuthenticated]);
 
   // Redirect to login if not authenticated
@@ -318,6 +463,7 @@ export function Dashboard() {
 
   if (!stats) return null;
   const displayName = user?.displayName || localUser?.name;
+  const activity = aggregateActivity(examStats);
 
   return (
     <div className="min-h-full flex flex-col">
@@ -365,6 +511,9 @@ export function Dashboard() {
           />
         </div>
 
+        <WeakDomainsSection recommendations={weakDomains} />
+        <WrongAnswersSection />
+
         <div className="grid md:grid-cols-3 gap-6">
           {/* Exam Progress */}
           <div className="md:col-span-2">
@@ -411,7 +560,7 @@ export function Dashboard() {
           {/* Activity & Quick Links */}
           <div>
             {/* Weekly Activity */}
-            {examStats[0]?.stats?.dailyActivity && (
+            {activity.length > 0 && (
               <div
                 className="rounded-xl p-5 mb-4"
                 style={{
@@ -426,7 +575,7 @@ export function Dashboard() {
                   <Calendar size={18} style={{ color: TOKENS.azure }} />
                   Last 7 Days
                 </h3>
-                <ActivityChart data={examStats[0].stats.dailyActivity} />
+                <ActivityChart data={activity} />
               </div>
             )}
 
