@@ -82,13 +82,13 @@ function ExamProgressCard({ examCode, stats }) {
   return (
     <Link
       to={`/${meta.slug}`}
-      className="block rounded-xl p-5 transition-all hover:opacity-90 relative"
+      className="group block rounded-2xl p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg relative"
       style={{
         background: TOKENS.panel,
         border: `1px solid ${TOKENS.panelBorder}`,
       }}
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-start justify-between gap-3 mb-5">
         <div>
           <h3 className="font-semibold mb-1" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
             {examCode}
@@ -138,7 +138,7 @@ function ExamProgressCard({ examCode, stats }) {
 
       <ChevronRight
         size={16}
-        className="absolute bottom-5 right-5"
+        className="absolute bottom-5 right-5 transition-transform group-hover:translate-x-1"
         style={{ color: TOKENS.inkMuted }}
       />
     </Link>
@@ -475,19 +475,32 @@ export function Dashboard() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      <main className="flex-1 px-6 sm:px-10 py-8">
+      <main className="flex-1 px-4 sm:px-8 lg:px-10 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            {displayName ? `Hello, ${displayName}!` : "Your Progress"}
-          </h1>
-          <p style={{ color: TOKENS.inkMuted }}>
-            Track your certification journey and see how far you have come.
-          </p>
+        <div
+          className="relative overflow-hidden rounded-2xl p-6 sm:p-8 mb-6"
+          style={{
+            background: `linear-gradient(120deg, ${TOKENS.panel}, ${TOKENS.bgDeep})`,
+            border: `1px solid ${TOKENS.panelBorder}`,
+          }}
+        >
+          <div className="relative z-10 max-w-2xl">
+            <div className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>
+              Study overview
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              {displayName ? `Hello, ${displayName}` : "Your progress"}
+            </h1>
+            <p className="text-sm sm:text-base" style={{ color: TOKENS.inkMuted }}>
+              Keep your momentum going. Review your performance and choose your next practice session.
+            </p>
+          </div>
+          <div className="absolute -right-10 -bottom-16 w-52 h-52 rounded-full opacity-20" style={{ background: TOKENS.azure }} />
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8">
           <StatCard
             icon={Trophy}
             label="Total Attempts"
@@ -514,9 +527,9 @@ export function Dashboard() {
         <WeakDomainsSection recommendations={weakDomains} />
         <WrongAnswersSection />
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-8 items-start">
           {/* Exam Progress */}
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2">
             <h2
               className="text-lg font-semibold mb-4 flex items-center gap-2"
               style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
@@ -611,6 +624,7 @@ export function Dashboard() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </main>
 
