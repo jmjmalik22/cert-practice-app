@@ -28,6 +28,7 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
     domains: domains.length - 1,
   };
   const [domainFilter, setDomainFilter] = useState(resolvedInitialDomain);
+  const [selectedQuestionCount, setSelectedQuestionCount] = useState(pool.length);
   const [showSetup, setShowSetup] = useState(reviewWrongAnswers || resolvedInitialDomain === "All");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [flaggedQuestions, setFlaggedQuestions] = useState(new Set());
@@ -37,7 +38,12 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
     () => (domainFilter === "All" ? pool : pool.filter((q) => q.domain === domainFilter)),
     [pool, domainFilter]
   );
-  const [order, setOrder] = useState(() => shuffle(filteredPool).slice(0, config.totalQuestions));
+  const questionCount = Math.min(selectedQuestionCount, filteredPool.length);
+  const questionCountOptions = useMemo(
+    () => [...new Set([10, 20, 30, 50, filteredPool.length].filter((count) => count > 0 && count <= filteredPool.length))],
+    [filteredPool.length]
+  );
+  const [order, setOrder] = useState(() => shuffle(filteredPool).slice(0, questionCount));
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState(null);
   const [revealed, setRevealed] = useState(false);
@@ -48,11 +54,12 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
   const [reviewIdx, setReviewIdx] = useState(0);
 
   useEffect(() => {
-    setOrder(shuffle(filteredPool).slice(0, config.totalQuestions));
+    setSelectedQuestionCount((count) => Math.min(count, filteredPool.length));
+    setOrder(shuffle(filteredPool).slice(0, questionCount));
     setIdx(0);
     setSelected(null);
     setRevealed(false);
-  }, [filteredPool, config.totalQuestions]);
+  }, [filteredPool, questionCount]);
 
   // Start timer when entering practice mode
   useEffect(() => {
@@ -132,7 +139,7 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
     setElapsedSeconds(0);
     setFlaggedQuestions(new Set());
     setAnswers({});
-    setOrder(shuffle(filteredPool).slice(0, config.totalQuestions));
+    setOrder(shuffle(filteredPool).slice(0, questionCount));
   }
 
   function toggleBm() {
@@ -169,7 +176,7 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
           </h2>
           <div className="rounded-xl p-4 mb-8" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
             <div className="text-sm mb-4" style={{ color: TOKENS.ink }}>
-              {config.totalQuestions} questions · {config.timeLimit} · Domain filters available
+              {questionCount} questions selected · {config.timeLimit} · Domain filters available
             </div>
             {reviewWrongAnswers && config.totalQuestions === 0 && (
               <div className="mb-4 rounded-lg p-3 text-sm" style={{ background: `${TOKENS.green}15`, color: TOKENS.green }}>
@@ -178,8 +185,8 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
             )}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Total questions</span>
-                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{config.totalQuestions}</span>
+                <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Available questions</span>
+                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{filteredPool.length}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Domains</span>
@@ -191,6 +198,32 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
               </div>
             </div>
           </div>
+
+          {!reviewWrongAnswers && questionCountOptions.length > 0 && (
+            <div className="rounded-xl p-4 mb-8" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+              <div className="text-sm font-medium mb-1" style={{ color: TOKENS.ink }}>How many questions?</div>
+              <div className="text-xs mb-3" style={{ color: TOKENS.inkMuted }}>
+                Choose the number of questions you want to practice in this session.
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {questionCountOptions.map((count) => (
+                  <button
+                    key={count}
+                    type="button"
+                    onClick={() => setSelectedQuestionCount(count)}
+                    className="text-sm rounded-full px-4 py-2 transition-colors"
+                    style={{
+                      color: selectedQuestionCount === count ? TOKENS.bgDeep : TOKENS.inkMuted,
+                      background: selectedQuestionCount === count ? TOKENS.azure : "transparent",
+                      border: `1px solid ${selectedQuestionCount === count ? TOKENS.azure : TOKENS.panelBorder}`,
+                    }}
+                  >
+                    {count === filteredPool.length ? `All (${count})` : count}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
             What to expect
@@ -288,7 +321,7 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
           <span className="text-xs font-medium" style={{ color: TOKENS.inkMuted }}>{exam} PRACTICE</span>
         </div>
         <h1 className="text-lg font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-          {caseStudyCount > 0 ? `${caseStudyCount} case study · ` : ""}{config.totalQuestions} questions · Untimed
+          {caseStudyCount > 0 ? `${caseStudyCount} case study · ` : ""}{order.length} questions · Untimed
         </h1>
       </div>
 
