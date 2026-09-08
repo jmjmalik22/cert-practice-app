@@ -103,6 +103,18 @@ const GUIDES = {
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/developing-ai-enabled-database-solutions/",
     docsUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-800",
   },
+  "SC-900": {
+    prereq: "None — SC-900 is an entry-level exam. General familiarity with cloud and networking basics is helpful, but no hands-on security experience is assumed.",
+    background: [
+      "General security, compliance, and identity concepts — Zero Trust, shared responsibility, defense in depth",
+      "Basic authentication and authorization concepts, including MFA and SSO",
+      "Awareness of Microsoft cloud services, especially Microsoft Entra and Microsoft 365",
+      "No hands-on configuration experience required",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-900",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/sc-900",
+    docsUrl: "https://learn.microsoft.com/en-us/entra/fundamentals/",
+  },
 };
 
 function buildSteps(code, meta, guide) {
