@@ -400,12 +400,12 @@ export function Landing() {
               Meet the founder
             </div>
             <h2 className="text-2xl font-bold mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              Hi, I'm Jitendra Singh Malik.
+              Hi, I&apos;m Jitendra Singh Malik.
             </h2>
             <p className="text-base mb-4" style={{ color: TOKENS.inkMuted }}>
-              I'm a data engineer and database architect working in a fully Microsoft-embedded stack — SQL Server,
+              I&apos;m a data engineer and database architect working in a fully Microsoft-embedded stack — SQL Server,
               Power BI, Azure, and Microsoft Fabric. I built FabricPrep to give you the realistic, exam-style
-              practice I wish I'd had while preparing for my own certifications.
+              practice I wish I&apos;d had while preparing for my own certifications.
             </p>
             <div className="flex flex-wrap gap-2 mt-4">
               <span className="text-xs px-3 py-1.5 rounded-full" style={{ background: `${TOKENS.azure}15`, color: TOKENS.azure }}>
