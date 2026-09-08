@@ -47,6 +47,11 @@ const STUDY_RESOURCES = [
     title: "DP-800: Developing AI-Enabled Database Solutions",
     description: "A step-by-step study path for the Microsoft DP-800 AI-enabled database solutions certification.",
   },
+  {
+    examCode: "SC-900",
+    title: "SC-900: Security, Compliance, and Identity Fundamentals",
+    description: "A step-by-step study path for the Microsoft Security, Compliance, and Identity Fundamentals certification.",
+  },
 ];
 
 const EXTERNAL_RESOURCES = [

@@ -161,6 +161,26 @@ export const EXAM_CATALOG = {
       timeLimit: "Untimed",
     },
   },
+  "SC-900": {
+    slug: "sc-900",
+    label: "Security, Compliance, and Identity Fundamentals",
+    questionCount: 26,
+    title: "Microsoft SC-900 Practice Exam",
+    metaTitle: "SC-900 Practice Exams | FabricPrep",
+    metaDescription:
+      "Free SC-900 practice questions for the Microsoft Security, Compliance, and Identity Fundamentals exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+    studyGuide: true,
+    mock: {
+      caseStudyQuestions: 0,
+      standaloneQuestions: 20,
+      totalQuestions: 20,
+      timeMinutes: 45,
+    },
+    practice: {
+      caseStudyCount: 0,
+      timeLimit: "Untimed",
+    },
+  },
 };
 
 export const EXAM_CODES = Object.freeze(Object.keys(EXAM_CATALOG));
@@ -175,7 +195,6 @@ export const COMING_SOON_EXAMS = Object.freeze([
   { code: "AZ-305", label: "Azure Solutions Architect Expert" },
   { code: "AZ-400", label: "DevOps Engineer Expert" },
   { code: "DP-750", label: "Azure Databricks Data Engineer Associate" },
-  { code: "SC-900", label: "Security, Compliance, and Identity Fundamentals" },
   { code: "SC-300", label: "Identity and Access Administrator Associate" },
   { code: "SC-500", label: "Cloud and AI Security Engineer Associate" },
 ]);

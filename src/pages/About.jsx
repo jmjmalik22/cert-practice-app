@@ -23,6 +23,7 @@ const EXAMS = [
   ["DP-900", "Azure Data Fundamentals"],
   ["DP-800", "SQL AI Developer Associate"],
   ["PL-300", "Power BI Data Analyst Associate"],
+  ["SC-900", "Security, Compliance, and Identity Fundamentals"],
 ];
 
 export function About() {
