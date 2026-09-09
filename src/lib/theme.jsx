@@ -104,6 +104,23 @@ export function markAttempted(examCode, qid) {
   }
 }
 
+export function getCookieConsent() {
+  if (typeof window === "undefined") return "";
+  try {
+    return localStorage.getItem("fp_cookie_consent") || "";
+  } catch {
+    return "";
+  }
+}
+export function setCookieConsent(value) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem("fp_cookie_consent", value);
+  } catch {
+    // ignore
+  }
+}
+
 export function getBookmarks() {
   return safeGet("fp_bookmarks", []);
 }

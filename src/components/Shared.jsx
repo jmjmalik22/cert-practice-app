@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, Home, BookOpen, Info, Menu, X, Lock, Heart } from "lucide-react";
-import { useState } from "react";
-import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
+import { LayoutDashboard, Home, BookOpen, Info, Menu, X, Lock, Heart, Linkedin } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useTheme, FONT_DISPLAY, FONT_MONO, getCookieConsent, setCookieConsent } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
+
+export const COOKIE_SETTINGS_EVENT = "fp:open-cookie-settings";
 
 export function Chip({ children, tone = "azure" }) {
   const TOKENS = useTheme();
@@ -351,22 +353,160 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
   );
 }
 
+const FOOTER_COLUMNS = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Exam Practice", to: "/" },
+      { label: "Study Guides", to: "/study-guides" },
+      { label: "Pricing", to: "/pricing" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About", to: "/about" },
+      { label: "Terms of Service", to: "/terms" },
+      { label: "Privacy Policy", to: "/privacy" },
+    ],
+  },
+  {
+    heading: "Get Started",
+    links: [
+      { label: "Sign up", to: "/login?mode=signup" },
+      { label: "Log in", to: "/login" },
+    ],
+  },
+];
+
 export function Footer() {
   const TOKENS = useTheme();
+  const year = new Date().getFullYear();
+
+  function openCookieSettings() {
+    window.dispatchEvent(new Event(COOKIE_SETTINGS_EVENT));
+  }
+
   return (
-    <footer className="text-center py-8 px-6">
-      <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4 text-xs">
-        <Link to="/">Fabric Prep Home</Link>
-        <Link to="/study-guides">Microsoft Fabric Study Guides</Link>
-        <Link to="/about">About Fabric Prep</Link>
-      </nav>
-      <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-        Built by <span style={{ color: TOKENS.azure }}>Jitendra Singh Malik</span>
-      </p>
-      <p className="text-xs mt-1" style={{ color: TOKENS.inkMuted, opacity: 0.6 }}>
-        Not affiliated with or endorsed by Microsoft.
-      </p>
+    <footer className="py-12 px-6" style={{ borderTop: `1px solid ${TOKENS.panelBorder}` }}>
+      <div className="max-w-5xl mx-auto w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-left mb-10">
+          <div className="col-span-2 sm:col-span-1">
+            <p className="font-bold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>FabricPrep</p>
+            <p className="text-xs leading-6" style={{ color: TOKENS.inkMuted }}>
+              Realistic practice for Microsoft certification exams. Prepare with confidence.
+            </p>
+          </div>
+          {FOOTER_COLUMNS.map(({ heading, links }) => (
+            <div key={heading}>
+              <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
+                {heading}
+              </p>
+              <ul className="space-y-2">
+                {links.map(({ label, to }) => (
+                  <li key={label}>
+                    <Link to={to} className="text-xs" style={{ color: TOKENS.ink }}>
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 text-center sm:text-left"
+          style={{ borderTop: `1px solid ${TOKENS.panelBorder}` }}
+        >
+          <div>
+            <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+              © {year} FabricPrep. All rights reserved.
+            </p>
+            <p className="text-xs mt-1" style={{ color: TOKENS.inkMuted, opacity: 0.6 }}>
+              Not affiliated with or endorsed by Microsoft.
+            </p>
+            <p className="text-xs mt-1" style={{ color: TOKENS.inkMuted, opacity: 0.6 }}>
+              Built by <span style={{ color: TOKENS.azure }}>Jitendra Singh Malik</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={openCookieSettings}
+              className="text-xs underline-offset-2 hover:underline"
+              style={{ color: TOKENS.inkMuted }}
+            >
+              Cookie Settings
+            </button>
+            <a
+              href="https://www.linkedin.com/in/jitendra123/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="FabricPrep on LinkedIn"
+              style={{ color: TOKENS.inkMuted }}
+            >
+              <Linkedin size={16} />
+            </a>
+          </div>
+        </div>
+      </div>
     </footer>
+  );
+}
+
+export function CookieConsent() {
+  const TOKENS = useTheme();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!getCookieConsent()) setVisible(true);
+    function handleOpen() {
+      setVisible(true);
+    }
+    window.addEventListener(COOKIE_SETTINGS_EVENT, handleOpen);
+    return () => window.removeEventListener(COOKIE_SETTINGS_EVENT, handleOpen);
+  }, []);
+
+  function choose(value) {
+    setCookieConsent(value);
+    setVisible(false);
+  }
+
+  if (!visible) return null;
+
+  return (
+    <div
+      role="dialog"
+      aria-label="Cookie settings"
+      className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-5"
+      style={{ background: TOKENS.panel, borderTop: `1px solid ${TOKENS.panelBorder}` }}
+    >
+      <div className="max-w-5xl mx-auto w-full flex flex-col sm:flex-row items-center gap-4">
+        <p className="text-xs flex-1 text-center sm:text-left" style={{ color: TOKENS.inkMuted }}>
+          FabricPrep uses local storage to remember your theme, progress, and preferences on this device. We don&apos;t use it for third-party advertising.{" "}
+          <Link to="/privacy" className="underline" style={{ color: TOKENS.ink }}>Privacy Policy</Link>
+        </p>
+        <div className="flex gap-2 flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => choose("declined")}
+            className="px-4 py-2 rounded-full text-xs font-medium"
+            style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}
+          >
+            Decline
+          </button>
+          <button
+            type="button"
+            onClick={() => choose("accepted")}
+            className="px-4 py-2 rounded-full text-xs font-medium"
+            style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+          >
+            Accept
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

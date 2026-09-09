@@ -11,7 +11,7 @@ import {
 } from "./lib/theme.jsx";
 import { useAuth } from "./lib/authContext.jsx";
 import { useProgressSync } from "./lib/progressSyncProvider.jsx";
-import { Header } from "./components/Shared.jsx";
+import { Header, CookieConsent } from "./components/Shared.jsx";
 
 function ScrollToTop() {
   const { pathname, search, hash } = useLocation();
@@ -75,6 +75,7 @@ export default function App() {
         <div className="flex-1 flex flex-col min-w-0">
           <Outlet context={{ theme, onToggleTheme: toggleTheme, streak, user, isAuthenticated, isEmailVerified }} />
         </div>
+        <CookieConsent />
       </div>
     </ThemeContext.Provider>
   );

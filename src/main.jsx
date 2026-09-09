@@ -33,6 +33,27 @@ const routes = [
       { index: true, element: <Landing /> },
       { path: "about", element: <About /> },
       {
+        path: "pricing",
+        lazy: async () => {
+          const { Pricing } = await import("./pages/Pricing.jsx");
+          return { Component: Pricing };
+        },
+      },
+      {
+        path: "terms",
+        lazy: async () => {
+          const { TermsOfService } = await import("./pages/TermsOfService.jsx");
+          return { Component: TermsOfService };
+        },
+      },
+      {
+        path: "privacy",
+        lazy: async () => {
+          const { PrivacyPolicy } = await import("./pages/PrivacyPolicy.jsx");
+          return { Component: PrivacyPolicy };
+        },
+      },
+      {
         path: ROUTE_PATHS.dashboard,
         lazy: async () => {
           const { Dashboard } = await import("./pages/Dashboard.jsx");

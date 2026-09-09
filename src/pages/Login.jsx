@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, CheckCircle, ArrowLeft } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { useAuth } from "../lib/authContext.jsx";
@@ -9,8 +9,9 @@ import { Footer, MedallionMotif } from "../components/Shared.jsx";
 export function Login() {
   const TOKENS = useTheme();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login, signup, loginWithGoogle, resendVerificationEmail, refreshUser, resetPassword } = useAuth();
-  const [isSignup, setIsSignup] = useState(false);
+  const [isSignup, setIsSignup] = useState(searchParams.get("mode") === "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
