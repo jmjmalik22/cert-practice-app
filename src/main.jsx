@@ -54,10 +54,10 @@ const routes = [
         },
       },
       {
-        path: ROUTE_PATHS.dp700StudyGuideTopic,
+        path: ROUTE_PATHS.studyGuideTopic,
         lazy: async () => {
-          const { DP700StudyGuide } = await import("./pages/study-guides/DP700StudyGuide.jsx");
-          return { Component: DP700StudyGuide };
+          const { TopicStudyGuide } = await import("./pages/study-guides/TopicStudyGuide.jsx");
+          return { Component: TopicStudyGuide };
         },
       },
       {
