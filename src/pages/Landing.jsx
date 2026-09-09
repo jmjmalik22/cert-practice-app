@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, useOutletContext } from "react-router-dom";
 import { RotateCcw, Clock, Bookmark, Flag, Lock } from "lucide-react";
@@ -5,6 +6,73 @@ import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.js
 import { getExamStats } from "../lib/progress.jsx";
 import { COMING_SOON_EXAMS, EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
+
+// Auto-rotating testimonial slider: one quote visible at a time, advances on
+// a timer, pauses on hover, and respects prefers-reduced-motion.
+function TestimonialCarousel({ testimonials }) {
+  const TOKENS = useTheme();
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const count = testimonials.length;
+
+  useEffect(() => {
+    if (paused) return undefined;
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return undefined;
+    }
+    const timer = setInterval(() => {
+      setIndex((i) => (i + 1) % count);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [paused, count]);
+
+  return (
+    <div className="mb-4" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div className="overflow-hidden rounded-2xl" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+        <div
+          className="flex transition-transform duration-700 ease-out"
+          style={{ transform: `translateX(-${index * 100}%)` }}
+        >
+          {testimonials.map((t) => (
+            <div key={t.name} className="w-full flex-shrink-0 p-6 sm:p-8 flex flex-col items-center text-center">
+              <p className="text-base sm:text-lg mb-5 max-w-lg" style={{ color: TOKENS.ink }}>
+                &ldquo;{t.quote}&rdquo;
+              </p>
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0"
+                  style={{ background: `${TOKENS[t.color]}20`, color: TOKENS[t.color], fontFamily: FONT_MONO }}
+                >
+                  {t.initials}
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-medium" style={{ color: TOKENS.ink }}>{t.name}</div>
+                  <div className="text-xs" style={{ color: TOKENS.inkMuted }}>{t.title}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-2 mt-4">
+        {testimonials.map((t, i) => (
+          <button
+            key={t.name}
+            aria-label={`Show testimonial from ${t.name}`}
+            onClick={() => setIndex(i)}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: i === index ? 18 : 6,
+              height: 6,
+              background: i === index ? TOKENS.azure : TOKENS.panelBorder,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function Landing() {
   const { isAuthenticated } = useOutletContext();
@@ -403,30 +471,8 @@ export function Landing() {
         <h2 className="text-xs uppercase mb-3 text-center" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
           What people are saying
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-          {testimonials.map((t) => (
-            <div
-              key={t.name}
-              className="rounded-2xl p-5 flex flex-col"
-              style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-            >
-              <p className="text-sm flex-1 mb-4" style={{ color: TOKENS.ink }}>&ldquo;{t.quote}&rdquo;</p>
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0"
-                  style={{ background: `${TOKENS[t.color]}20`, color: TOKENS[t.color], fontFamily: FONT_MONO }}
-                >
-                  {t.initials}
-                </div>
-                <div className="min-w-0">
-                  <div className="text-xs font-medium truncate" style={{ color: TOKENS.ink }}>{t.name}</div>
-                  <div className="text-xs truncate" style={{ color: TOKENS.inkMuted }}>{t.title}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <p className="text-xs text-center mb-16" style={{ color: TOKENS.inkMuted }}>
+        <TestimonialCarousel testimonials={testimonials} />
+        <p className="text-xs text-center mt-4 mb-16" style={{ color: TOKENS.inkMuted }}>
           Real comments from FabricPrep&apos;s{" "}
           <a href="https://www.linkedin.com/in/jitendra123/" target="_blank" rel="noopener noreferrer" style={{ color: TOKENS.azure }}>
             LinkedIn launch post
