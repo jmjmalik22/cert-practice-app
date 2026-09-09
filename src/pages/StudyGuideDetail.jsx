@@ -1,6 +1,6 @@
 import { Head as Helmet } from "vite-react-ssg";
 import { useParams, Link, Navigate } from "react-router-dom";
-import { ChevronLeft, ExternalLink, CheckCircle2, Database, Activity, Shield } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, CheckCircle2, Database, Activity, Shield, FileText, BookOpen } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { EXAM_META, SLUG_TO_EXAM, QUESTION_BANK } from "../lib/questionBank/index.js";
 import { buildBreadcrumbSchema } from "../lib/examCatalog.js";
@@ -164,6 +164,24 @@ export function StudyGuideDetail() {
   const topics = getStudyTopics(code);
   const steps = buildSteps(code, meta, guide);
 
+  const quickLinks = [];
+  if (code === "DP-700") {
+    quickLinks.push({
+      href: "/DP_700_Guide.pdf",
+      icon: FileText,
+      label: "Download PDF cheatsheet",
+      desc: "Complete DP-700 study guide in PDF format",
+    });
+  }
+  if (code === "DP-700" || code === "DP-600") {
+    quickLinks.push({
+      to: "/study-guides/shared",
+      icon: BookOpen,
+      label: "In-depth Fabric learning path",
+      desc: "Dataflows Gen2, pipelines, and Copy Data before Spark, Delta, Eventhouse, and KQL",
+    });
+  }
+
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
@@ -274,32 +292,6 @@ export function StudyGuideDetail() {
               </Link>
             </div>
 
-            {/* PDF Cheatsheet Download */}
-            <a
-              href="/DP_700_Guide.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 mt-5 p-4 rounded-xl transition-colors hover:opacity-90"
-              style={{ background: `${TOKENS.amber}15`, border: `1px solid ${TOKENS.amber}40` }}
-            >
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.amber}25` }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={TOKENS.amber} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <path d="M12 18v-6"/>
-                  <path d="m9 15 3 3 3-3"/>
-                </svg>
-              </div>
-              <div className="flex-1">
-                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Download PDF Cheatsheet</div>
-                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Complete DP-700 study guide in PDF format</div>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={TOKENS.amber} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-            </a>
           </>
         )}
 
@@ -537,21 +529,30 @@ export function StudyGuideDetail() {
           </>
         )}
 
-        {(code === "DP-700" || code === "DP-600") && (
-          <div className="rounded-xl p-5 mt-6" style={{ background: `${TOKENS.azure}10`, border: `1px solid ${TOKENS.azure}35` }}>
-            <h2 className="text-base font-semibold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              In-Depth Fabric Learning Path
-            </h2>
-            <p className="text-sm mb-3" style={{ color: TOKENS.inkMuted }}>
-              Build your knowledge step by step, starting with Dataflows Gen2, pipelines, and Copy Data before moving to Spark, Delta, Eventhouse, and KQL.
-            </p>
-            <Link
-              to="/study-guides/shared"
-              className="inline-flex items-center gap-2 text-sm font-medium"
-              style={{ color: TOKENS.azure }}
-            >
-              Start the learning path <ChevronLeft size={14} style={{ transform: "rotate(180deg)" }} />
-            </Link>
+        {quickLinks.length > 0 && (
+          <div className="rounded-xl mt-6 overflow-hidden" style={{ border: `1px solid ${TOKENS.panelBorder}` }}>
+            {quickLinks.map((q, i) => {
+              const Icon = q.icon;
+              const row = (
+                <>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}15` }}>
+                    <Icon size={16} color={TOKENS.azure} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>{q.label}</div>
+                    <div className="text-xs mt-0.5" style={{ color: TOKENS.inkMuted }}>{q.desc}</div>
+                  </div>
+                  <ChevronRight size={14} className="flex-shrink-0" style={{ color: TOKENS.inkMuted }} />
+                </>
+              );
+              const className = "flex items-center gap-3 p-4 transition-colors hover:opacity-80";
+              const style = { background: TOKENS.panel, borderTop: i > 0 ? `1px solid ${TOKENS.panelBorder}` : "none" };
+              return q.to ? (
+                <Link key={q.label} to={q.to} className={className} style={style}>{row}</Link>
+              ) : (
+                <a key={q.label} href={q.href} target="_blank" rel="noopener noreferrer" className={className} style={style}>{row}</a>
+              );
+            })}
           </div>
         )}
 
@@ -575,35 +576,38 @@ export function StudyGuideDetail() {
         <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
           Step-by-step study plan
         </h2>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
           {steps.map((s, i) => (
-            <div key={s.title} className="rounded-xl p-4" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span
-                  className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                  style={{ background: TOKENS.azure, color: TOKENS.bgDeep, fontFamily: FONT_MONO }}
-                >
-                  {i + 1}
-                </span>
-                <span className="text-sm font-medium" style={{ color: TOKENS.ink }}>{s.title}</span>
+            <div key={s.title} className="relative flex gap-3 pb-6 last:pb-0">
+              {i < steps.length - 1 && (
+                <span className="absolute left-[9px] top-5 bottom-0 w-px" style={{ background: TOKENS.panelBorder }} />
+              )}
+              <span
+                className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 z-10"
+                style={{ background: TOKENS.azure, color: TOKENS.bgDeep, fontFamily: FONT_MONO }}
+              >
+                {i + 1}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium mb-1" style={{ color: TOKENS.ink }}>{s.title}</div>
+                <p className="text-xs" style={{ color: TOKENS.inkMuted }}>{s.body}</p>
+                {s.link && (
+                  <a
+                    href={s.link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-1 text-xs"
+                    style={{ color: TOKENS.azure }}
+                  >
+                    {s.link.label} <ExternalLink size={11} />
+                  </a>
+                )}
+                {s.internalLink && (
+                  <Link to={s.internalLink} className="mt-2 inline-flex items-center gap-1 text-xs" style={{ color: TOKENS.azure }}>
+                    Practice {code} now — {total} free questions <ChevronLeft size={11} style={{ transform: "rotate(180deg)" }} />
+                  </Link>
+                )}
               </div>
-              <p className="text-xs ml-7" style={{ color: TOKENS.inkMuted }}>{s.body}</p>
-              {s.link && (
-                <a
-                  href={s.link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-7 mt-2 inline-flex items-center gap-1 text-xs"
-                  style={{ color: TOKENS.azure }}
-                >
-                  {s.link.label} <ExternalLink size={11} />
-                </a>
-              )}
-              {s.internalLink && (
-                <Link to={s.internalLink} className="ml-7 mt-2 inline-flex items-center gap-1 text-xs" style={{ color: TOKENS.azure }}>
-                  Practice {code} now — {total} free questions <ChevronLeft size={11} style={{ transform: "rotate(180deg)" }} />
-                </Link>
-              )}
             </div>
           ))}
         </div>

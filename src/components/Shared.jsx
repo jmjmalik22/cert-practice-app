@@ -118,7 +118,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
         </button>
 
         {/* Desktop Navigation */}
-        <div className="hidden sm:flex items-center gap-2.5 pr-24">
+        <div className="hidden lg:flex items-center gap-2.5 flex-wrap justify-end">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isLocked = !item.public && !hasFullAccess;
@@ -127,10 +127,10 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
                 key={item.to}
                 to={item.to}
                 onClick={(e) => handleNavClick(item, e)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-                style={{ 
-                  color: TOKENS.ink, 
-                  background: TOKENS.panel, 
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap"
+                style={{
+                  color: TOKENS.ink,
+                  background: TOKENS.panel,
                   border: `1px solid ${TOKENS.panelBorder}`,
                   opacity: isLocked ? 0.6 : 1,
                 }}
@@ -165,7 +165,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
           )}
           {streak > 0 && (
             <div
-              className="flex items-center gap-1 rounded-full px-2.5 py-1"
+              className="flex items-center gap-1 rounded-full px-2.5 py-1 whitespace-nowrap"
               style={{ background: `${TOKENS.amber}1A`, border: `1px solid ${TOKENS.amber}40` }}
             >
               <span className="text-xs" style={{ color: TOKENS.amber, fontFamily: FONT_MONO }}>
@@ -192,14 +192,11 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
               }}
             />
           </button>
-        </div>
-
-        <div className="absolute right-4 sm:right-6 lg:right-10 top-1/2 -translate-y-1/2 hidden sm:block">
           <SponsorButton />
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="flex sm:hidden items-center gap-2">
+        <div className="flex lg:hidden items-center gap-2">
           {user ? (
             <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
               {user.displayName || user.email}
@@ -230,7 +227,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
       {mobileMenuOpen && (
         <div
           id="mobile-navigation"
-          className="sm:hidden px-4 pb-4"
+          className="lg:hidden px-4 pb-4"
           style={{ borderBottom: `1px solid ${TOKENS.panelBorder}` }}
         >
           <div className="flex flex-col gap-2">
