@@ -19,6 +19,52 @@ export function Landing() {
     { icon: Flag, title: "Sourced from Microsoft Learn", body: "Questions are grounded in official Microsoft documentation, not guesswork." },
   ];
 
+  // Real comments from FabricPrep's LinkedIn launch post, lightly trimmed for length.
+  const testimonials = [
+    {
+      initials: "EO",
+      name: "Eghosa Osayame",
+      title: "Azure & Fabric Data Engineer, 8x Microsoft Certified",
+      quote: "I really wish I had this while I was preparing for my AZ-104 and DP-900. I'm sure fabricprep.com will be super helpful to lots of people.",
+      color: "azure",
+    },
+    {
+      initials: "SR",
+      name: "Soumadip Roy",
+      title: "Data & Analytics Consultant, 21+ Yrs IT Leader",
+      quote: "This is awesome, giving back to the data community.",
+      color: "green",
+    },
+    {
+      initials: "IL",
+      name: "Imraan Thabang Leeuw",
+      title: "Aspiring Data Engineer, Azure Data Certified",
+      quote: "Thank you very much. I will definitely use this for my DP-700 prep!",
+      color: "amber",
+    },
+    {
+      initials: "AB",
+      name: "Anirban Bhattacharjee",
+      title: "Lead BI Data Engineer",
+      quote: "Good one — will share with others as well!",
+      color: "azure",
+    },
+    {
+      initials: "ZC",
+      name: "Zach C.",
+      title: "Data Engineer, Snowflake · dbt · Azure",
+      quote: "If you had a “buy me a coffee” button I'd do it. Very cool.",
+      color: "green",
+    },
+    {
+      initials: "AY",
+      name: "Abdelhak Yahiaoui",
+      title: "Budget & Control Sr. Analyst",
+      quote: "Thank you so much! Hope the number of questions will increase in the future.",
+      color: "amber",
+    },
+  ];
+
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
@@ -354,7 +400,40 @@ export function Landing() {
           </div>
         </div>
 
-        <div 
+        <h2 className="text-xs uppercase mb-3 text-center" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
+          What people are saying
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+          {testimonials.map((t) => (
+            <div
+              key={t.name}
+              className="rounded-2xl p-5 flex flex-col"
+              style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+            >
+              <p className="text-sm flex-1 mb-4" style={{ color: TOKENS.ink }}>&ldquo;{t.quote}&rdquo;</p>
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0"
+                  style={{ background: `${TOKENS[t.color]}20`, color: TOKENS[t.color], fontFamily: FONT_MONO }}
+                >
+                  {t.initials}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-medium truncate" style={{ color: TOKENS.ink }}>{t.name}</div>
+                  <div className="text-xs truncate" style={{ color: TOKENS.inkMuted }}>{t.title}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-center mb-16" style={{ color: TOKENS.inkMuted }}>
+          Real comments from FabricPrep&apos;s{" "}
+          <a href="https://www.linkedin.com/in/jitendra123/" target="_blank" rel="noopener noreferrer" style={{ color: TOKENS.azure }}>
+            LinkedIn launch post
+          </a>.
+        </p>
+
+        <div
           className="rounded-2xl p-8 sm:p-10 flex flex-col sm:flex-row gap-6 items-start relative overflow-hidden mb-16"
           style={{ 
             background: TOKENS.panel, 
