@@ -1,7 +1,7 @@
 import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
-import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
+import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
 import { COMING_SOON_EXAMS, EXAM_META } from "../lib/examCatalog.js";
 import { buildBreadcrumbSchema, SITE_ORIGIN } from "../lib/examCatalog.js";
@@ -72,40 +72,37 @@ const EXTERNAL_RESOURCES = [
 function ResourceCard({ resource }) {
   const TOKENS = useTheme();
   const meta = EXAM_META[resource.examCode];
+  const displayTitle = resource.title.replace(/^[A-Z]{2,3}-\d{3}:\s*/, "");
 
   return (
-    <div
-      className="rounded-xl p-5 flex flex-col h-full"
-      style={{
-        background: TOKENS.panel,
-        border: `1px solid ${TOKENS.panelBorder}`,
-      }}
+    <Link
+      to={`/study-guides/${meta.slug}`}
+      className="rounded-xl p-4 flex flex-col h-full transition-colors hover:opacity-90"
+      style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, textDecoration: "none" }}
     >
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-center gap-2 mb-2">
         <div
-          className="w-10 h-10 rounded-lg flex items-center justify-center"
+          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
           style={{ background: `${TOKENS.azure}1A` }}
         >
-          <BookOpen size={20} style={{ color: TOKENS.azure }} />
+          <BookOpen size={16} style={{ color: TOKENS.azure }} />
         </div>
+        <span className="text-xs font-semibold" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>
+          {resource.examCode}
+        </span>
       </div>
 
-      <h3 className="font-semibold mb-1" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-        {resource.title}
+      <h3 className="text-sm font-semibold mb-1" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+        {displayTitle}
       </h3>
-      <p className="text-xs mb-4 flex-grow" style={{ color: TOKENS.inkMuted }}>
+      <p className="text-xs mb-3 flex-grow" style={{ color: TOKENS.inkMuted }}>
         {resource.description}
       </p>
 
-      <Link
-        to={`/study-guides/${meta.slug}`}
-        className="flex items-center justify-between py-2.5 px-3 rounded-lg text-sm transition-colors mt-auto"
-        style={{ background: TOKENS.bg, color: TOKENS.ink, textDecoration: "none" }}
-      >
-        <span>Read the study guide</span>
-        <ChevronRight size={14} style={{ color: TOKENS.inkMuted }} />
-      </Link>
-    </div>
+      <span className="flex items-center gap-1 text-xs font-medium mt-auto" style={{ color: TOKENS.azure }}>
+        Read the study guide <ChevronRight size={12} />
+      </span>
+    </Link>
   );
 }
 
