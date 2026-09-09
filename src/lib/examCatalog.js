@@ -243,11 +243,27 @@ export const DP700_TOPIC_IDS = Object.freeze([
   "scenario-guide",
 ]);
 
+export const AZ104_TOPIC_IDS = Object.freeze([
+  "identities-governance",
+  "storage",
+  "compute",
+  "networking",
+  "monitoring",
+]);
+
+// Registry of exam -> topic-page IDs, used to generate SSG routes and
+// sitemap entries. Keep in sync with src/lib/studyTopics/index.js, which
+// holds the actual page content for the same topic IDs.
+export const STUDY_GUIDE_TOPIC_IDS_BY_EXAM = Object.freeze({
+  "DP-700": DP700_TOPIC_IDS,
+  "AZ-104": AZ104_TOPIC_IDS,
+});
+
 export const ROUTE_PATHS = Object.freeze({
   dashboard: "dashboard",
   login: "login",
   studyGuides: "study-guides",
-  dp700StudyGuideTopic: "study-guides/dp-700/:topicId",
+  studyGuideTopic: "study-guides/:examSlug/:topicId",
   studyGuideDetail: "study-guides/:examSlug",
   exam: ":examSlug",
 });
@@ -268,7 +284,9 @@ export const SSG_ROUTES = Object.freeze([
     "/study-guides/shared/lifecycle-orchestration",
   ...EXAM_CODES.map((code) => `/${EXAM_META[code].slug}`),
   ...STUDY_GUIDE_EXAM_CODES.map((code) => `/study-guides/${EXAM_META[code].slug}`),
-  ...DP700_TOPIC_IDS.map((topicId) => `/study-guides/dp-700/${topicId}`),
+  ...Object.entries(STUDY_GUIDE_TOPIC_IDS_BY_EXAM).flatMap(([code, topicIds]) =>
+    topicIds.map((topicId) => `/study-guides/${EXAM_META[code].slug}/${topicId}`)
+  ),
 ]);
 
 export const SITEMAP_ROUTES = Object.freeze([
@@ -293,11 +311,13 @@ export const SITEMAP_ROUTES = Object.freeze([
     priority: "0.8",
     changefreq: "monthly",
   })),
-  ...DP700_TOPIC_IDS.map((topicId) => ({
-    path: `/study-guides/dp-700/${topicId}`,
-    priority: "0.7",
-    changefreq: "monthly",
-  })),
+  ...Object.entries(STUDY_GUIDE_TOPIC_IDS_BY_EXAM).flatMap(([code, topicIds]) =>
+    topicIds.map((topicId) => ({
+      path: `/study-guides/${EXAM_META[code].slug}/${topicId}`,
+      priority: "0.7",
+      changefreq: "monthly",
+    }))
+  ),
 ]);
 
 // Builds a schema.org BreadcrumbList JSON-LD object from an ordered list of

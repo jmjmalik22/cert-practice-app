@@ -4,6 +4,7 @@ import { ChevronLeft, ExternalLink, CheckCircle2, Database, Activity, Shield } f
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { EXAM_META, SLUG_TO_EXAM, QUESTION_BANK } from "../lib/questionBank/index.js";
 import { buildBreadcrumbSchema } from "../lib/examCatalog.js";
+import { getStudyTopics } from "../lib/studyTopics/index.js";
 import { Footer } from "../components/Shared.jsx";
 
 // Content grounded in Microsoft's official study guides (learn.microsoft.com/credentials/certifications/resources/study-guides).
@@ -160,6 +161,7 @@ export function StudyGuideDetail() {
   const meta = EXAM_META[code];
   const guide = GUIDES[code];
   const total = QUESTION_BANK[code].questions.length;
+  const topics = getStudyTopics(code);
   const steps = buildSteps(code, meta, guide);
 
   return (
@@ -496,6 +498,41 @@ export function StudyGuideDetail() {
                   </div>
                 </div>
               </div>
+            </div>
+          </>
+        )}
+
+        {code === "AZ-104" && topics && (
+          <>
+            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              AZ-104: Microsoft Azure Administrator
+            </h2>
+            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
+              Dive deep into each exam objective with comprehensive study materials.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {topics.map((t) => {
+                const TopicIcon = t.icon;
+                return (
+                  <Link
+                    key={t.id}
+                    to={`/study-guides/${meta.slug}/${t.id}`}
+                    className="rounded-xl p-4 transition-colors hover:opacity-90"
+                    style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                        <TopicIcon size={20} color={TOKENS.azure} />
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>{t.weight}</div>
+                        <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>{t.title}</div>
+                        <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>{t.description}</div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </>
         )}
