@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, CheckCircle, ArrowLeft } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { useAuth } from "../lib/authContext.jsx";
@@ -10,12 +10,14 @@ export function Login() {
   const TOKENS = useTheme();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, login, signup, loginWithGoogle, resendVerificationEmail, refreshUser, resetPassword } = useAuth();
-  // Captured once on mount: someone who was already signed in when they
-  // landed here (e.g. via the footer's Sign up link) gets sent home
-  // instead of the form, but a fresh signup/login completed on this page
-  // itself must not immediately redirect away before its own flow finishes.
-  const [wasAlreadySignedIn] = useState(() => !!user);
+  const { user, loading: authLoading, login, signup, loginWithGoogle, resendVerificationEmail, refreshUser, resetPassword } = useAuth();
+  // Firebase resolves a persisted session asynchronously, so `user` isn't
+  // known yet on first render — redirecting has to react to it becoming
+  // available rather than checking it once at mount. formSubmittedRef marks
+  // a signup/login/Google attempt started on this page itself, so finishing
+  // one here doesn't get redirected home before its own flow (the
+  // verification-pending screen, etc.) gets a chance to run.
+  const formSubmittedRef = useRef(false);
   const [isSignup, setIsSignup] = useState(searchParams.get("mode") === "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,9 +28,11 @@ export function Login() {
   const [verificationPending, setVerificationPending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
 
-  if (wasAlreadySignedIn) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    if (!authLoading && user && !formSubmittedRef.current) {
+      navigate("/", { replace: true });
+    }
+  }, [authLoading, user, navigate]);
 
   function getAuthErrorMessage(err) {
     const messages = {
@@ -53,6 +57,7 @@ export function Login() {
   }
 
   async function handleGoogleSignIn() {
+    formSubmittedRef.current = true;
     setError("");
     setNotice("");
     setLoading(true);
@@ -69,6 +74,7 @@ export function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    formSubmittedRef.current = true;
     setError("");
     setNotice("");
     setLoading(true);
@@ -145,6 +151,10 @@ export function Login() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (authLoading || (user && !formSubmittedRef.current)) {
+    return null;
   }
 
   if (verificationPending) {
