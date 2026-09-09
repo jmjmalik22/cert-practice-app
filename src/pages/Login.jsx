@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, CheckCircle, ArrowLeft } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
 import { useAuth } from "../lib/authContext.jsx";
@@ -10,7 +10,12 @@ export function Login() {
   const TOKENS = useTheme();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, signup, loginWithGoogle, resendVerificationEmail, refreshUser, resetPassword } = useAuth();
+  const { user, login, signup, loginWithGoogle, resendVerificationEmail, refreshUser, resetPassword } = useAuth();
+  // Captured once on mount: someone who was already signed in when they
+  // landed here (e.g. via the footer's Sign up link) gets sent home
+  // instead of the form, but a fresh signup/login completed on this page
+  // itself must not immediately redirect away before its own flow finishes.
+  const [wasAlreadySignedIn] = useState(() => !!user);
   const [isSignup, setIsSignup] = useState(searchParams.get("mode") === "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +25,10 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const [verificationPending, setVerificationPending] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+
+  if (wasAlreadySignedIn) {
+    return <Navigate to="/" replace />;
+  }
 
   function getAuthErrorMessage(err) {
     const messages = {
@@ -324,26 +333,22 @@ export function Login() {
             {loading ? "Please wait..." : isSignup ? "Create Account" : "Sign In"}
           </button>
 
-          {!isSignup && (
-            <>
-              <div className="flex items-center gap-3 py-1" aria-hidden="true">
-                <div className="h-px flex-1" style={{ background: TOKENS.panelBorder }} />
-                <span className="text-xs" style={{ color: TOKENS.inkMuted }}>OR</span>
-                <div className="h-px flex-1" style={{ background: TOKENS.panelBorder }} />
-              </div>
+          <div className="flex items-center gap-3 py-1" aria-hidden="true">
+            <div className="h-px flex-1" style={{ background: TOKENS.panelBorder }} />
+            <span className="text-xs" style={{ color: TOKENS.inkMuted }}>OR</span>
+            <div className="h-px flex-1" style={{ background: TOKENS.panelBorder }} />
+          </div>
 
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                disabled={loading}
-                className="w-full py-3 rounded-full font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-3"
-                style={{ background: TOKENS.panel, color: TOKENS.ink, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <span className="font-bold text-base" aria-hidden="true">G</span>
-                Continue with Google
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full py-3 rounded-full font-medium text-sm disabled:opacity-50 flex items-center justify-center gap-3"
+            style={{ background: TOKENS.panel, color: TOKENS.ink, border: `1px solid ${TOKENS.panelBorder}` }}
+          >
+            <span className="font-bold text-base" aria-hidden="true">G</span>
+            Continue with Google
+          </button>
 
           {!isSignup && (
             <button
