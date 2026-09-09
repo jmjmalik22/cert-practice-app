@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ChevronLeft, ArrowRight, Clock, Flag, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ArrowRight, Clock, Flag, CheckCircle2, XCircle } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getBookmarks, toggleBookmarkStorage, markAttempted, shuffle } from "../lib/theme.jsx";
 import { getPracticeConfig } from "../lib/examCatalog.js";
 import { QUESTION_BANK } from "../lib/questionBank/index.js";
@@ -425,13 +425,13 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
                     {rq.domain}
                   </span>
                   {isCorrect ? (
-                    <span className="flex items-center gap-1 text-xs" style={{ color: TOKENS.green }}>
-                      <CheckCircle2 size={14} /> Correct
-                    </span>
+                    <Chip tone="green">
+                      <span className="flex items-center gap-1"><CheckCircle2 size={14} /> Correct</span>
+                    </Chip>
                   ) : (
-                    <span className="flex items-center gap-1 text-xs" style={{ color: TOKENS.red }}>
-                      Incorrect
-                    </span>
+                    <Chip tone="red">
+                      <span className="flex items-center gap-1"><XCircle size={14} /> Incorrect</span>
+                    </Chip>
                   )}
                 </div>
 
@@ -610,13 +610,13 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
             <div className="flex items-center justify-between mt-5">
               <div className="flex items-center gap-2">
                 {selected === q.correct ? (
-                  <span className="flex items-center gap-1 text-xs" style={{ color: TOKENS.green }}>
-                    <CheckCircle2 size={14} /> Correct
-                  </span>
+                  <Chip tone="green">
+                    <span className="flex items-center gap-1"><CheckCircle2 size={14} /> Correct</span>
+                  </Chip>
                 ) : (
-                  <span className="flex items-center gap-1 text-xs" style={{ color: TOKENS.red }}>
-                    Incorrect
-                  </span>
+                  <Chip tone="red">
+                    <span className="flex items-center gap-1"><XCircle size={14} /> Incorrect</span>
+                  </Chip>
                 )}
               </div>
               <button
