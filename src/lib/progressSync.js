@@ -56,7 +56,7 @@ function applyLocalSnapshot({ progress, examResults }) {
   syncDerivedLocalKeys(progress || {});
 }
 
-function mergeExamProgress(localExam, remoteExam) {
+export function mergeExamProgress(localExam, remoteExam) {
   const local = localExam || emptyExamProgress();
   const remote = remoteExam || emptyExamProgress();
 
@@ -83,7 +83,7 @@ function mergeExamProgress(localExam, remoteExam) {
   };
 }
 
-function mergeProgressData(localProgress, remoteProgress) {
+export function mergeProgressData(localProgress, remoteProgress) {
   const merged = {};
   const examCodes = new Set([
     ...Object.keys(localProgress || {}),
@@ -97,7 +97,7 @@ function mergeProgressData(localProgress, remoteProgress) {
   return merged;
 }
 
-function mergeExamResults(localResults, remoteResults) {
+export function mergeExamResults(localResults, remoteResults) {
   const resultsByKey = new Map();
 
   [...(localResults || []), ...(remoteResults || [])].forEach((result) => {

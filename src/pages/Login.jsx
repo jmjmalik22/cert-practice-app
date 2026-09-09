@@ -158,7 +158,7 @@ export function Login() {
             We sent a verification link to <strong style={{ color: TOKENS.ink }}>{email}</strong>.
           </p>
           <p className="text-xs text-center mb-6" style={{ color: TOKENS.amber }}>
-            Can't find it? Check spam/junk folder. Delivery may take a few minutes.
+            Can&apos;t find it? Check spam/junk folder. Delivery may take a few minutes.
           </p>
 
           {error && (
