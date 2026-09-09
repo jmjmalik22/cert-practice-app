@@ -271,6 +271,9 @@ export const ROUTE_PATHS = Object.freeze({
 export const SSG_ROUTES = Object.freeze([
   "/",
   "/about",
+  "/pricing",
+  "/terms",
+  "/privacy",
   "/login",
   "/dashboard",
   "/study-guides",
@@ -292,6 +295,7 @@ export const SSG_ROUTES = Object.freeze([
 export const SITEMAP_ROUTES = Object.freeze([
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/about", priority: "0.7", changefreq: "monthly" },
+  { path: "/pricing", priority: "0.5", changefreq: "monthly" },
   { path: "/study-guides", priority: "0.9", changefreq: "weekly" },
   { path: "/study-guides/shared", priority: "0.8", changefreq: "monthly" },
   { path: "/study-guides/shared/dataflows-pipelines", priority: "0.8", changefreq: "monthly" },
