@@ -70,16 +70,16 @@ export function mergeExamProgress(localExam, remoteExam) {
   );
   const bookmarked = [...new Set([...(local.bookmarked || []), ...(remote.bookmarked || [])])];
   const correct = attempts.filter((attempt) => attempt.isCorrect).length;
+  const lastUpdated = [local.lastUpdated, remote.lastUpdated].filter(Boolean).sort().at(-1);
 
   return {
     attempts,
     correct,
     total: attempts.length,
     bookmarked,
-    lastUpdated: [local.lastUpdated, remote.lastUpdated]
-      .filter(Boolean)
-      .sort()
-      .at(-1),
+    // Firestore's setDoc rejects explicit `undefined` fields — omit entirely
+    // when neither side has recorded a lastUpdated timestamp yet.
+    ...(lastUpdated ? { lastUpdated } : {}),
   };
 }
 

@@ -266,6 +266,7 @@ export const ROUTE_PATHS = Object.freeze({
   studyGuideTopic: "study-guides/:examSlug/:topicId",
   studyGuideDetail: "study-guides/:examSlug",
   exam: ":examSlug",
+  verifyBadge: "verify/:badgeId",
 });
 
 export const SSG_ROUTES = Object.freeze([

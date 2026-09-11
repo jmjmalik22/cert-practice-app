@@ -1,11 +1,57 @@
 import { useState, useEffect } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, useOutletContext } from "react-router-dom";
-import { RotateCcw, Clock, Bookmark, Flag, Lock } from "lucide-react";
+import { RotateCcw, Clock, Bookmark, Flag, Lock, ArrowRight } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
 import { COMING_SOON_EXAMS, EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
+import { BadgeShield } from "../components/BadgeShield.jsx";
+import { getEarnedBadges } from "../lib/badges.js";
+
+const TIER_RANK = { elite: 0, mastery: 1, proven: 2 };
+
+// Nudges a returning visitor toward a badge they've already earned (computed
+// from local exam results, so it works before/without sign-in) so they
+// notice it's ready to view and share.
+function EarnedBadgeBanner() {
+  const TOKENS = useTheme();
+  const [badge, setBadge] = useState(null);
+
+  useEffect(() => {
+    const earned = getEarnedBadges();
+    if (earned.length === 0) return;
+    const best = [...earned].sort((a, b) => TIER_RANK[a.tier] - TIER_RANK[b.tier])[0];
+    setBadge(best);
+  }, []);
+
+  if (!badge) return null;
+  const examMeta = EXAM_META[badge.examCode];
+
+  return (
+    <div className="px-6 sm:px-10 max-w-3xl mx-auto w-full mb-14">
+      <Link
+        to="/dashboard"
+        className="flex items-center gap-4 rounded-2xl p-4 transition-transform hover:-translate-y-0.5"
+        style={{
+          background: `linear-gradient(135deg, ${TOKENS.panel}, ${TOKENS.azure}12)`,
+          border: `1px solid ${TOKENS.azure}40`,
+        }}
+      >
+        <BadgeShield tier={badge.tier} examCode={badge.examCode} examLabel={examMeta?.label} score={badge.score} size={64} />
+        <div className="flex-1">
+          <p className="text-xs uppercase tracking-widest mb-1" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>
+            Badge earned
+          </p>
+          <p className="text-sm font-semibold" style={{ color: TOKENS.ink }}>
+            Your {badge.tierLabel} shield for {badge.examCode} is ready to share.
+          </p>
+        </div>
+        <ArrowRight size={18} style={{ color: TOKENS.azure }} className="flex-shrink-0" />
+      </Link>
+    </div>
+  );
+}
 
 // Auto-rotating testimonial slider: one quote visible at a time, advances on
 // a timer, pauses on hover, and respects prefers-reduced-motion.
@@ -277,6 +323,8 @@ export function Landing() {
           </div>
         </div>
       </div>
+
+      <EarnedBadgeBanner />
 
       <div className="px-6 sm:px-10 pb-14 max-w-3xl mx-auto w-full">
         <h2 className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
