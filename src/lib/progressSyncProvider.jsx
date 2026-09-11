@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext.jsx";
 import { pullAndMergeProgress, scheduleCloudSync, setActiveSyncUid } from "./progressSync.js";
+import { syncBadgesToCloud } from "./badges.js";
 
 const ProgressSyncContext = createContext({ syncing: false });
 
@@ -31,6 +32,10 @@ export function ProgressSyncProvider({ children }) {
         if (!cancelled) setSyncing(false);
       });
 
+    // Independent of cloud progress sync — a failure there (e.g. malformed
+    // legacy progress data) should never block badge minting.
+    syncBadgesToCloud(user.uid);
+
     return () => {
       cancelled = true;
     };
@@ -41,6 +46,7 @@ export function ProgressSyncProvider({ children }) {
 
     function handleProgressChanged() {
       scheduleCloudSync(user.uid);
+      syncBadgesToCloud(user.uid);
     }
 
     function handleVisibilityChange() {

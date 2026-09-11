@@ -145,6 +145,13 @@ const routes = [
         },
       },
       {
+        path: ROUTE_PATHS.verifyBadge,
+        lazy: async () => {
+          const { VerifyBadge } = await import("./pages/VerifyBadge.jsx");
+          return { Component: VerifyBadge };
+        },
+      },
+      {
         path: ROUTE_PATHS.exam,
         lazy: async () => {
           const { ExamPage } = await import("./pages/ExamPage.jsx");

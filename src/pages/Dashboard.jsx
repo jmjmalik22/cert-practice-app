@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, Navigate, useOutletContext } from "react-router-dom";
-import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight, AlertCircle } from "lucide-react";
+import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight, AlertCircle, Copy, Linkedin } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
+import { SITE_ORIGIN } from "../lib/examCatalog.js";
 import { Footer } from "../components/Shared.jsx";
+import { BadgeShield } from "../components/BadgeShield.jsx";
 import { getOverallStats, getExamStats, getUser, getExamResults, getWeakDomainRecommendations, getWrongAnswerSummary } from "../lib/progress.jsx";
 import { getAttempted, updateStreak } from "../lib/theme.jsx";
+import { useAuth } from "../lib/authContext.jsx";
+import { getEarnedBadges, badgeDocId } from "../lib/badges.js";
 
 function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
   const TOKENS = useTheme();
@@ -254,6 +258,95 @@ function ExamResultsSection() {
                   ))}
                 </div>
               </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function AchievementsSection() {
+  const TOKENS = useTheme();
+  const { user, isAuthenticated } = useAuth();
+  const [badges, setBadges] = useState([]);
+  const [copiedExam, setCopiedExam] = useState(null);
+
+  useEffect(() => {
+    function loadBadges() {
+      setBadges(getEarnedBadges());
+    }
+
+    loadBadges();
+    window.addEventListener("fp-progress-changed", loadBadges);
+    window.addEventListener("fp-progress-synced", loadBadges);
+    return () => {
+      window.removeEventListener("fp-progress-changed", loadBadges);
+      window.removeEventListener("fp-progress-synced", loadBadges);
+    };
+  }, []);
+
+  if (badges.length === 0) return null;
+
+  return (
+    <div className="mb-8">
+      <h2
+        className="text-lg font-semibold mb-4 flex items-center gap-2"
+        style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
+      >
+        <Award size={20} style={{ color: TOKENS.amber }} />
+        Achievements
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {badges.map((badge) => {
+          const examMeta = EXAM_META[badge.examCode];
+          const origin = typeof window !== "undefined" ? window.location.origin : SITE_ORIGIN;
+          const verifyUrl =
+            isAuthenticated && user?.uid
+              ? `${origin}/verify/${badgeDocId(user.uid, badge.examCode)}`
+              : null;
+
+          return (
+            <div
+              key={badge.examCode}
+              className="rounded-xl p-4 flex flex-col items-center text-center"
+              style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+            >
+              <BadgeShield
+                tier={badge.tier}
+                examCode={badge.examCode}
+                examLabel={examMeta?.label}
+                score={badge.score}
+                size={160}
+              />
+              {verifyUrl ? (
+                <div className="flex items-center gap-2 mt-3">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard?.writeText(verifyUrl);
+                      setCopiedExam(badge.examCode);
+                      setTimeout(() => setCopiedExam(null), 2000);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}
+                  >
+                    <Copy size={13} /> {copiedExam === badge.examCode ? "Copied!" : "Copy link"}
+                  </button>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+                  >
+                    <Linkedin size={13} /> Share
+                  </a>
+                </div>
+              ) : (
+                <Link to="/login" className="text-xs mt-3" style={{ color: TOKENS.azure }}>
+                  Sign in to get a shareable, verified badge link
+                </Link>
+              )}
             </div>
           );
         })}
@@ -567,6 +660,7 @@ export function Dashboard() {
             )}
 
             {/* Mock Exam Results */}
+            <AchievementsSection />
             <ExamResultsSection />
           </div>
 
