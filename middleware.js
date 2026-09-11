@@ -17,10 +17,11 @@ function escapeHtml(value) {
   ));
 }
 
-function renderMetaPage({ title, description, url }) {
+function renderMetaPage({ title, description, url, image = FALLBACK_OG_IMAGE }) {
   const safeTitle = escapeHtml(title);
   const safeDescription = escapeHtml(description);
   const safeUrl = escapeHtml(url);
+  const safeImage = escapeHtml(image);
 
   return `<!doctype html>
 <html>
@@ -31,12 +32,14 @@ function renderMetaPage({ title, description, url }) {
 <meta property="og:type" content="website" />
 <meta property="og:title" content="${safeTitle}" />
 <meta property="og:description" content="${safeDescription}" />
-<meta property="og:image" content="${FALLBACK_OG_IMAGE}" />
+<meta property="og:image" content="${safeImage}" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <meta property="og:url" content="${safeUrl}" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="${safeTitle}" />
 <meta name="twitter:description" content="${safeDescription}" />
-<meta name="twitter:image" content="${FALLBACK_OG_IMAGE}" />
+<meta name="twitter:image" content="${safeImage}" />
 </head>
 <body></body>
 </html>`;
@@ -79,6 +82,7 @@ export default async function middleware(request) {
       title: `FabricPrep ${tier} Badge — ${examCode}`,
       description: `Awarded for achieving ${score}%+ on the FabricPrep ${examCode} Skills Assessment. Issued by FabricPrep — an independent learning platform; not a Microsoft certification.`,
       url: url.toString(),
+      image: `${url.origin}/api/badge-image/${badgeId}`,
     });
   } catch {
     // Firestore lookup failed for some other reason — fall through to the
