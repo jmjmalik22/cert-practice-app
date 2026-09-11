@@ -1,11 +1,19 @@
-// Achievement badge logic: award tiers from mock exam scores, and mint a
-// public, verifiable badge record in Firestore for signed-in users.
+// Achievement badge logic: award tiers from cumulative practice-mode
+// accuracy, and mint a public, verifiable badge record in Firestore for
+// signed-in users.
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
 import { safeGet, safeSet } from "./theme.jsx";
-import { getExamResults } from "./progress.jsx";
+import { getPracticeMastery } from "./progress.jsx";
+import { EXAM_CODES } from "./examCatalog.js";
 
 const BADGES_KEY = "fp_badges";
+
+// Minimum distinct practice questions an exam needs before it's eligible
+// for a badge at all — keeps a badge from being earned off a handful of
+// lucky answers. Mock exam attempts don't count toward badges: someone
+// could otherwise game a short mock rather than actually practicing.
+export const MIN_PRACTICE_QUESTIONS_FOR_BADGE = 51;
 
 export const BADGE_TIERS = [
   { id: "elite", label: "ELITE", minPercentage: 95 },
@@ -17,29 +25,24 @@ export function getTierForScore(percentage) {
   return BADGE_TIERS.find((tier) => percentage >= tier.minPercentage) || null;
 }
 
-// Best-scoring badge per exam, for every exam that has reached a tier.
+// One badge per exam, based on cumulative practice-mode accuracy (not mock
+// exams) once at least MIN_PRACTICE_QUESTIONS_FOR_BADGE distinct questions
+// have been practiced.
 export function getEarnedBadges() {
-  const bestByExam = {};
+  return EXAM_CODES.map((examCode) => {
+    const { attempted, percentage } = getPracticeMastery(examCode);
+    if (attempted < MIN_PRACTICE_QUESTIONS_FOR_BADGE) return null;
 
-  getExamResults().forEach((result) => {
-    const current = bestByExam[result.examCode];
-    if (!current || result.percentage > current.percentage) {
-      bestByExam[result.examCode] = result;
-    }
-  });
+    const tier = getTierForScore(percentage);
+    if (!tier) return null;
 
-  return Object.entries(bestByExam)
-    .map(([examCode, result]) => {
-      const tier = getTierForScore(result.percentage);
-      if (!tier) return null;
-      return {
-        examCode,
-        tier: tier.id,
-        tierLabel: tier.label,
-        score: result.percentage,
-      };
-    })
-    .filter(Boolean);
+    return {
+      examCode,
+      tier: tier.id,
+      tierLabel: tier.label,
+      score: percentage,
+    };
+  }).filter(Boolean);
 }
 
 export function badgeDocId(uid, examCode) {

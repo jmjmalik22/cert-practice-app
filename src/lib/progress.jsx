@@ -157,9 +157,10 @@ export function getBookmarks(examCode) {
   return progress[examCode]?.bookmarked || [];
 }
 
-// Return questions whose most recent practice attempt was incorrect.
-export function getWrongQuestionIds(examCode) {
-  migrateOldProgress();
+// Practice-mode attempts (mock exams excluded), one entry per question keyed
+// to its most recent attempt — so re-answering a question updates its state
+// rather than counting it twice.
+function latestPracticeAttempts(examCode) {
   const progress = getProgress();
   const attempts = progress[examCode]?.attempts || [];
   const latestByQuestion = new Map();
@@ -168,9 +169,28 @@ export function getWrongQuestionIds(examCode) {
     .filter((attempt) => !attempt.isMockExam)
     .forEach((attempt) => latestByQuestion.set(attempt.questionId, attempt));
 
-  return [...latestByQuestion.entries()]
+  return latestByQuestion;
+}
+
+// Return questions whose most recent practice attempt was incorrect.
+export function getWrongQuestionIds(examCode) {
+  migrateOldProgress();
+  return [...latestPracticeAttempts(examCode).entries()]
     .filter(([, attempt]) => !attempt.isCorrect)
     .map(([questionId]) => questionId);
+}
+
+// Practice-only accuracy, used to gate achievement badges: rewards breadth
+// of practice (distinct questions answered) rather than a single mock-exam
+// sitting, and re-attempting a question updates its result instead of
+// padding the count.
+export function getPracticeMastery(examCode) {
+  migrateOldProgress();
+  const latest = latestPracticeAttempts(examCode);
+  const attempted = latest.size;
+  const correct = [...latest.values()].filter((attempt) => attempt.isCorrect).length;
+  const percentage = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+  return { attempted, correct, percentage };
 }
 
 export function getWrongAnswerSummary(questionBank) {
