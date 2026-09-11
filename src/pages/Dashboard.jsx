@@ -339,7 +339,8 @@ function AchievementsSection() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => {
-                        const caption = `I just earned the ${badge.tierLabel} badge on FabricPrep's ${badge.examCode} Skills Assessment (${badge.score}%+)! Build your Microsoft certification skills for free at fabricprep.com.`;
+                        const examName = examMeta?.label ? `${badge.examCode} (${examMeta.label})` : badge.examCode;
+                        const caption = `I just earned the ${badge.tierLabel} badge on FabricPrep's ${examName} Skills Assessment, scoring ${badge.score}%+! If you're studying for a Microsoft certification, FabricPrep has free practice questions and full mock exams to help you get there — try it yourself at fabricprep.com.`;
                         navigator.clipboard?.writeText(caption);
                         setCaptionCopiedExam(badge.examCode);
                         setTimeout(() => setCaptionCopiedExam(null), 4000);
