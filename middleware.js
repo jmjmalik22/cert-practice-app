@@ -75,14 +75,18 @@ export default async function middleware(request) {
 
     const doc = await firestoreRes.json();
     const examCode = doc.fields?.examCode?.stringValue || "";
-    const tier = (doc.fields?.tier?.stringValue || "").toUpperCase();
+    const tier = doc.fields?.tier?.stringValue || "";
     const score = doc.fields?.score?.integerValue ?? doc.fields?.score?.doubleValue ?? "";
 
     return metaResponse({
-      title: `FabricPrep ${tier} Badge — ${examCode}`,
+      title: `FabricPrep ${tier.toUpperCase()} Badge — ${examCode}`,
       description: `Awarded for achieving ${score}%+ on the FabricPrep ${examCode} Skills Assessment. Issued by FabricPrep — an independent learning platform; not a Microsoft certification.`,
       url: url.toString(),
-      image: `${url.origin}/api/badge-image/${badgeId}`,
+      // A static, pre-rendered file (one per tier x exam, see
+      // scripts/generate-badge-images.mjs) rather than a function — a
+      // dynamic per-score image kept failing to deploy (see git history),
+      // and a plain static file has no runtime to break.
+      image: `${url.origin}/badge-images/${tier}-${examCode}.png`,
     });
   } catch {
     // Firestore lookup failed for some other reason — fall through to the
