@@ -7,10 +7,10 @@ import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
 import { SITE_ORIGIN } from "../lib/examCatalog.js";
 import { Footer } from "../components/Shared.jsx";
 import { BadgeShield } from "../components/BadgeShield.jsx";
-import { getOverallStats, getExamStats, getUser, getExamResults, getWeakDomainRecommendations, getWrongAnswerSummary } from "../lib/progress.jsx";
+import { getOverallStats, getExamStats, getUser, getExamResults, getWeakDomainRecommendations, getWrongAnswerSummary, getPracticeMastery } from "../lib/progress.jsx";
 import { getAttempted, updateStreak } from "../lib/theme.jsx";
 import { useAuth } from "../lib/authContext.jsx";
-import { getEarnedBadges, badgeDocId } from "../lib/badges.js";
+import { getEarnedBadges, badgeDocId, getTierForScore, BADGE_TIERS, MIN_PRACTICE_QUESTIONS_FOR_BADGE } from "../lib/badges.js";
 
 function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
   const TOKENS = useTheme();
@@ -80,6 +80,9 @@ function ExamProgressCard({ examCode, stats }) {
   const totalQuestions = QUESTION_BANK[examCode]?.questions.length || 0;
   const attempted = getAttempted(examCode).length;
   const coverage = totalQuestions > 0 ? Math.round((attempted / totalQuestions) * 100) : 0;
+  const practiceMastery = getPracticeMastery(examCode);
+  const badgeTier = getTierForScore(practiceMastery.percentage);
+  const questionsToGoBadge = Math.max(0, MIN_PRACTICE_QUESTIONS_FOR_BADGE - practiceMastery.attempted);
 
   if (!meta) return null;
 
@@ -130,15 +133,29 @@ function ExamProgressCard({ examCode, stats }) {
         </div>
       </div>
 
-      {stats.bookmarked > 0 && (
-        <div
-          className="mt-3 text-xs px-2 py-1 rounded-full inline-flex items-center gap-1"
-          style={{ background: `${TOKENS.amber}1A`, color: TOKENS.amber }}
-        >
-          <BookOpen size={12} />
-          {stats.bookmarked} bookmarked
-        </div>
-      )}
+      <div className="flex flex-wrap gap-2 mt-3">
+        {stats.bookmarked > 0 && (
+          <div
+            className="text-xs px-2 py-1 rounded-full inline-flex items-center gap-1"
+            style={{ background: `${TOKENS.amber}1A`, color: TOKENS.amber }}
+          >
+            <BookOpen size={12} />
+            {stats.bookmarked} bookmarked
+          </div>
+        )}
+
+        {!badgeTier && (
+          <div
+            className="text-xs px-2 py-1 rounded-full inline-flex items-center gap-1"
+            style={{ background: `${TOKENS.azure}1A`, color: TOKENS.azure }}
+          >
+            <Award size={12} />
+            {questionsToGoBadge > 0
+              ? `${questionsToGoBadge} more question${questionsToGoBadge === 1 ? "" : "s"} to unlock a shield`
+              : "Score 80%+ to unlock a shield"}
+          </div>
+        )}
+      </div>
 
       <ChevronRight
         size={16}
@@ -287,7 +304,38 @@ function AchievementsSection() {
     };
   }, []);
 
-  if (badges.length === 0) return null;
+  if (badges.length === 0) {
+    return (
+      <div className="mb-8">
+        <h2
+          className="text-lg font-semibold mb-4 flex items-center gap-2"
+          style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
+        >
+          <Award size={20} style={{ color: TOKENS.amber }} />
+          Achievements
+        </h2>
+        <div
+          className="rounded-xl p-5"
+          style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+        >
+          <p className="text-sm mb-1" style={{ color: TOKENS.ink }}>
+            Earn a shareable badge for any exam
+          </p>
+          <p className="text-sm mb-3" style={{ color: TOKENS.inkMuted }}>
+            Practice at least {MIN_PRACTICE_QUESTIONS_FOR_BADGE} questions in one exam to unlock a shield — the
+            tier depends on your accuracy: {BADGE_TIERS.slice()
+              .reverse()
+              .map((tier) => `${tier.label} at ${tier.minPercentage}%+`)
+              .join(", ")}
+            .
+          </p>
+          <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+            Only untimed practice questions count toward this — mock exams do not.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-8">
