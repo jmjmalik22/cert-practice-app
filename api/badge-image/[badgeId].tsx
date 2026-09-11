@@ -3,7 +3,13 @@ import { ImageResponse } from "@vercel/og";
 // Renders a 1200x630 LinkedIn/Open Graph preview image for one specific
 // badge (tier + exam + score), so every certification/tier combination gets
 // its own accurate picture instead of a generic site banner.
-export const config = { runtime: "edge" };
+//
+// Runs on the Node.js runtime rather than Edge: co-locating this with the
+// Edge Middleware on /verify/:badgeId made Vercel bundle @vercel/og's WASM
+// renderer into the middleware's edge worker, which Vercel rejects as an
+// "unsupported module" for Middleware and refuses to deploy. @vercel/og
+// ships a Node build too, so moving this one function off Edge sidesteps it.
+export const config = { runtime: "nodejs" };
 
 const FIRESTORE_PROJECT_ID = "fabricprep-65092";
 
