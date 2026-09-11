@@ -592,6 +592,8 @@ export function Dashboard() {
           <div className="absolute -right-10 -bottom-16 w-52 h-52 rounded-full opacity-20" style={{ background: TOKENS.azure }} />
         </div>
 
+        <AchievementsSection />
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8">
           <StatCard
@@ -660,7 +662,6 @@ export function Dashboard() {
             )}
 
             {/* Mock Exam Results */}
-            <AchievementsSection />
             <ExamResultsSection />
           </div>
 
