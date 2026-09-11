@@ -21,6 +21,10 @@
     {
       "source": "/dashboard",
       "destination": "/index.html"
+    },
+    {
+      "source": "/verify/:badgeId",
+      "destination": "/index.html"
     }
   ]
 }

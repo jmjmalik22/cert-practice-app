@@ -271,6 +271,7 @@ function AchievementsSection() {
   const { user, isAuthenticated } = useAuth();
   const [badges, setBadges] = useState([]);
   const [copiedExam, setCopiedExam] = useState(null);
+  const [captionCopiedExam, setCaptionCopiedExam] = useState(null);
 
   useEffect(() => {
     function loadBadges() {
@@ -320,27 +321,40 @@ function AchievementsSection() {
                 size={160}
               />
               {verifyUrl ? (
-                <div className="flex items-center gap-2 mt-3">
-                  <button
-                    onClick={() => {
-                      navigator.clipboard?.writeText(verifyUrl);
-                      setCopiedExam(badge.examCode);
-                      setTimeout(() => setCopiedExam(null), 2000);
-                    }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                    style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}
-                  >
-                    <Copy size={13} /> {copiedExam === badge.examCode ? "Copied!" : "Copy link"}
-                  </button>
-                  <a
-                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                    style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
-                  >
-                    <Linkedin size={13} /> Share
-                  </a>
+                <div className="flex flex-col items-center mt-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard?.writeText(verifyUrl);
+                        setCopiedExam(badge.examCode);
+                        setTimeout(() => setCopiedExam(null), 2000);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                      style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}
+                    >
+                      <Copy size={13} /> {copiedExam === badge.examCode ? "Copied!" : "Copy link"}
+                    </button>
+                    <a
+                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => {
+                        const caption = `I just earned the ${badge.tierLabel} badge on FabricPrep's ${badge.examCode} Skills Assessment (${badge.score}%+)! Build your Microsoft certification skills for free at fabricprep.com.`;
+                        navigator.clipboard?.writeText(caption);
+                        setCaptionCopiedExam(badge.examCode);
+                        setTimeout(() => setCaptionCopiedExam(null), 4000);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                      style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+                    >
+                      <Linkedin size={13} /> Share
+                    </a>
+                  </div>
+                  {captionCopiedExam === badge.examCode && (
+                    <p className="text-xs mt-2" style={{ color: TOKENS.inkMuted }}>
+                      Caption copied — paste it into the LinkedIn post box.
+                    </p>
+                  )}
                 </div>
               ) : (
                 <Link to="/login" className="text-xs mt-3" style={{ color: TOKENS.azure }}>
@@ -592,6 +606,8 @@ export function Dashboard() {
           <div className="absolute -right-10 -bottom-16 w-52 h-52 rounded-full opacity-20" style={{ background: TOKENS.azure }} />
         </div>
 
+        <AchievementsSection />
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8">
           <StatCard
@@ -660,7 +676,6 @@ export function Dashboard() {
             )}
 
             {/* Mock Exam Results */}
-            <AchievementsSection />
             <ExamResultsSection />
           </div>
 

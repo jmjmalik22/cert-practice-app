@@ -89,11 +89,11 @@ function TierIcon({ icon, accent, x = 170, y = 358 }) {
   );
 }
 
-function Laurel({ side, accent }) {
+function Laurel({ side, accent, yOffset = 0 }) {
   const cx = side === "left" ? 62 : 278;
   const sign = side === "left" ? 1 : -1;
   const leaves = Array.from({ length: 6 }, (_, i) => {
-    const cy = 254 + i * 14;
+    const cy = 254 + yOffset + i * 14;
     const lx = cx + sign * (8 + i * 3);
     const rot = sign * (26 + i * 5);
     return (
@@ -112,10 +112,41 @@ function Laurel({ side, accent }) {
 
   return (
     <g>
-      <path d={`M ${cx} 250 Q ${cx + sign * 16} 298 ${cx} 340`} stroke={accent} strokeWidth="2" fill="none" opacity="0.85" />
+      <path
+        d={`M ${cx} ${250 + yOffset} Q ${cx + sign * 16} ${298 + yOffset} ${cx} ${340 + yOffset}`}
+        stroke={accent}
+        strokeWidth="2"
+        fill="none"
+        opacity="0.85"
+      />
       {leaves}
     </g>
   );
+}
+
+// SVG text doesn't wrap on its own — greedily pack words into lines no wider
+// than maxChars (an estimate for this monospace font/size), capped at 2
+// lines so a very long label truncates gracefully rather than growing forever.
+function wrapLabel(text, maxChars = 27) {
+  const words = (text || "").split(" ").filter(Boolean);
+  const lines = [];
+  let current = "";
+
+  words.forEach((word) => {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length > maxChars && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = candidate;
+    }
+  });
+  if (current) lines.push(current);
+
+  if (lines.length > 2) {
+    return [lines[0], `${lines[1]}…`];
+  }
+  return lines;
 }
 
 // Live, data-driven shield: colors/artwork come from `tier`, everything else
@@ -125,6 +156,8 @@ export function BadgeShield({ tier, examCode, examLabel, score, size = 220 }) {
   const bodyId = `bs-body-${tier}`;
   const borderId = `bs-border-${tier}`;
   const pillId = `bs-pill-${tier}`;
+  const labelLines = wrapLabel(examLabel);
+  const extra = (labelLines.length - 1) * 13;
 
   return (
     <svg
@@ -180,25 +213,29 @@ export function BadgeShield({ tier, examCode, examLabel, score, size = 220 }) {
         {examCode}
       </text>
       <text x="170" y="242" textAnchor="middle" fontSize="11.5" fontFamily={FONT_MONO} fill={style.examLabel}>
-        {examLabel}
+        {labelLines.map((line, i) => (
+          <tspan key={line} x="170" dy={i === 0 ? 0 : 13}>
+            {line}
+          </tspan>
+        ))}
       </text>
 
-      {tier === "elite" && <Laurel side="left" accent={style.accent} />}
-      {tier === "elite" && <Laurel side="right" accent={style.accent} />}
+      {tier === "elite" && <Laurel side="left" accent={style.accent} yOffset={extra} />}
+      {tier === "elite" && <Laurel side="right" accent={style.accent} yOffset={extra} />}
 
-      <rect x="95" y="263" width="150" height="38" rx="19" fill={`url(#${pillId})`} />
-      <text x="170" y="288" textAnchor="middle" fontSize="19" fontWeight="800" fontFamily={FONT_DISPLAY} fill={style.pillText}>
+      <rect x="95" y={263 + extra} width="150" height="38" rx="19" fill={`url(#${pillId})`} />
+      <text x="170" y={288 + extra} textAnchor="middle" fontSize="19" fontWeight="800" fontFamily={FONT_DISPLAY} fill={style.pillText}>
         {score}%+
       </text>
 
-      <text x="170" y="317" textAnchor="middle" fontSize="10.5" letterSpacing="0.24em" fontFamily={FONT_MONO} fill={style.skillsLabel}>
+      <text x="170" y={317 + extra} textAnchor="middle" fontSize="10.5" letterSpacing="0.24em" fontFamily={FONT_MONO} fill={style.skillsLabel}>
         SKILLS ASSESSMENT
       </text>
-      <text x="170" y="332" textAnchor="middle" fontSize="7.5" letterSpacing="0.16em" fontFamily={FONT_MONO} fill={style.skillsLabel} opacity="0.75">
+      <text x="170" y={332 + extra} textAnchor="middle" fontSize="7.5" letterSpacing="0.16em" fontFamily={FONT_MONO} fill={style.skillsLabel} opacity="0.75">
         ISSUED BY FABRICPREP.COM
       </text>
 
-      <TierIcon icon={style.icon} accent={style.accent} y={368} />
+      <TierIcon icon={style.icon} accent={style.accent} y={368 + extra} />
     </svg>
   );
 }
