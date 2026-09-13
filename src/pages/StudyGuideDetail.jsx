@@ -1,6 +1,6 @@
 import { Head as Helmet } from "vite-react-ssg";
 import { useParams, Link, Navigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, ExternalLink, CheckCircle2, Database, Activity, Shield, FileText, BookOpen } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, CheckCircle2, FileText, BookOpen } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { EXAM_META, SLUG_TO_EXAM, QUESTION_BANK } from "../lib/questionBank/index.js";
 import { buildBreadcrumbSchema } from "../lib/examCatalog.js";
@@ -21,6 +21,24 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-700",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/dp-700",
     docsUrl: "https://learn.microsoft.com/en-us/fabric/data-engineering/data-engineering-overview",
+    glance: {
+      length: "120 min (140 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    certPath: {
+      before: [{ code: "DP-900", label: "recommended groundwork" }],
+      after: [{ code: "DP-600", label: "pairs with — Fabric Analytics Engineer" }],
+    },
+    resources: [
+      { label: "Official DP-700 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-700", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "DP-700 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/fabric-data-engineer-associate/", why: "Official exam facts — format, renewal period, and prerequisites" },
+      { label: "Fabric data engineering docs", url: "https://learn.microsoft.com/en-us/fabric/data-engineering/data-engineering-overview", why: "Core lakehouse, pipeline, and Spark concepts the exam draws from" },
+    ],
   },
   "DP-600": {
     prereq: "No strict prerequisites, but the exam assumes practical experience building semantic models and reports. Comfort with Power BI, DAX basics, and Microsoft Fabric's analytics workloads will make this much easier.",
@@ -33,6 +51,29 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-600",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/dp-600",
     docsUrl: "https://learn.microsoft.com/en-us/fabric/get-started/microsoft-fabric-overview",
+    glance: {
+      length: "120 min (140 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Maintain a data analytics solution", weight: "25-30%", description: "Deployment pipelines, workspace and item governance, source control for Fabric items" },
+      { title: "Prepare data", weight: "45-50%", description: "Dataflows, pipelines, and transformations that feed semantic models" },
+      { title: "Implement and manage semantic models", weight: "25-30%", description: "Star schema design, DAX, storage modes, and Direct Lake" },
+    ],
+    certPath: {
+      before: [{ code: "PL-300", label: "recommended skills" }],
+      after: [{ code: "DP-700", label: "pairs with — Fabric Data Engineer" }],
+    },
+    resources: [
+      { label: "Official DP-600 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-600", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "DP-600 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/fabric-analytics-engineer-associate/", why: "Official exam facts — format, renewal period, and prerequisites" },
+      { label: "Fabric lakehouse & warehouse docs", url: "https://learn.microsoft.com/en-us/fabric/data-engineering/lakehouse-overview", why: "Core storage and modeling concepts the exam draws from" },
+    ],
   },
   "AZ-900": {
     prereq: "None — AZ-900 is designed as an entry point with no assumed technical background. Basic familiarity with computing concepts (networking, storage, applications) helps but isn't required.",
@@ -44,6 +85,33 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/az-900",
     docsUrl: "https://learn.microsoft.com/en-us/azure/",
+    glance: {
+      length: "45 min (65 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, hot area — no case studies",
+      learnAccess: "Not available (closed-book)",
+      renewal: "Does not expire",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Describe cloud concepts", weight: "25-30%", description: "Cloud computing models, shared responsibility, and cloud economics" },
+      { title: "Describe Azure architecture and services", weight: "35-40%", description: "Regions, availability zones, and core compute, storage, and networking services" },
+      { title: "Describe Azure management and governance", weight: "30-35%", description: "Cost management, RBAC, resource locks, tags, policies, and monitoring" },
+    ],
+    certPath: {
+      before: [],
+      after: [
+        { code: "AZ-104", label: "Administrator Associate" },
+        { code: "AZ-305", label: "Solutions Architect Expert" },
+        { code: "AZ-400", label: "DevOps Engineer Expert" },
+      ],
+    },
+    resources: [
+      { label: "Official AZ-900 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "AZ-900 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/", why: "Official exam facts — confirms it never expires, so no renewal to track" },
+      { label: "Cloud Adoption Framework", url: "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/", why: "Ties architecture and governance concepts together with real guidance" },
+    ],
   },
   "DP-900": {
     prereq: "None — DP-900 is an entry-level exam. General familiarity with core data concepts (what a database is, structured vs unstructured data) is helpful but not assumed.",
@@ -55,6 +123,34 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/dp-900",
     docsUrl: "https://learn.microsoft.com/en-us/azure/",
+    glance: {
+      length: "45 min (65 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, hot area — no case studies",
+      learnAccess: "Not available (closed-book)",
+      renewal: "Does not expire",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Describe core data concepts", weight: "25-30%", description: "Structured, semi-structured, and unstructured data, plus common data roles" },
+      { title: "Identify considerations for relational data on Azure", weight: "20-25%", description: "Azure SQL, PostgreSQL, MySQL, and SQL Managed Instance" },
+      { title: "Describe considerations for non-relational data on Azure", weight: "15-20%", description: "Azure Cosmos DB, storage accounts, and data lake storage" },
+      { title: "Describe an analytics workload on Azure", weight: "25-30%", description: "Modern data warehousing, ingestion, processing, and visualization" },
+    ],
+    certPath: {
+      before: [],
+      after: [
+        { code: "DP-700", label: "Fabric Data Engineer Associate" },
+        { code: "DP-600", label: "Fabric Analytics Engineer Associate" },
+      ],
+    },
+    resources: [
+      { label: "Official DP-900 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-900", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "DP-900 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-data-fundamentals/", why: "Official exam facts — confirms it never expires, so no renewal to track" },
+      { label: "Azure Cosmos DB docs", url: "https://learn.microsoft.com/en-us/azure/cosmos-db/", why: "Canonical reference for the non-relational data domain" },
+      { label: "Azure SQL docs", url: "https://learn.microsoft.com/en-us/azure/azure-sql/", why: "Canonical reference for the relational data domain" },
+    ],
   },
   "AZ-104": {
     prereq: "No strict prerequisites, but the exam assumes subject matter expertise implementing, managing, and monitoring an Azure environment. You should be familiar with operating systems, networking, servers, and virtualization, plus have experience with PowerShell, Azure CLI, the Azure portal, and ARM templates or Bicep.",
@@ -67,6 +163,28 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-104",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/az-104",
     docsUrl: "https://learn.microsoft.com/en-us/azure/?product=featured",
+    glance: {
+      length: "120 min (140 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    certPath: {
+      before: [{ code: "AZ-900", label: "recommended groundwork" }],
+      after: [
+        { code: "AZ-305", label: "Solutions Architect Expert — requires an active AZ-104" },
+        { code: "AZ-400", label: "DevOps Engineer Expert" },
+      ],
+    },
+    resources: [
+      { label: "Official AZ-104 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-104", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "AZ-104 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/", why: "Official exam facts — format, renewal period, and prerequisites" },
+      { label: "Azure virtual machines docs", url: "https://learn.microsoft.com/en-us/azure/virtual-machines/", why: "Core compute concepts behind the deploy-and-manage-compute domain" },
+      { label: "Azure virtual network docs", url: "https://learn.microsoft.com/en-us/azure/virtual-network/", why: "Core networking concepts behind the virtual-networking domain" },
+    ],
   },
   "AI-901": {
     prereq: "You should have conceptual knowledge of AI solutions in Azure and foundational technical skills to work with them, including knowledge of Python coding syntax and familiarity with Azure resources. No formal data science or software engineering background is assumed.",
@@ -79,6 +197,28 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-901",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/ai-901",
     docsUrl: "https://learn.microsoft.com/en-us/azure/ai-foundry/",
+    glance: {
+      length: "45 min (65 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, hot area — no case studies",
+      learnAccess: "Not available (closed-book)",
+      renewal: "Does not expire",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Identify AI concepts and capabilities", weight: "40-45%", description: "Responsible AI, and the shape of generative AI, vision, speech, and language workloads" },
+      { title: "Implement AI solutions by using Microsoft Foundry", weight: "55-60%", description: "Deploying and testing models and agents inside Microsoft Foundry" },
+    ],
+    certPath: {
+      before: [],
+      after: [{ code: "AI-103", label: "Apps and Agents Developer Associate" }],
+    },
+    resources: [
+      { label: "Official AI-901 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-901", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "AI-901 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-fundamentals/", why: "Official exam facts — confirms it never expires, so no renewal to track" },
+      { label: "Azure AI services docs", url: "https://learn.microsoft.com/en-us/azure/ai-services/", why: "Umbrella docs for the Foundry services referenced throughout the exam" },
+    ],
   },
   "PL-300": {
     prereq: "No strict prerequisites, but the exam assumes you can deliver actionable insights by working with available data. You should be proficient using Power Query and Data Analysis Expressions (DAX), and comfortable working closely with business stakeholders to identify requirements.",
@@ -91,6 +231,34 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/pl-300",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/pl-300",
     docsUrl: "https://learn.microsoft.com/en-us/power-bi/",
+    glance: {
+      length: "100 min (120 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Prepare the data", weight: "25-30%", description: "Power Query, data profiling, and shaping data for modeling" },
+      { title: "Model the data", weight: "25-30%", description: "Star schema, relationships, DAX measures, and calculation groups" },
+      { title: "Visualize and analyze the data", weight: "25-30%", description: "Report design, custom visuals, and accessible, performant dashboards" },
+      { title: "Manage and secure Power BI", weight: "15-20%", description: "Workspaces, deployment pipelines, row-level security, and governance" },
+    ],
+    certPath: {
+      before: [],
+      after: [
+        { code: "DP-600", label: "Fabric Analytics Engineer Associate" },
+        { code: "DP-700", label: "Fabric Data Engineer Associate" },
+      ],
+    },
+    resources: [
+      { label: "Official PL-300 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/pl-300", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "PL-300 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/data-analyst-associate/", why: "Official exam facts — format, renewal period, and prerequisites" },
+      { label: "Prepare data for analysis with Power BI", url: "https://learn.microsoft.com/en-us/training/paths/prepare-data-power-bi/", why: "Free hands-on learning path covering the largest exam domain" },
+      { label: "Power BI docs", url: "https://learn.microsoft.com/en-us/power-bi/", why: "Canonical product reference for every domain" },
+    ],
   },
   "DP-800": {
     prereq: "No strict prerequisites, but the exam assumes subject matter expertise designing and developing AI-enabled database solutions across Microsoft SQL Server, Azure SQL, and SQL databases in Microsoft Fabric. You should be comfortable writing T-SQL, familiar with CI/CD in GitHub, and know AI concepts such as embeddings, vectors, and models.",
@@ -103,6 +271,29 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-800",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/developing-ai-enabled-database-solutions/",
     docsUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-800",
+    glance: {
+      length: "100–120 min (may include labs)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Design and develop database solutions", weight: "35-40%", description: "Schema design, T-SQL objects, and cross-platform SQL development" },
+      { title: "Secure, optimize, and deploy database solutions", weight: "35-40%", description: "Encryption, row-level security, performance tuning, and CI/CD" },
+      { title: "Implement AI capabilities in database solutions", weight: "25-30%", description: "Embeddings, vector search, and RAG patterns built on SQL data" },
+    ],
+    certPath: {
+      before: [{ code: "DP-900", label: "optional groundwork" }],
+      after: [],
+    },
+    resources: [
+      { label: "Official DP-800 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-800", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "Microsoft Fabric docs", url: "https://learn.microsoft.com/en-us/fabric/", why: "Covers SQL databases in Fabric, one of the platforms the exam spans" },
+      { label: "Azure SQL docs", url: "https://learn.microsoft.com/en-us/sql/", why: "Canonical T-SQL and cross-platform SQL reference" },
+    ],
   },
   "SC-900": {
     prereq: "None — SC-900 is an entry-level exam. General familiarity with cloud and networking basics is helpful, but no hands-on security experience is assumed.",
@@ -115,6 +306,148 @@ const GUIDES = {
     officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-900",
     examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/sc-900",
     docsUrl: "https://learn.microsoft.com/en-us/entra/fundamentals/",
+    glance: {
+      length: "45 min (65 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, hot area — no case studies",
+      learnAccess: "Not available (closed-book)",
+      renewal: "Does not expire",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Describe security, compliance, and identity concepts", weight: "10-15%", description: "Zero Trust, shared responsibility, and defense in depth" },
+      { title: "Describe the capabilities of Microsoft Entra", weight: "25-30%", description: "Identity types, authentication, access management, and identity governance" },
+      { title: "Describe the capabilities of Microsoft security solutions", weight: "35-40%", description: "Defender XDR, Sentinel, and Microsoft's security service portfolio" },
+      { title: "Describe the capabilities of Microsoft compliance solutions", weight: "20-25%", description: "Purview information protection, data lifecycle, and compliance management" },
+    ],
+    certPath: {
+      before: [],
+      after: [
+        { code: "SC-200", label: "Security Operations Analyst Associate" },
+        { code: "SC-300", label: "Identity and Access Administrator Associate" },
+      ],
+    },
+    resources: [
+      { label: "Official SC-900 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-900", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "SC-900 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/", why: "Official exam facts — confirms it never expires, so no renewal to track" },
+      { label: "Security, compliance, and identity concepts", url: "https://learn.microsoft.com/en-us/training/paths/describe-concepts-of-security-compliance-identity/", why: "Free official 4-part learning path covering the whole exam" },
+      { label: "Microsoft Purview docs", url: "https://learn.microsoft.com/en-us/purview/", why: "Canonical reference for the compliance domain" },
+    ],
+  },
+  "AI-103": {
+    prereq: "No formal prerequisite, but the exam assumes real Python development experience and familiarity with Azure and Microsoft Foundry basics. AI-901 is a good optional on-ramp if you're new to AI concepts.",
+    background: [
+      "Python development — writing and debugging apps, using SDKs, calling REST APIs",
+      "Microsoft Foundry basics — projects, model deployment types, keys vs. managed identity",
+      "Generative AI concepts — prompts, tokens, embeddings, RAG, and function calling",
+      "Git, environment variables, and basic CI/CD workflow",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-103",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/ai-103",
+    docsUrl: "https://learn.microsoft.com/en-us/azure/ai-services/",
+    glance: {
+      length: "100–120 min (may include labs)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Plan and manage an Azure AI solution", weight: "25-30%", description: "Model and service selection, deployment, cost, monitoring, and responsible AI" },
+      { title: "Implement generative AI and agentic solutions", weight: "30-35%", description: "RAG, agents, tool calling, and multi-agent workflows" },
+      { title: "Implement computer vision solutions", weight: "10-15%", description: "Image/video generation and multimodal understanding" },
+      { title: "Implement text analysis solutions", weight: "10-15%", description: "Language-model text analysis, sentiment, translation, and speech" },
+      { title: "Implement information extraction solutions", weight: "10-15%", description: "Retrieval, grounding pipelines, and document extraction" },
+    ],
+    certPath: {
+      before: [{ code: "AI-901", label: "recommended groundwork" }],
+      after: [
+        { code: "AI-200", label: "Cloud Developer Associate" },
+        { code: "AI-300", label: "MLOps Engineer Associate" },
+        { code: "AI-500", label: "Multi-Agent AI Solutions Expert (beta)" },
+      ],
+    },
+    resources: [
+      { label: "Official AI-103 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-103", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "Develop AI agents on Azure", url: "https://learn.microsoft.com/en-us/training/paths/develop-ai-agents-on-azure/", why: "Free hands-on learning path matching the largest exam domain" },
+      { label: "Azure AI services docs", url: "https://learn.microsoft.com/en-us/azure/ai-services/", why: "Canonical reference for the Foundry Tools covered throughout the exam" },
+    ],
+  },
+  "AI-200": {
+    prereq: "No formal prerequisite, but the exam assumes hands-on experience building and deploying cloud applications on Azure. AI-103 is a useful foundation since this exam builds on Foundry basics for the backend and data-management side of AI apps.",
+    background: [
+      "Containers — Docker images, Container Apps, and AKS basics",
+      "Azure data services — Cosmos DB, PostgreSQL, and Redis",
+      "REST APIs and backend integration patterns",
+      "Secrets and configuration management, plus basic observability",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/ai-200",
+    docsUrl: "https://learn.microsoft.com/en-us/azure/cosmos-db/",
+    glance: {
+      length: "100–120 min (may include labs)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Develop containerized solutions on Azure", weight: "20-25%", description: "Container Registry, Container Apps, and AKS" },
+      { title: "Develop AI solutions using Azure data management services", weight: "25-30%", description: "Cosmos DB, vector storage, and data-layer design for AI apps" },
+      { title: "Connect to and consume Azure services", weight: "20-25%", description: "Backend integration, messaging, and service-to-service auth" },
+      { title: "Secure, monitor, and troubleshoot Azure solutions", weight: "20-25%", description: "Secrets management, logging, and diagnosing production issues" },
+    ],
+    certPath: {
+      before: [{ code: "AI-103", label: "recommended foundation" }],
+      after: [{ code: "AI-500", label: "Multi-Agent AI Solutions Expert (beta)" }],
+    },
+    resources: [
+      { label: "Official AI-200 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "Implement containerized solutions", url: "https://learn.microsoft.com/en-us/training/paths/az-204-implement-iaas-solutions/", why: "Covers Container Registry, Container Apps, and AKS — the largest exam domain" },
+      { label: "Azure Cosmos DB docs", url: "https://learn.microsoft.com/en-us/azure/cosmos-db/", why: "Canonical reference for the data-management domain" },
+    ],
+  },
+  "AI-300": {
+    prereq: "No formal prerequisite, but the exam assumes experience operating machine learning and generative AI systems in production. AI-901 or AI-103 are useful optional groundwork if you're newer to Azure AI.",
+    background: [
+      "ML lifecycle concepts — training, versioning, deployment, and monitoring",
+      "GenAIOps concepts — evaluation, observability, and safety for LLM-based systems",
+      "Azure Machine Learning basics — workspaces, endpoints, and pipelines",
+      "Comfort reading Python and interpreting evaluation metrics",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-300",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/ai-300",
+    docsUrl: "https://learn.microsoft.com/en-us/azure/machine-learning/",
+    glance: {
+      length: "100–120 min (may include labs)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Design and implement an MLOps infrastructure", weight: "15-20%", description: "Workspaces, compute, and CI/CD for ML projects" },
+      { title: "Implement machine learning model lifecycle and operations", weight: "25-30%", description: "Training, versioning, deployment, and monitoring models in production" },
+      { title: "Design and implement a GenAIOps infrastructure", weight: "20-25%", description: "Infrastructure for deploying and operating LLM-based systems" },
+      { title: "Implement generative AI quality assurance and observability", weight: "10-15%", description: "Evaluation for groundedness, relevance, and safety, plus tracing" },
+      { title: "Optimize generative AI systems and model performance", weight: "10-15%", description: "Cost, latency, and quality trade-offs for deployed models" },
+    ],
+    certPath: {
+      before: [{ code: "AI-901", label: "optional groundwork" }],
+      after: [{ code: "AI-500", label: "Multi-Agent AI Solutions Expert (beta)" }],
+    },
+    resources: [
+      { label: "Official AI-300 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-300", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "Operationalize generative AI applications", url: "https://learn.microsoft.com/en-us/training/paths/operationalize-gen-ai-apps/", why: "Matches the GenAIOps and quality-assurance domains directly" },
+      { label: "Azure Machine Learning docs", url: "https://learn.microsoft.com/en-us/azure/machine-learning/", why: "Canonical reference for the model-lifecycle domain, the largest single weight" },
+    ],
   },
 };
 
@@ -149,6 +482,29 @@ function buildSteps(code, meta, guide) {
       body: "The day before: review only your weak topics, don't cram new material. On exam day: read each question carefully, eliminate wrong answers first, and watch for wording that implies a constraint (least privilege, cost, performance).",
     },
   ];
+}
+
+// A cert-path chip. Links to our own study guide when we cover that exam;
+// otherwise renders as plain text since there's nowhere to send the reader.
+function CertPathBadge({ entry, TOKENS }) {
+  const targetMeta = EXAM_META[entry.code];
+  const className = "px-3 py-1.5 rounded-full text-xs";
+  const style = { background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink };
+  const content = (
+    <>
+      <span style={{ fontFamily: FONT_MONO }}>{entry.code}</span>
+      {entry.label && <span style={{ color: TOKENS.inkMuted }}> · {entry.label}</span>}
+    </>
+  );
+  return targetMeta ? (
+    <Link to={`/study-guides/${targetMeta.slug}`} className={className} style={style}>
+      {content}
+    </Link>
+  ) : (
+    <span className={className} style={style}>
+      {content}
+    </span>
+  );
 }
 
 export function StudyGuideDetail() {
@@ -230,301 +586,103 @@ export function StudyGuideDetail() {
           A study path for {meta.title} — what to know before you start, and the order worth doing things in.
         </p>
 
-        {/* DP-700 Detailed Topics Section - Moved above Prerequisites */}
-        {code === "DP-700" && (
+        {/* Exam at a Glance: a quick facts table, present once real numbers are added to GUIDES[code].glance */}
+        {guide.glance && (
           <>
             <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              DP-700: Microsoft Fabric Data Engineer Associate
+              Exam at a glance
             </h2>
-            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
-              Dive deep into each exam objective with comprehensive study materials.
-            </p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Link
-                to="/study-guides/dp-700/ingestion"
-                className="rounded-xl p-4 transition-colors hover:opacity-90"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <Database size={20} color={TOKENS.azure} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>40-45%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Ingest and Transform Data</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Copy jobs, pipelines, shortcuts, transformations</div>
-                  </div>
+            <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${TOKENS.panelBorder}` }}>
+              {[
+                ["Length", guide.glance.length],
+                ["Questions", guide.glance.questionCount],
+                ["Passing score", guide.glance.passingScore],
+                ["Formats", guide.glance.formats],
+                ["Microsoft Learn access", guide.glance.learnAccess],
+                ["Renewal", guide.glance.renewal],
+                ["Prerequisite", guide.glance.prerequisite || "None"],
+              ].map(([label, value], i) => (
+                <div
+                  key={label}
+                  className="flex justify-between gap-4 px-4 py-2.5 text-xs"
+                  style={{ background: TOKENS.panel, borderTop: i > 0 ? `1px solid ${TOKENS.panelBorder}` : "none" }}
+                >
+                  <span style={{ color: TOKENS.inkMuted }}>{label}</span>
+                  <span className="text-right" style={{ color: TOKENS.ink }}>{value}</span>
                 </div>
-              </Link>
-
-              <Link
-                to="/study-guides/dp-700/monitoring"
-                className="rounded-xl p-4 transition-colors hover:opacity-90"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <Activity size={20} color={TOKENS.azure} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>30-35%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Monitor and Maintain Data</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Pipeline monitoring, optimization, data quality</div>
-                  </div>
-                </div>
-              </Link>
-
-              <Link
-                to="/study-guides/dp-700/security"
-                className="rounded-xl p-4 transition-colors hover:opacity-90 sm:col-span-2"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <Shield size={20} color={TOKENS.azure} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Secure Data</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Access control, data protection, compliance and auditing</div>
-                  </div>
-                </div>
-              </Link>
-            </div>
-
-          </>
-        )}
-
-        {/* DP-600 Static Exam Topics */}
-        {code === "DP-600" && (
-          <>
-            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              DP-600: Fabric Analytics Engineer Associate
-            </h2>
-            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
-              Key areas covered in the DP-600 exam.
-            </p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>📊</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>35-40%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Plan, Implement, and Manage a Power BI Environment</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Tenant settings, workspaces, deployment pipelines, governance</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🔄</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>30-35%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Model and Visualize Data</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Semantic models, DAX, relationships, storage modes</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>📈</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Implement and Manage Data Analytics</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Paginated reports, scorecards, metrics, dataflows, datamarts</div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </>
         )}
 
-        {/* AZ-900 Static Exam Topics */}
-        {code === "AZ-900" && (
+        {/* Domain breakdown: links to deep-dive topic pages where they exist (topics),
+            otherwise plain weighted cards from GUIDES[code].domains as a placeholder
+            until deep-dive pages are written for that exam. */}
+        {(topics || guide.domains) && (
           <>
             <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              AZ-900: Azure Fundamentals
+              {code}: exam domains
             </h2>
             <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
-              Key areas covered in the AZ-900 exam.
+              {topics
+                ? "Dive deep into each exam objective with comprehensive study materials."
+                : "Key areas covered in the exam, weighted by how much of the exam they make up."}
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>☁️</span>
+              {(topics || guide.domains).map((t) => {
+                const TopicIcon = t.icon || BookOpen;
+                const card = (
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                      <TopicIcon size={20} color={TOKENS.azure} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>{t.weight}</div>
+                      <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>{t.title}</div>
+                      <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>{t.description}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Cloud Concepts</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Cloud computing, shared responsibility, models (IaaS, PaaS, SaaS)</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🏛️</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>35-40%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Azure Architecture and Services</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Regions, availability zones, resource groups, core services (compute, storage, networking)</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🔒</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>30-35%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Azure Management and Governance</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Cost management, RBAC, resource locks, tags, policies, monitoring</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* DP-900 Static Exam Topics */}
-        {code === "DP-900" && (
-          <>
-            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              DP-900: Azure Data Fundamentals
-            </h2>
-            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
-              Key areas covered in the DP-900 exam.
-            </p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🗄️</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Core Data Concepts</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Data types (structured, semi-structured, unstructured), data roles, data analytics</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>📋</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>35-40%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Identify Considerations for Relational Data</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Relational concepts, Azure SQL, PostgreSQL, MySQL, SQL Managed Instance</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>📊</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>25-30%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Considerations for Non-Relational Data</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Azure Cosmos DB, storage accounts, data lake, file storage</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="rounded-xl p-4"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                    <span style={{ color: TOKENS.azure, fontSize: '1.25rem' }}>🔍</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>10-15%</div>
-                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Describe Analytics Workloads</div>
-                    <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>Modern data warehousing, data ingestion, processing, visualization</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
-        {code === "AZ-104" && topics && (
-          <>
-            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              AZ-104: Microsoft Azure Administrator
-            </h2>
-            <p className="text-xs mb-4" style={{ color: TOKENS.inkMuted }}>
-              Dive deep into each exam objective with comprehensive study materials.
-            </p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {topics.map((t) => {
-                const TopicIcon = t.icon;
-                return (
+                );
+                return topics ? (
                   <Link
                     key={t.id}
                     to={`/study-guides/${meta.slug}/${t.id}`}
                     className="rounded-xl p-4 transition-colors hover:opacity-90"
                     style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                        <TopicIcon size={20} color={TOKENS.azure} />
-                      </div>
-                      <div>
-                        <div className="text-xs font-medium mb-0.5" style={{ color: TOKENS.azure }}>{t.weight}</div>
-                        <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>{t.title}</div>
-                        <div className="text-xs mt-1" style={{ color: TOKENS.inkMuted }}>{t.description}</div>
-                      </div>
-                    </div>
+                    {card}
                   </Link>
+                ) : (
+                  <div key={t.title} className="rounded-xl p-4" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+                    {card}
+                  </div>
                 );
               })}
+            </div>
+          </>
+        )}
+
+        {/* Certification path: where this exam sits relative to others, once GUIDES[code].certPath is set */}
+        {guide.certPath && (guide.certPath.before?.length > 0 || guide.certPath.after?.length > 0) && (
+          <>
+            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              Where this exam fits
+            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              {guide.certPath.before?.map((c) => (
+                <CertPathBadge key={c.code} entry={c} TOKENS={TOKENS} />
+              ))}
+              {guide.certPath.before?.length > 0 && <ChevronRight size={14} style={{ color: TOKENS.inkMuted }} />}
+              <span
+                className="px-3 py-1.5 rounded-full text-xs font-semibold"
+                style={{ background: TOKENS.azure, color: TOKENS.bgDeep, fontFamily: FONT_MONO }}
+              >
+                {code}
+              </span>
+              {guide.certPath.after?.length > 0 && <ChevronRight size={14} style={{ color: TOKENS.inkMuted }} />}
+              {guide.certPath.after?.map((c) => (
+                <CertPathBadge key={c.code} entry={c} TOKENS={TOKENS} />
+              ))}
             </div>
           </>
         )}
@@ -611,6 +769,32 @@ export function StudyGuideDetail() {
             </div>
           ))}
         </div>
+
+        {guide.resources?.length > 0 && (
+          <>
+            <h2 className="text-sm font-semibold mt-8 mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              Additional resources
+            </h2>
+            <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${TOKENS.panelBorder}` }}>
+              {guide.resources.map((r, i) => (
+                <a
+                  key={r.url}
+                  href={r.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 p-4 transition-colors hover:opacity-80"
+                  style={{ background: TOKENS.panel, borderTop: i > 0 ? `1px solid ${TOKENS.panelBorder}` : "none" }}
+                >
+                  <ExternalLink size={14} className="flex-shrink-0 mt-0.5" style={{ color: TOKENS.azure }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>{r.label}</div>
+                    <div className="text-xs mt-0.5" style={{ color: TOKENS.inkMuted }}>{r.why}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </>
+        )}
 
         <div className="rounded-xl p-5 mt-8 text-center" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
           <div className="text-sm font-medium mb-1" style={{ color: TOKENS.ink }}>Ready to test yourself?</div>

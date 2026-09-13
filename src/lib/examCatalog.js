@@ -107,7 +107,7 @@ export const EXAM_CATALOG = {
     metaTitle: "AI-103 Practice Exams | FabricPrep",
     metaDescription:
       "Free AI-103 practice questions for the Microsoft Azure AI Apps and Agents Developer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
-    studyGuide: false,
+    studyGuide: true,
     mock: {
       caseStudyQuestions: 0,
       standaloneQuestions: 40,
@@ -127,7 +127,7 @@ export const EXAM_CATALOG = {
     metaTitle: "AI-200 Practice Exams | FabricPrep",
     metaDescription:
       "Free AI-200 practice questions for the Microsoft Azure AI Cloud Developer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
-    studyGuide: false,
+    studyGuide: true,
     mock: {
       caseStudyQuestions: 0,
       standaloneQuestions: 40,
@@ -147,7 +147,7 @@ export const EXAM_CATALOG = {
     metaTitle: "AI-300 Practice Exams | FabricPrep",
     metaDescription:
       "Free AI-300 practice questions for the Microsoft Machine Learning Operations Engineer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
-    studyGuide: false,
+    studyGuide: true,
     mock: {
       caseStudyQuestions: 0,
       standaloneQuestions: 40,
