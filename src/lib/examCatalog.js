@@ -141,6 +141,26 @@ export const EXAM_CATALOG = {
       timeLimit: "Untimed",
     },
   },
+  "AI-103": {
+    slug: "ai-103",
+    label: "Azure AI Apps and Agents Developer Associate",
+    questionCount: 60,
+    title: "Microsoft Azure AI-103 Practice Exam",
+    metaTitle: "AI-103 Practice Exams | FabricPrep",
+    metaDescription:
+      "Free AI-103 practice questions for the Microsoft Azure AI Apps and Agents Developer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+    studyGuide: false,
+    mock: {
+      caseStudyQuestions: 0,
+      standaloneQuestions: 40,
+      totalQuestions: 40,
+      timeMinutes: 60,
+    },
+    practice: {
+      caseStudyCount: 0,
+      timeLimit: "Untimed",
+    },
+  },
   "AI-200": {
     slug: "ai-200",
     label: "Azure AI Cloud Developer Associate",
@@ -229,7 +249,6 @@ export const EXAM_CODES = Object.freeze(Object.keys(EXAM_CATALOG));
 // separate from EXAM_CATALOG so they cannot create routes or appear in SEO
 // sitemaps before content is available.
 export const COMING_SOON_EXAMS = Object.freeze([
-  { code: "AI-103", label: "Azure AI Apps and Agents Developer Associate" },
   { code: "AZ-305", label: "Azure Solutions Architect Expert" },
   { code: "AZ-400", label: "DevOps Engineer Expert" },
   { code: "DP-750", label: "Azure Databricks Data Engineer Associate" },
