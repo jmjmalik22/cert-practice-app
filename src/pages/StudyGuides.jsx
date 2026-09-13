@@ -3,56 +3,17 @@ import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
-import { COMING_SOON_EXAMS, EXAM_META } from "../lib/examCatalog.js";
+import { COMING_SOON_EXAMS, EXAM_META, STUDY_GUIDE_EXAM_CODES } from "../lib/examCatalog.js";
 import { buildBreadcrumbSchema, SITE_ORIGIN } from "../lib/examCatalog.js";
 
-const STUDY_RESOURCES = [
-  {
-    examCode: "DP-700",
-    title: "DP-700: Microsoft Fabric Data Engineer Associate",
-    description: "A step-by-step study path for the Microsoft Fabric Data Engineer Associate certification.",
-  },
-  {
-    examCode: "DP-600",
-    title: "DP-600: Fabric Analytics Engineer Associate",
-    description: "A step-by-step study path for the Microsoft Fabric Analytics Engineer Associate certification.",
-  },
-  {
-    examCode: "AZ-900",
-    title: "AZ-900: Azure Fundamentals",
-    description: "A step-by-step study path for the Microsoft Azure Fundamentals certification.",
-  },
-  {
-    examCode: "DP-900",
-    title: "DP-900: Azure Data Fundamentals",
-    description: "A step-by-step study path for the Microsoft Azure Data Fundamentals certification.",
-  },
-  {
-    examCode: "AZ-104",
-    title: "AZ-104: Azure Administrator Associate",
-    description: "A step-by-step study path for the Microsoft Azure Administrator Associate certification.",
-  },
-  {
-    examCode: "AI-901",
-    title: "AI-901: Azure AI Fundamentals",
-    description: "A step-by-step study path for the Microsoft Azure AI Fundamentals (Foundry) certification.",
-  },
-  {
-    examCode: "PL-300",
-    title: "PL-300: Power BI Data Analyst Associate",
-    description: "A step-by-step study path for the Microsoft Power BI Data Analyst Associate certification.",
-  },
-  {
-    examCode: "DP-800",
-    title: "DP-800: Developing AI-Enabled Database Solutions",
-    description: "A step-by-step study path for the Microsoft DP-800 AI-enabled database solutions certification.",
-  },
-  {
-    examCode: "SC-900",
-    title: "SC-900: Security, Compliance, and Identity Fundamentals",
-    description: "A step-by-step study path for the Microsoft Security, Compliance, and Identity Fundamentals certification.",
-  },
-];
+// Derived from STUDY_GUIDE_EXAM_CODES (driven by `studyGuide: true` in examCatalog.js)
+// instead of a hand-maintained list, so a new exam's guide shows up here the moment
+// its flag flips — no separate list to remember to update.
+const STUDY_RESOURCES = STUDY_GUIDE_EXAM_CODES.map((code) => ({
+  examCode: code,
+  title: `${code}: ${EXAM_META[code].label}`,
+  description: `A step-by-step study path for the Microsoft ${EXAM_META[code].label} certification.`,
+}));
 
 const EXTERNAL_RESOURCES = [
   {
