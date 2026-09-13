@@ -1,20 +1,21 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, Navigate, useOutletContext, useSearchParams } from "react-router-dom";
 import { Head as Helmet } from "vite-react-ssg";
-import { RotateCcw, Clock, ChevronLeft, BookOpen, Lock } from "lucide-react";
+import { RotateCcw, Clock, ChevronLeft, BookOpen, Lock, Shield } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
-import { GUEST_MOCK_CONFIG, STUDY_GUIDE_EXAMS, getMockConfig, buildBreadcrumbSchema } from "../lib/examCatalog.js";
+import { MOCK_CONFIG, SHIELD_CONFIG, STUDY_GUIDE_EXAMS, isShieldAvailable, buildBreadcrumbSchema } from "../lib/examCatalog.js";
 import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank/index.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { Practice } from "../components/Practice.jsx";
 import { MockExam } from "../components/MockExam.jsx";
+import { ShieldExam } from "../components/ShieldExam.jsx";
 
 function buildFaqs(code, meta, total) {
   return [
     { q: `How many questions are in the ${code} practice bank?`, a: `There are currently ${total} practice questions for ${code}, covering every domain in the official Microsoft exam skills outline.` },
-    { q: `Is FabricPrep's ${code} practice free?`, a: `Yes — all questions and mock exams are free. A free account is required for untimed practice, bookmarks, and saved progress; mock exams remain available without signing in.` },
+    { q: `Is FabricPrep's ${code} practice free?`, a: `Yes — all questions and exams are free. A free account is required for untimed practice, bookmarks, saved progress, and the Shield exam; the mock exam remains available without signing in.` },
     { q: `Where do the ${code} questions come from?`, a: `Questions are written from official Microsoft Learn documentation and the published exam skills outline for ${code}, not guesswork.` },
-    { q: `What's the difference between Practice mode and Mock exam mode?`, a: `Practice mode is untimed with instant explanations and domain filters, so you can study one topic at a time. Mock exam mode is a timed, scored simulation of exam-day conditions.` },
+    { q: `What's the difference between Practice, Mock and Shield exams?`, a: `Practice mode is untimed with instant explanations and domain filters, so you can study one topic at a time. The mock exam is a quick, untimed ${MOCK_CONFIG.totalQuestions}-question check with no feedback until you submit. The Shield exam is a timed ${SHIELD_CONFIG.totalQuestions}-question scored sitting — score ${SHIELD_CONFIG.passPercentage}% or more and you earn a shareable, verifiable shield.` },
     { q: `How hard is the ${code} exam?`, a: `Difficulty depends on your hands-on experience with the technology. Working through the full question bank in both modes is a good way to find your weak spots before exam day.` },
   ];
 }
@@ -24,7 +25,7 @@ export function ExamPage() {
   const { isAuthenticated } = useOutletContext();
   const [searchParams, setSearchParams] = useSearchParams();
   const TOKENS = useTheme();
-  const [mode, setMode] = useState(null); // null | "practice" | "mock"
+  const [mode, setMode] = useState(null); // null | "practice" | "mock" | "shield"
 
   const code = SLUG_TO_EXAM[examSlug];
   const practiceDomain = searchParams.get("domain");
@@ -45,7 +46,7 @@ export function ExamPage() {
   const attempted = getAttempted(code).length;
   const pct = total ? Math.min(100, Math.round((attempted / total) * 100)) : 0;
   const faqs = buildFaqs(code, meta, total);
-  const mockConfig = isAuthenticated ? getMockConfig(code) : GUEST_MOCK_CONFIG;
+  const shieldAvailable = isShieldAvailable(code);
 
   function clearPracticeParams() {
     setSearchParams({}, { replace: true });
@@ -67,6 +68,7 @@ export function ExamPage() {
     );
   }
   if (mode === "mock") return <MockExam exam={code} onExit={() => setMode(null)} />;
+  if (mode === "shield") return <ShieldExam exam={code} onExit={() => setMode(null)} />;
 
   return (
     <div className="min-h-full flex flex-col">
@@ -114,19 +116,13 @@ export function ExamPage() {
         </Link>
 
         <div className="text-center mb-8 flex flex-col items-center">
-          <div
-            className="text-xs uppercase mb-4 px-3 py-1 rounded-full inline-block"
-            style={{ color: TOKENS.azure, letterSpacing: "0.14em", border: `1px solid ${TOKENS.azure}40`, fontFamily: FONT_MONO }}
-          >
-            {code}
-          </div>
           <MedallionMotif opacity={0.5} />
           <h1 className="text-2xl sm:text-3xl font-semibold mt-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            {meta.title}
+            {code} — {meta.title}
           </h1>
           <p className="mt-3 text-sm max-w-md" style={{ color: TOKENS.inkMuted }}>
-            {total} free practice questions for the {data.label} certification, sourced from official Microsoft
-            Learn documentation. Practice untimed or sit a scored mock exam.
+            {total} free practice questions, sourced from official Microsoft Learn documentation. Practice
+            untimed, try a quick mock, or sit the scored Shield exam to earn a badge.
           </p>
         </div>
 
@@ -184,10 +180,51 @@ export function ExamPage() {
               <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Mock exam</span>
             </div>
             <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-              {mockConfig.totalQuestions} questions, {mockConfig.timeMinutes}-min timer.
+              {MOCK_CONFIG.totalQuestions} questions, untimed. A quick check.
             </p>
           </button>
         </div>
+
+        {/* Shield Exam - Scored sitting that mints a badge */}
+        {shieldAvailable && (
+          <div className="mb-4">
+            {isAuthenticated ? (
+              <button
+                onClick={() => setMode("shield")}
+                className="w-full rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+                style={{ background: `${TOKENS.amber}10`, border: `1px solid ${TOKENS.amber}40` }}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Shield size={16} color={TOKENS.amber} />
+                  <span className="font-semibold text-sm" style={{ color: TOKENS.ink }}>Shield exam</span>
+                </div>
+                <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
+                  {SHIELD_CONFIG.totalQuestions} questions, {SHIELD_CONFIG.timeMinutes} min. Score{" "}
+                  {SHIELD_CONFIG.passPercentage}%+ to earn a shareable shield — 80%+ and 90%+ unlock higher tiers.
+                </p>
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="block w-full rounded-xl p-4 text-left relative overflow-hidden"
+                style={{ background: `${TOKENS.panel}80`, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${TOKENS.bg}60` }}>
+                  <div className="flex items-center gap-1 text-xs" style={{ color: TOKENS.inkMuted }}>
+                    <Lock size={12} /> Sign in to unlock
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mb-1 opacity-40">
+                  <Shield size={16} color={TOKENS.inkMuted} />
+                  <span className="font-semibold text-sm" style={{ color: TOKENS.inkMuted }}>Shield exam</span>
+                </div>
+                <p className="text-xs opacity-40" style={{ color: TOKENS.inkMuted }}>
+                  {SHIELD_CONFIG.totalQuestions} scored questions. Earn a shareable shield.
+                </p>
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* Study Guide Link - Public */}
         {STUDY_GUIDE_EXAMS.has(code) && (

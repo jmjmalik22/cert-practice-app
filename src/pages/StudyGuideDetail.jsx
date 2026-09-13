@@ -141,7 +141,7 @@ function buildSteps(code, meta, guide) {
     },
     {
       title: "Benchmark your knowledge",
-      body: `Use FabricPrep's ${code} practice questions to find weak spots, and take a timed mock exam to build comfort with exam-day pacing.`,
+      body: `Use FabricPrep's ${code} practice questions to find weak spots, and sit the timed Shield exam to build comfort with exam-day pacing.`,
       internalLink: `/${meta.slug}`,
     },
     {

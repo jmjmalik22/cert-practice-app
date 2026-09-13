@@ -1,4 +1,4 @@
-import { EXAM_CATALOG, GUEST_MOCK_CONFIG, SITEMAP_ROUTES, SSG_ROUTES, SITE_ORIGIN, STUDY_GUIDE_EXAM_CODES, getMockConfig } from "../src/lib/examCatalog.js";
+import { EXAM_CATALOG, MOCK_CONFIG, SHIELD_CONFIG, SITEMAP_ROUTES, SSG_ROUTES, SITE_ORIGIN, STUDY_GUIDE_EXAM_CODES, isShieldAvailable } from "../src/lib/examCatalog.js";
 import { EXAM_CODES, EXAM_META, QUESTION_BANK, SLUG_TO_EXAM } from "../src/lib/questionBank/index.js";
 
 const errors = [];
@@ -34,11 +34,13 @@ for (const code of EXAM_CODES) {
   assert(typeof meta.slug === "string" && meta.slug.length > 0, `${code} is missing a slug`);
   assert(SLUG_TO_EXAM[meta.slug] === code, `${code} slug does not resolve back through SLUG_TO_EXAM`);
 
-  const mock = getMockConfig(code);
-  assert(mock.totalQuestions <= exam.questions.length, `${code} mock exam asks for more questions than exist`);
   assert(
-    mock.caseStudyQuestions + mock.standaloneQuestions === mock.totalQuestions,
-    `${code} mock exam sections do not add up to totalQuestions`
+    MOCK_CONFIG.totalQuestions <= exam.questions.length,
+    `${code} mock exam asks for more questions than exist`
+  );
+  assert(
+    !isShieldAvailable(code) || SHIELD_CONFIG.totalQuestions <= exam.questions.length,
+    `${code} offers a Shield exam but cannot fill ${SHIELD_CONFIG.totalQuestions} questions`
   );
 
   for (const question of exam.questions) {
@@ -69,8 +71,10 @@ for (const code of EXAM_CODES) {
 }
 
 assert(SITE_ORIGIN.startsWith("https://"), "SITE_ORIGIN must be an HTTPS URL");
-assert(GUEST_MOCK_CONFIG.totalQuestions === 5, "Guest mock exam should stay at 5 questions");
-assert(GUEST_MOCK_CONFIG.timeMinutes === 5, "Guest mock exam should stay at 5 minutes");
+assert(MOCK_CONFIG.totalQuestions === 5, "Mock exam should stay at 5 questions");
+assert(MOCK_CONFIG.timeMinutes === undefined, "Mock exam should stay untimed");
+assert(SHIELD_CONFIG.totalQuestions === 50, "Shield exam should stay at 50 questions");
+assert(SHIELD_CONFIG.passPercentage === 70, "Shield exam pass mark should stay at 70%");
 
 const expectedStaticRoutes = new Set([
   "/",

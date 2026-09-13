@@ -75,7 +75,7 @@ export function UserProfileModal({ onClose }) {
           className="text-xs text-center mt-4"
           style={{ color: TOKENS.inkMuted }}
         >
-          Guests can access Mock Exams with 5 free questions. Sign in for unlimited access.
+          Guests can try the free 5-question mock exam. Sign in to unlock Practice mode, the Shield exam, and saved progress.
         </p>
       </div>
     </div>

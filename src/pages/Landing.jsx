@@ -128,7 +128,7 @@ export function Landing() {
 
   const features = [
     { icon: RotateCcw, title: "Untimed practice", body: "Work through questions at your own pace, with instant explanations and domain filters." },
-    { icon: Clock, title: "Timed mock exams", body: "Sit a scored, timed exam that mirrors the real format before exam day." },
+    { icon: Clock, title: "Scored Shield exam", body: "Sit a timed, scored exam that mirrors the real format and earn a shareable badge." },
     { icon: Bookmark, title: "Bookmark questions", body: "Flag anything tricky and come back to it later." },
     { icon: Flag, title: "Sourced from Microsoft Learn", body: "Questions are grounded in official Microsoft documentation, not guesswork." },
   ];
@@ -186,7 +186,7 @@ export function Landing() {
         <link rel="canonical" href="https://fabricprep.com/" />
         <meta
           name="description"
-          content={`${totalQuestions}+ free Fabric Prep certification practice questions for DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, and DP-800. Prepare for Microsoft Fabric and Azure exams with realistic mock exams sourced from official Microsoft Learn documentation.`}
+          content={`${totalQuestions}+ free Fabric Prep certification practice questions for DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, and DP-800. Prepare for Microsoft Fabric and Azure exams with a scored Shield exam sourced from official Microsoft Learn documentation.`}
         />
         <meta name="keywords" content="fabric certification, microsoft fabric certification, fabric certification exam, fabric prep, fabricprep, dp 700 prep, dp 600 prep, dp 900 prep, az 900 prep, certification prep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, azure certification, fabric data engineer, fabric analytics engineer, data engineer prep, analytics engineer prep, fabric study guide, azure study guide" />
         <meta property="og:type" content="website" />
@@ -266,7 +266,7 @@ export function Landing() {
           Pass your Microsoft certification exam with <span style={{ color: TOKENS.azure }}>confidence</span>.
         </h1>
         <p className="mt-4 text-base max-w-lg relative z-10" style={{ color: TOKENS.inkMuted }}>
-          {totalQuestions}+ realistic practice questions for Fabric certification and Azure certification exams. Free DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, DP-800 prep with timed mock exams.
+          {totalQuestions}+ realistic practice questions for Fabric certification and Azure certification exams. Free DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, DP-800 prep with a scored Shield exam.
         </p>
         <div className="mt-6 flex items-center gap-2 text-xs relative z-10">
           <div className="flex items-center gap-1 px-3 py-1 rounded-full" style={{ background: `${TOKENS.green}15`, color: TOKENS.green }}>
@@ -388,15 +388,16 @@ export function Landing() {
                 </div>
                 
                 <div className="mt-4 flex justify-end">
-                  <span 
-                    className="text-xs font-medium px-3 py-1.5 rounded-full transition-all duration-300 group-hover:scale-105"
-                    style={{ 
-                      background: `${TOKENS.azure}15`, 
+                  <span
+                    aria-hidden="true"
+                    className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:translate-x-0.5"
+                    style={{
+                      background: `${TOKENS.azure}15`,
                       color: TOKENS.azure,
                       border: `1px solid ${TOKENS.azure}30`
                     }}
                   >
-                    Practice {code} →
+                    <ArrowRight size={14} />
                   </span>
                 </div>
               </Link>
@@ -441,8 +442,9 @@ export function Landing() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
           {features.map((f, idx) => {
-            // First 2 features (Untimed practice, Bookmark) require login
-            const requiresAuth = idx === 0 || idx === 2;
+            // Untimed practice, the Shield exam, and Bookmarks all require login — only
+            // "Sourced from Microsoft Learn" (the last card) is free to everyone.
+            const requiresAuth = idx !== features.length - 1;
             const isLocked = requiresAuth && !isAuthenticated;
             
             return (
@@ -506,7 +508,7 @@ export function Landing() {
                 "Every question sourced from official Microsoft Learn docs",
                 "A written explanation for every answer, right or wrong",
                 "Filter by exam domain to target your weak spots",
-                "Timed mock exams that mirror real exam-day pacing",
+                "A scored Shield exam that mirrors real exam-day pacing",
               ].map((t) => (
                 <li key={t} className="flex items-start gap-2 text-sm" style={{ color: TOKENS.ink }}>
                   <span style={{ color: TOKENS.green, flexShrink: 0 }}>✓</span> {t}
