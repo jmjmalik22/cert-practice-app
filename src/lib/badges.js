@@ -8,6 +8,7 @@ import { getPracticeMastery } from "./progress.jsx";
 import { EXAM_CODES } from "./examCatalog.js";
 
 const BADGES_KEY = "fp_badges";
+const SHIELD_RESULTS_KEY = "fp_shield_results";
 
 // Minimum distinct practice questions an exam needs before it's eligible
 // for a badge at all — keeps a badge from being earned off a handful of
@@ -21,27 +22,83 @@ export const BADGE_TIERS = [
   { id: "proven", label: "PROVEN", minPercentage: 80 },
 ];
 
+// The Shield exam is a single scored sitting rather than cumulative practice,
+// so it reaches the same tiers at lower thresholds.
+export const SHIELD_TIERS = [
+  { id: "elite", label: "ELITE", minPercentage: 90 },
+  { id: "mastery", label: "MASTERY", minPercentage: 80 },
+  { id: "proven", label: "PROVEN", minPercentage: 70 },
+];
+
+const TIER_RANK = { proven: 1, mastery: 2, elite: 3 };
+
 export function getTierForScore(percentage) {
   return BADGE_TIERS.find((tier) => percentage >= tier.minPercentage) || null;
 }
 
-// One badge per exam, based on cumulative practice-mode accuracy (not mock
-// exams) once at least MIN_PRACTICE_QUESTIONS_FOR_BADGE distinct questions
-// have been practiced.
+export function getShieldTierForScore(percentage) {
+  return SHIELD_TIERS.find((tier) => percentage >= tier.minPercentage) || null;
+}
+
+export function getShieldResults() {
+  return safeGet(SHIELD_RESULTS_KEY, {});
+}
+
+export function getShieldResult(examCode) {
+  return getShieldResults()[examCode] || null;
+}
+
+// Keeps only the best Shield sitting per exam, so a weaker retake can never
+// downgrade a shield the user has already earned.
+export function recordShieldResult(examCode, percentage) {
+  const tier = getShieldTierForScore(percentage);
+  const results = getShieldResults();
+  const previous = results[examCode];
+
+  if (!previous || percentage > previous.score) {
+    results[examCode] = {
+      score: percentage,
+      tier: tier?.id ?? null,
+      earnedAt: new Date().toISOString(),
+    };
+    safeSet(SHIELD_RESULTS_KEY, results);
+  }
+
+  return tier;
+}
+
+function practiceBadgeFor(examCode) {
+  const { attempted, percentage } = getPracticeMastery(examCode);
+  if (attempted < MIN_PRACTICE_QUESTIONS_FOR_BADGE) return null;
+
+  const tier = getTierForScore(percentage);
+  if (!tier) return null;
+
+  return { examCode, tier: tier.id, tierLabel: tier.label, score: percentage, source: "practice" };
+}
+
+function shieldBadgeFor(examCode) {
+  const result = getShieldResult(examCode);
+  if (!result?.tier) return null;
+
+  const tier = SHIELD_TIERS.find((t) => t.id === result.tier);
+  if (!tier) return null;
+
+  return { examCode, tier: tier.id, tierLabel: tier.label, score: result.score, source: "shield" };
+}
+
+// One badge per exam. Both the Shield exam and cumulative practice accuracy
+// can earn one, so when a user has both we keep the stronger tier — and
+// prefer the Shield on a tie, since a scored sitting is the harder credential.
 export function getEarnedBadges() {
   return EXAM_CODES.map((examCode) => {
-    const { attempted, percentage } = getPracticeMastery(examCode);
-    if (attempted < MIN_PRACTICE_QUESTIONS_FOR_BADGE) return null;
+    const practice = practiceBadgeFor(examCode);
+    const shield = shieldBadgeFor(examCode);
 
-    const tier = getTierForScore(percentage);
-    if (!tier) return null;
+    if (!practice) return shield;
+    if (!shield) return practice;
 
-    return {
-      examCode,
-      tier: tier.id,
-      tierLabel: tier.label,
-      score: percentage,
-    };
+    return TIER_RANK[shield.tier] >= TIER_RANK[practice.tier] ? shield : practice;
   }).filter(Boolean);
 }
 
@@ -68,7 +125,7 @@ export async function syncBadgesToCloud(uid) {
 
   for (const badge of getEarnedBadges()) {
     const cached = cache[badge.examCode];
-    if (cached && cached.uid === uid && cached.tier === badge.tier) continue;
+    if (cached && cached.uid === uid && cached.tier === badge.tier && cached.source === badge.source) continue;
 
     const badgeId = badgeDocId(uid, badge.examCode);
     try {
@@ -79,11 +136,12 @@ export async function syncBadgesToCloud(uid) {
           examCode: badge.examCode,
           tier: badge.tier,
           score: badge.score,
+          source: badge.source,
           issuedAt: serverTimestamp(),
         },
         { merge: true }
       );
-      saveBadgeCacheEntry(badge.examCode, { uid, tier: badge.tier, badgeId });
+      saveBadgeCacheEntry(badge.examCode, { uid, tier: badge.tier, source: badge.source, badgeId });
     } catch (error) {
       console.error("Failed to sync badge:", error);
     }

@@ -1,15 +1,35 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ChevronLeft, ArrowRight, Clock, Flag, CheckCircle2, XCircle } from "lucide-react";
-import { useTheme, FONT_DISPLAY, FONT_MONO, getBookmarks, toggleBookmarkStorage, markAttempted, shuffle } from "../lib/theme.jsx";
-import { getPracticeConfig } from "../lib/examCatalog.js";
+import { ChevronLeft, ArrowRight, Clock, Flag, CheckCircle2, XCircle, ShieldCheck } from "lucide-react";
+import { useTheme, FONT_DISPLAY, FONT_MONO, getBookmarks, toggleBookmarkStorage, markAttempted, getAttempted, shuffle } from "../lib/theme.jsx";
+import { getPracticeConfig, getProductIcon } from "../lib/examCatalog.js";
 import { QUESTION_BANK } from "../lib/questionBank/index.js";
 import { recordAttempt, toggleBookmark } from "../lib/progress.jsx";
 import { getWrongQuestionIds } from "../lib/progress.jsx";
 import { Chip } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
+function FilterToggle({ label, hint, checked, onChange }) {
+  const TOKENS = useTheme();
+  return (
+    <label className="flex items-start gap-3 cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5"
+        style={{ accentColor: TOKENS.azure }}
+      />
+      <span>
+        <span className="block text-sm" style={{ color: TOKENS.ink }}>{label}</span>
+        <span className="block text-xs" style={{ color: TOKENS.inkMuted }}>{hint}</span>
+      </span>
+    </label>
+  );
+}
+
 export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswers = false }) {
   const TOKENS = useTheme();
+  const productIcon = getProductIcon(exam);
   const allQuestions = QUESTION_BANK[exam].questions;
   const wrongQuestionIds = useMemo(() => new Set(getWrongQuestionIds(exam)), [exam]);
   const pool = useMemo(
@@ -18,27 +38,49 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
       : allQuestions,
     [allQuestions, reviewWrongAnswers, wrongQuestionIds]
   );
-  const domains = useMemo(() => ["All", ...Array.from(new Set(pool.map((q) => q.domain)))], [pool]);
-  const resolvedInitialDomain =
-    initialDomain && domains.includes(initialDomain) ? initialDomain : "All";
+  const domains = useMemo(() => Array.from(new Set(pool.map((q) => q.domain))), [pool]);
   const practiceConfig = getPracticeConfig(exam);
   const config = {
     ...practiceConfig,
     totalQuestions: pool.length,
-    domains: domains.length - 1,
+    domains: domains.length,
   };
-  const [domainFilter, setDomainFilter] = useState(resolvedInitialDomain);
+  // An empty set means "every domain" — the same thing the old "All" chip did,
+  // but it keeps the selection additive as the user taps domains on and off.
+  const deepLinkedDomain = initialDomain && domains.includes(initialDomain) ? initialDomain : null;
+  const [selectedDomains, setSelectedDomains] = useState(
+    () => new Set(deepLinkedDomain ? [deepLinkedDomain] : [])
+  );
   const [selectedQuestionCount, setSelectedQuestionCount] = useState(pool.length);
-  const [showSetup, setShowSetup] = useState(reviewWrongAnswers || resolvedInitialDomain === "All");
+  const [bookmarkedOnly, setBookmarkedOnly] = useState(false);
+  const [unseenOnly, setUnseenOnly] = useState(false);
+  const [showSetup, setShowSetup] = useState(reviewWrongAnswers || !deepLinkedDomain);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [flaggedQuestions, setFlaggedQuestions] = useState(new Set());
   const [answers, setAnswers] = useState({});
   const timerRef = useRef(null);
+  const bookmarkKeys = useMemo(() => new Set(getBookmarks()), []);
+  const seenQuestionIds = useMemo(() => new Set(getAttempted(exam)), [exam]);
   const filteredPool = useMemo(
-    () => (domainFilter === "All" ? pool : pool.filter((q) => q.domain === domainFilter)),
-    [pool, domainFilter]
+    () =>
+      pool.filter((q) => {
+        if (selectedDomains.size > 0 && !selectedDomains.has(q.domain)) return false;
+        if (bookmarkedOnly && !bookmarkKeys.has(`${exam}:${q.id}`)) return false;
+        if (unseenOnly && seenQuestionIds.has(q.id)) return false;
+        return true;
+      }),
+    [pool, selectedDomains, bookmarkedOnly, unseenOnly, bookmarkKeys, seenQuestionIds, exam]
   );
   const questionCount = Math.min(selectedQuestionCount, filteredPool.length);
+
+  function toggleDomain(domain) {
+    setSelectedDomains((prev) => {
+      const next = new Set(prev);
+      if (next.has(domain)) next.delete(domain);
+      else next.add(domain);
+      return next;
+    });
+  }
   const questionCountOptions = useMemo(
     () => [...new Set([10, 20, 30, 50, filteredPool.length].filter((count) => count > 0 && count <= filteredPool.length))],
     [filteredPool.length]
@@ -162,14 +204,67 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
         />
 
         <div className="mt-8">
-          <h1 className="text-2xl sm:text-3xl font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            {reviewWrongAnswers ? `${exam} Wrong Answers` : `${exam} Practice Mode`}
-          </h1>
+          <div
+            className="inline-flex items-center gap-1.5 text-xs uppercase mb-3 px-3 py-1 rounded-full"
+            style={{ color: TOKENS.azure, letterSpacing: "0.1em", border: `1px solid ${TOKENS.azure}40`, fontFamily: FONT_MONO }}
+          >
+            <ShieldCheck size={13} /> Certification prep
+          </div>
+          <div className="flex items-center gap-3 mb-4">
+            {productIcon && (
+              <img src={productIcon.src} alt={productIcon.alt} width={32} height={32} className="flex-shrink-0" />
+            )}
+            <h1 className="text-2xl sm:text-3xl font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              {reviewWrongAnswers ? `${exam} Wrong Answers` : `${exam} Practice Mode`}
+            </h1>
+          </div>
           <p className="text-sm mb-8" style={{ color: TOKENS.inkMuted }}>
             {reviewWrongAnswers
               ? "Review the questions you most recently answered incorrectly and strengthen the concepts behind them."
               : "Study at your own pace with instant feedback and detailed explanations. Perfect for learning and reviewing concepts."}
           </p>
+
+          <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            What to expect
+          </h2>
+          <div className="space-y-4 mb-8">
+            <div className="flex gap-3">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>1</span>
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Instant feedback</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>See if your answer is correct immediately with detailed explanations.</div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>2</span>
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Filter by domain</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Focus on specific topics or study all domains together.</div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>3</span>
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Bookmark questions</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Save questions to review later from your dashboard.</div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
+                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>4</span>
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Track your progress</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Your score and progress are saved as you go through questions.</div>
+              </div>
+            </div>
+          </div>
 
           <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
             Practice setup
@@ -225,81 +320,79 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
             </div>
           )}
 
-          <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            What to expect
-          </h2>
-          <div className="space-y-4 mb-8">
-            <div className="flex gap-3">
-              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>1</span>
+          {!reviewWrongAnswers && (
+            <>
+              <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+                Focus areas
+              </h2>
+              <div className="rounded-xl p-4 mb-8" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+                <div className="text-xs mb-3" style={{ color: TOKENS.inkMuted }}>
+                  Pick any combination of domains, or leave them all off to study every topic together.
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {domains.map((d) => {
+                    const active = selectedDomains.has(d);
+                    return (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => toggleDomain(d)}
+                        className="text-xs rounded-full px-3 py-1.5 flex-shrink-0 whitespace-nowrap transition-colors"
+                        style={{
+                          color: active ? TOKENS.bgDeep : TOKENS.inkMuted,
+                          background: active ? TOKENS.azure : "transparent",
+                          border: `1px solid ${active ? TOKENS.azure : TOKENS.panelBorder}`,
+                        }}
+                      >
+                        {d}
+                      </button>
+                    );
+                  })}
+                </div>
+                {selectedDomains.size > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDomains(new Set())}
+                    className="text-xs mt-3"
+                    style={{ color: TOKENS.azure }}
+                  >
+                    Clear selection ({selectedDomains.size} selected)
+                  </button>
+                )}
               </div>
-              <div>
-                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Instant feedback</div>
-                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>See if your answer is correct immediately with detailed explanations.</div>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>2</span>
-              </div>
-              <div>
-                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Filter by domain</div>
-                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Focus on specific topics or study all domains together.</div>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>3</span>
-              </div>
-              <div>
-                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Bookmark questions</div>
-                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Save questions to review later from your dashboard.</div>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>4</span>
-              </div>
-              <div>
-                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Track your progress</div>
-                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Your score and progress are saved as you go through questions.</div>
-              </div>
-            </div>
-          </div>
 
-          <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            Focus area
-          </h2>
-          <div className="rounded-xl p-4 mb-8" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
-            <div className="text-xs mb-3" style={{ color: TOKENS.inkMuted }}>
-              Choose a domain to focus on, or study all topics together.
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {domains.map((d) => (
-                <button
-                  key={d}
-                  type="button"
-                  onClick={() => setDomainFilter(d)}
-                  className="text-xs rounded-full px-3 py-1.5 flex-shrink-0 whitespace-nowrap transition-colors"
-                  style={{
-                    color: domainFilter === d ? TOKENS.bgDeep : TOKENS.inkMuted,
-                    background: domainFilter === d ? TOKENS.azure : "transparent",
-                    border: `1px solid ${domainFilter === d ? TOKENS.azure : TOKENS.panelBorder}`,
-                  }}
-                >
-                  {d}
-                </button>
-              ))}
-            </div>
-          </div>
+              <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+                Narrow it down
+              </h2>
+              <div className="rounded-xl p-4 mb-8 space-y-3" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+                <FilterToggle
+                  label="Bookmarked only"
+                  hint="Just the questions you saved for later."
+                  checked={bookmarkedOnly}
+                  onChange={setBookmarkedOnly}
+                />
+                <FilterToggle
+                  label="Unseen only"
+                  hint="Skip questions you've already answered before."
+                  checked={unseenOnly}
+                  onChange={setUnseenOnly}
+                />
+              </div>
+            </>
+          )}
 
           <button
             onClick={() => setShowSetup(false)}
-            disabled={config.totalQuestions === 0}
+            disabled={filteredPool.length === 0}
             className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-medium text-sm"
-            style={{ background: TOKENS.azure, color: TOKENS.bgDeep, opacity: config.totalQuestions === 0 ? 0.5 : 1 }}
+            style={{ background: TOKENS.azure, color: TOKENS.bgDeep, opacity: filteredPool.length === 0 ? 0.5 : 1 }}
           >
-            {config.totalQuestions === 0 ? "Nothing to review" : reviewWrongAnswers ? "Start Review" : "Start Practice"} <ArrowRight size={16} />
+            {filteredPool.length === 0
+              ? "No questions match these filters"
+              : reviewWrongAnswers
+              ? "Start Review"
+              : `Start Practice (${questionCount})`}{" "}
+            <ArrowRight size={16} />
           </button>
         </div>
       </div>
@@ -359,23 +452,26 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
       {/* Domain Filter - Collapsible */}
       <details className="mb-4">
         <summary className="text-xs cursor-pointer" style={{ color: TOKENS.inkMuted }}>
-          Filter by domain ({domainFilter})
+          Filter by domain ({selectedDomains.size === 0 ? "All" : `${selectedDomains.size} selected`})
         </summary>
         <div className="flex flex-wrap gap-2 mt-2">
-          {domains.map((d) => (
-            <button
-              key={d}
-              onClick={() => setDomainFilter(d)}
-              className="text-xs rounded-full px-3 py-1.5 flex-shrink-0 whitespace-nowrap transition-colors"
-              style={{
-                color: domainFilter === d ? TOKENS.bgDeep : TOKENS.inkMuted,
-                background: domainFilter === d ? TOKENS.azure : "transparent",
-                border: `1px solid ${domainFilter === d ? TOKENS.azure : TOKENS.panelBorder}`,
-              }}
-            >
-              {d}
-            </button>
-          ))}
+          {domains.map((d) => {
+            const active = selectedDomains.has(d);
+            return (
+              <button
+                key={d}
+                onClick={() => toggleDomain(d)}
+                className="text-xs rounded-full px-3 py-1.5 flex-shrink-0 whitespace-nowrap transition-colors"
+                style={{
+                  color: active ? TOKENS.bgDeep : TOKENS.inkMuted,
+                  background: active ? TOKENS.azure : "transparent",
+                  border: `1px solid ${active ? TOKENS.azure : TOKENS.panelBorder}`,
+                }}
+              >
+                {d}
+              </button>
+            );
+          })}
         </div>
       </details>
 

@@ -5,17 +5,11 @@ export const EXAM_CATALOG = {
     slug: "dp-700",
     label: "Fabric Data Engineer Associate",
     questionCount: 92,
-    title: "Microsoft Fabric DP-700 Practice Exam",
+    title: "Microsoft Certified: Fabric Data Engineer Associate",
     metaTitle: "DP-700 Practice Exams | FabricPrep",
     metaDescription:
-      "Free DP-700 practice questions for the Microsoft Fabric Data Engineer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free DP-700 practice questions for the Microsoft Fabric Data Engineer Associate exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 8,
-      standaloneQuestions: 42,
-      totalQuestions: 50,
-      timeMinutes: 100,
-    },
     practice: {
       caseStudyCount: 8,
       timeLimit: "Untimed",
@@ -25,17 +19,11 @@ export const EXAM_CATALOG = {
     slug: "dp-600",
     label: "Fabric Analytics Engineer Associate",
     questionCount: 76,
-    title: "Microsoft Fabric DP-600 Practice Exam",
+    title: "Microsoft Certified: Fabric Analytics Engineer Associate",
     metaTitle: "DP-600 Practice Exams | FabricPrep",
     metaDescription:
-      "Free DP-600 practice questions for the Microsoft Fabric Analytics Engineer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free DP-600 practice questions for the Microsoft Fabric Analytics Engineer Associate exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 8,
-      standaloneQuestions: 42,
-      totalQuestions: 50,
-      timeMinutes: 100,
-    },
     practice: {
       caseStudyCount: 8,
       timeLimit: "Untimed",
@@ -45,17 +33,11 @@ export const EXAM_CATALOG = {
     slug: "az-900",
     label: "Azure Fundamentals",
     questionCount: 72,
-    title: "Microsoft Azure AZ-900 Practice Exam",
+    title: "Microsoft Certified: Azure Fundamentals",
     metaTitle: "AZ-900 Practice Exams | FabricPrep",
     metaDescription:
-      "Free AZ-900 practice questions for the Microsoft Azure Fundamentals exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free AZ-900 practice questions for the Microsoft Azure Fundamentals exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 32,
-      totalQuestions: 32,
-      timeMinutes: 45,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -65,17 +47,11 @@ export const EXAM_CATALOG = {
     slug: "dp-900",
     label: "Azure Data Fundamentals",
     questionCount: 72,
-    title: "Microsoft Azure DP-900 Practice Exam",
+    title: "Microsoft Certified: Azure Data Fundamentals",
     metaTitle: "DP-900 Practice Exams | FabricPrep",
     metaDescription:
-      "Free DP-900 practice questions for the Microsoft Azure Data Fundamentals exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free DP-900 practice questions for the Microsoft Azure Data Fundamentals exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 32,
-      totalQuestions: 32,
-      timeMinutes: 45,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -85,17 +61,11 @@ export const EXAM_CATALOG = {
     slug: "az-104",
     label: "Azure Administrator Associate",
     questionCount: 72,
-    title: "Microsoft Azure AZ-104 Practice Exam",
+    title: "Microsoft Certified: Azure Administrator Associate",
     metaTitle: "AZ-104 Practice Exams | FabricPrep",
     metaDescription:
-      "Free AZ-104 practice questions for the Microsoft Azure Administrator Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free AZ-104 practice questions for the Microsoft Azure Administrator Associate exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 40,
-      totalQuestions: 40,
-      timeMinutes: 60,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -105,17 +75,11 @@ export const EXAM_CATALOG = {
     slug: "ai-901",
     label: "Azure AI Fundamentals (Foundry)",
     questionCount: 72,
-    title: "Microsoft Azure AI-901 Practice Exam",
+    title: "Microsoft Certified: Azure AI Fundamentals (Foundry)",
     metaTitle: "AI-901 Practice Exams | FabricPrep",
     metaDescription:
-      "Free AI-901 practice questions for the Microsoft Azure AI Fundamentals exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free AI-901 practice questions for the Microsoft Azure AI Fundamentals exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 32,
-      totalQuestions: 32,
-      timeMinutes: 45,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -125,17 +89,11 @@ export const EXAM_CATALOG = {
     slug: "pl-300",
     label: "Power BI Data Analyst Associate",
     questionCount: 72,
-    title: "Microsoft Power BI PL-300 Practice Exam",
+    title: "Microsoft Certified: Power BI Data Analyst Associate",
     metaTitle: "PL-300 Practice Exams | FabricPrep",
     metaDescription:
-      "Free PL-300 practice questions for the Microsoft Power BI Data Analyst Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free PL-300 practice questions for the Microsoft Power BI Data Analyst Associate exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 40,
-      totalQuestions: 40,
-      timeMinutes: 60,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -205,17 +163,11 @@ export const EXAM_CATALOG = {
     slug: "dp-800",
     label: "Developing AI-Enabled Database Solutions",
     questionCount: 90,
-    title: "Microsoft Certified: SQL AI Developer Associate (DP-800)",
+    title: "Microsoft Certified: SQL AI Developer Associate",
     metaTitle: "DP-800 Practice Exams | FabricPrep",
     metaDescription:
       "Free DP-800 practice questions for the Microsoft SQL AI Developer Associate certification, based on the official Developing AI-Enabled Database Solutions study guide.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 30,
-      totalQuestions: 30,
-      timeMinutes: 60,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -225,17 +177,11 @@ export const EXAM_CATALOG = {
     slug: "sc-900",
     label: "Security, Compliance, and Identity Fundamentals",
     questionCount: 26,
-    title: "Microsoft SC-900 Practice Exam",
+    title: "Microsoft Certified: Security, Compliance, and Identity Fundamentals",
     metaTitle: "SC-900 Practice Exams | FabricPrep",
     metaDescription:
-      "Free SC-900 practice questions for the Microsoft Security, Compliance, and Identity Fundamentals exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free SC-900 practice questions for the Microsoft Security, Compliance, and Identity Fundamentals exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 20,
-      totalQuestions: 20,
-      timeMinutes: 45,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -244,6 +190,29 @@ export const EXAM_CATALOG = {
 };
 
 export const EXAM_CODES = Object.freeze(Object.keys(EXAM_CATALOG));
+
+// The Microsoft product each exam is built around, shown as a small logo on
+// practice pages so learners can see at a glance which technology they're
+// studying. Sourced from Microsoft's own official icon assets (Fabric and
+// Power BI hosted on Microsoft's CDN; Azure via the widely-used devicon
+// recreation of Microsoft's Azure logo) — used only to identify the subject
+// of each exam, not to imply endorsement.
+// SC-900 spans several products (Entra, Defender, Purview) rather than one,
+// so it intentionally has no single logo here.
+export const PRODUCT_ICONS = Object.freeze({
+  "DP-700": { src: "/product-icons/fabric.svg", alt: "Microsoft Fabric" },
+  "DP-600": { src: "/product-icons/fabric.svg", alt: "Microsoft Fabric" },
+  "AZ-900": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
+  "DP-900": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
+  "AZ-104": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
+  "AI-901": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
+  "DP-800": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
+  "PL-300": { src: "/product-icons/power-bi.svg", alt: "Power BI" },
+});
+
+export function getProductIcon(examCode) {
+  return PRODUCT_ICONS[examCode] || null;
+}
 
 // Exams planned for future question-bank releases. These are intentionally
 // separate from EXAM_CATALOG so they cannot create routes or appear in SEO
@@ -258,7 +227,7 @@ export const COMING_SOON_EXAMS = Object.freeze([
 
 export const EXAM_META = Object.freeze(
   Object.fromEntries(
-    Object.entries(EXAM_CATALOG).map(([code, { studyGuide, mock, practice, ...meta }]) => [code, meta])
+    Object.entries(EXAM_CATALOG).map(([code, { studyGuide, practice, ...meta }]) => [code, meta])
   )
 );
 
@@ -272,15 +241,24 @@ export const STUDY_GUIDE_EXAM_CODES = Object.freeze(
 
 export const STUDY_GUIDE_EXAMS = new Set(STUDY_GUIDE_EXAM_CODES);
 
-export const GUEST_MOCK_CONFIG = Object.freeze({
-  caseStudyQuestions: 0,
-  standaloneQuestions: 5,
+// The mock exam is a fixed, untimed 5-question warm-up — identical for every
+// exam and for guests and members alike. Anything longer or scored belongs to
+// the Shield exam below.
+export const MOCK_CONFIG = Object.freeze({
   totalQuestions: 5,
-  timeMinutes: 5,
 });
 
-export function getMockConfig(examCode) {
-  return EXAM_CATALOG[examCode]?.mock ?? GUEST_MOCK_CONFIG;
+// The Shield exam is the scored, timed assessment that mints a badge.
+export const SHIELD_CONFIG = Object.freeze({
+  totalQuestions: 50,
+  timeMinutes: 75,
+  passPercentage: 70,
+});
+
+// An exam can only offer a Shield if its bank can fill a full sitting —
+// a shield drawn from a short bank wouldn't mean the same thing.
+export function isShieldAvailable(examCode) {
+  return (EXAM_CATALOG[examCode]?.questionCount ?? 0) >= SHIELD_CONFIG.totalQuestions;
 }
 
 export function getPracticeConfig(examCode) {

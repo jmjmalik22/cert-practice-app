@@ -7,7 +7,7 @@ import { Footer } from "../components/Shared.jsx";
 const INCLUDED = [
   "Practice questions across every exam track",
   "Explanations for every answer",
-  "Timed mock exam mode",
+  "Scored Shield exam with earned badges",
   "Progress tracking and streaks synced across devices",
   "Study guides for every supported exam",
 ];

@@ -1,26 +1,29 @@
 import { useState, useEffect, useRef } from "react";
-import { CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft } from "lucide-react";
+import { Clock, CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft, Shield } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, markAttempted, shuffle } from "../lib/theme.jsx";
-import { MOCK_CONFIG } from "../lib/examCatalog.js";
-import { QUESTION_BANK } from "../lib/questionBank/index.js";
+import { SHIELD_CONFIG } from "../lib/examCatalog.js";
+import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
 import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
+import { SHIELD_TIERS, recordShieldResult } from "../lib/badges.js";
 import { Chip } from "./Shared.jsx";
+import { BadgeShield } from "./BadgeShield.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
-export function MockExam({ exam, onExit }) {
+export function ShieldExam({ exam, onExit }) {
   const TOKENS = useTheme();
   const pool = QUESTION_BANK[exam].questions;
-  const totalQuestions = Math.min(MOCK_CONFIG.totalQuestions, pool.length);
+  const totalSeconds = SHIELD_CONFIG.timeMinutes * 60;
 
-  const [order] = useState(() => shuffle(pool).slice(0, totalQuestions));
+  const [order] = useState(() => shuffle(pool).slice(0, SHIELD_CONFIG.totalQuestions));
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
   const [finished, setFinished] = useState(false);
   const [showSetup, setShowSetup] = useState(true);
+  const [awardedTier, setAwardedTier] = useState(null);
   const timerRef = useRef(null);
   const answersRef = useRef(answers);
-  const elapsedRef = useRef(0);
+  const secondsLeftRef = useRef(secondsLeft);
   const finishedRef = useRef(false);
 
   useEffect(() => {
@@ -28,48 +31,55 @@ export function MockExam({ exam, onExit }) {
   }, [answers]);
 
   useEffect(() => {
-    elapsedRef.current = elapsedSeconds;
-  }, [elapsedSeconds]);
+    secondsLeftRef.current = secondsLeft;
+  }, [secondsLeft]);
 
-  function finishExam() {
+  function finishExam(remainingSeconds = secondsLeftRef.current) {
     if (finishedRef.current) return;
     finishedRef.current = true;
 
     const currentAnswers = answersRef.current;
     const correctCount = order.filter((qq) => currentAnswers[qq.id] === qq.correct).length;
-    const incorrectCount = order.length - correctCount;
     const percentage = Math.round((correctCount / order.length) * 100);
 
-    // Save each question attempt (mark as mock exam)
+    // Shield sittings are scored assessments, not study — record the attempts
+    // as mock-exam attempts so they can't inflate practice-mode mastery.
     order.forEach((qq) => {
-      const isCorrect = currentAnswers[qq.id] === qq.correct;
       markAttempted(exam, qq.id);
-      recordAttempt(exam, qq.id, isCorrect, 0, true); // true = isMockExam
+      recordAttempt(exam, qq.id, currentAnswers[qq.id] === qq.correct, 0, true);
     });
 
-    // Save exam result
     saveExamResult(exam, {
       score: correctCount,
       total: order.length,
       percentage,
       correct: correctCount,
-      incorrect: incorrectCount,
-      timeSpent: elapsedRef.current,
+      incorrect: order.length - correctCount,
+      timeSpent: totalSeconds - remainingSeconds,
     });
 
+    setAwardedTier(recordShieldResult(exam, percentage));
     setFinished(true);
   }
 
-  // Untimed — the clock counts up for reference only and never ends the exam.
   useEffect(() => {
     if (finished || showSetup) return undefined;
-    timerRef.current = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
+    timerRef.current = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          clearInterval(timerRef.current);
+          finishExam(0);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
     return () => clearInterval(timerRef.current);
   }, [finished, showSetup]);
 
   const q = order[idx];
-  const mm = String(Math.floor(elapsedSeconds / 60)).padStart(2, "0");
-  const ss = String(elapsedSeconds % 60).padStart(2, "0");
+  const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
+  const ss = String(secondsLeft % 60).padStart(2, "0");
 
   function choose(optId) {
     setAnswers((a) => ({ ...a, [q.id]: optId }));
@@ -81,17 +91,57 @@ export function MockExam({ exam, onExit }) {
 
   if (finished) {
     const correctCount = order.filter((qq) => answers[qq.id] === qq.correct).length;
+    const percentage = Math.round((correctCount / order.length) * 100);
+    const toNextTier = SHIELD_TIERS.slice()
+      .reverse()
+      .find((tier) => percentage < tier.minPercentage);
+
     return (
       <div className="min-h-full px-6 py-8 max-w-2xl mx-auto w-full">
-        <TopBar left={<span className="text-sm font-medium" style={{ color: TOKENS.ink }}>Results</span>} right={<Chip tone="amber">{exam} · Mock exam</Chip>} />
+        <TopBar
+          left={<span className="text-sm font-medium" style={{ color: TOKENS.ink }}>Results</span>}
+          right={<Chip tone="amber">{exam} · Shield exam</Chip>}
+        />
 
-        <div className="mt-8 rounded-2xl p-6 text-center" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
-          <div className="text-5xl font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_MONO }}>
+        <div
+          className="mt-8 rounded-2xl p-6 flex flex-col items-center text-center"
+          style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+        >
+          {awardedTier ? (
+            <>
+              <BadgeShield
+                tier={awardedTier.id}
+                examCode={exam}
+                examLabel={EXAM_META[exam]?.label}
+                score={awardedTier.minPercentage}
+                size={180}
+              />
+              <div className="text-lg font-semibold mt-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+                {awardedTier.label} shield earned
+              </div>
+            </>
+          ) : (
+            <>
+              <Shield size={48} color={TOKENS.inkMuted} />
+              <div className="text-lg font-semibold mt-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+                No shield this time
+              </div>
+              <div className="text-sm mt-1" style={{ color: TOKENS.inkMuted }}>
+                You need {SHIELD_CONFIG.passPercentage}% to earn a shield. Review the answers below and sit it again.
+              </div>
+            </>
+          )}
+
+          <div className="text-4xl font-semibold mt-5" style={{ color: TOKENS.ink, fontFamily: FONT_MONO }}>
             {correctCount}/{order.length}
           </div>
-          <div className="text-sm mt-2" style={{ color: TOKENS.inkMuted }}>
-            {Math.round((correctCount / order.length) * 100)}% correct
-          </div>
+          <div className="text-sm mt-1" style={{ color: TOKENS.inkMuted }}>{percentage}% correct</div>
+
+          {toNextTier && (
+            <div className="text-xs mt-3" style={{ color: TOKENS.inkMuted }}>
+              {toNextTier.minPercentage}% earns the {toNextTier.label} shield.
+            </div>
+          )}
         </div>
 
         <div className="mt-6 space-y-4">
@@ -128,7 +178,7 @@ export function MockExam({ exam, onExit }) {
 
         <div className="flex justify-center mt-8">
           <button onClick={onExit} className="px-5 py-2.5 rounded-full font-medium text-sm" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>
-            Back to home
+            Back to exam hub
           </button>
         </div>
       </div>
@@ -144,16 +194,33 @@ export function MockExam({ exam, onExit }) {
               <ChevronLeft size={16} /> Back to exam hub
             </button>
           }
-          right={<Chip tone="amber">{exam} · Mock exam</Chip>}
+          right={<Chip tone="amber">{exam} · Shield exam</Chip>}
         />
 
         <div className="mt-8">
           <h1 className="text-2xl sm:text-3xl font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            {exam} Mock Exam
+            {exam} Shield Exam
           </h1>
           <p className="text-sm mb-8" style={{ color: TOKENS.inkMuted }}>
-            A quick, untimed five-question check. No feedback until you submit, just like the real exam.
+            A full {SHIELD_CONFIG.totalQuestions}-question scored sitting. Score {SHIELD_CONFIG.passPercentage}% or
+            higher and you earn a shareable, verifiable shield for {exam}.
           </p>
+
+          <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            Shield tiers
+          </h2>
+          <div className="rounded-xl p-4 mb-8" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+            <div className="space-y-3">
+              {SHIELD_TIERS.slice().reverse().map((tier) => (
+                <div key={tier.id} className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm" style={{ color: TOKENS.inkMuted }}>
+                    <Shield size={14} color={TOKENS.amber} /> {tier.label}
+                  </span>
+                  <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{tier.minPercentage}%+</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <h2 className="text-sm font-semibold mb-4" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
             Exam setup
@@ -162,11 +229,15 @@ export function MockExam({ exam, onExit }) {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Questions</span>
-                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{order.length}</span>
+                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{SHIELD_CONFIG.totalQuestions}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Time limit</span>
-                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>Untimed</span>
+                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{SHIELD_CONFIG.timeMinutes} min</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm" style={{ color: TOKENS.inkMuted }}>Pass mark</span>
+                <span className="text-sm font-medium" style={{ color: TOKENS.azure }}>{SHIELD_CONFIG.passPercentage}%</span>
               </div>
             </div>
           </div>
@@ -177,29 +248,29 @@ export function MockExam({ exam, onExit }) {
           <div className="space-y-4 mb-8">
             <div className="flex gap-3">
               <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>1</span>
+                <span style={{ color: TOKENS.azure, fontSize: "0.75rem" }}>1</span>
               </div>
               <div>
                 <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>No feedback during the exam</div>
-                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Results, explanations and your score appear only on the summary after you finish.</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Your score, the answers and explanations all appear only after you submit.</div>
               </div>
             </div>
             <div className="flex gap-3">
               <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>2</span>
+                <span style={{ color: TOKENS.azure, fontSize: "0.75rem" }}>2</span>
               </div>
               <div>
-                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Move freely and change answers</div>
-                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Navigate between questions at any time. Answers stay editable until final submission.</div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Auto-submit at time-up</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>When the timer reaches zero the exam submits automatically and you land on your results.</div>
               </div>
             </div>
             <div className="flex gap-3">
               <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${TOKENS.azure}20` }}>
-                <span style={{ color: TOKENS.azure, fontSize: '0.75rem' }}>3</span>
+                <span style={{ color: TOKENS.azure, fontSize: "0.75rem" }}>3</span>
               </div>
               <div>
-                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Take as long as you need</div>
-                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>There is no time limit — the clock only tracks how long you spent. Submit when you&apos;re ready.</div>
+                <div className="text-sm font-medium" style={{ color: TOKENS.ink }}>Retake as often as you like</div>
+                <div className="text-xs" style={{ color: TOKENS.inkMuted }}>Only your best sitting counts, so a weaker retake can never downgrade a shield you already hold.</div>
               </div>
             </div>
           </div>
@@ -209,7 +280,7 @@ export function MockExam({ exam, onExit }) {
             className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-medium text-sm"
             style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
           >
-            Start Exam <ArrowRight size={16} />
+            Start Shield Exam <ArrowRight size={16} />
           </button>
         </div>
       </div>
@@ -225,7 +296,10 @@ export function MockExam({ exam, onExit }) {
           </button>
         }
         right={
-          <span className="text-sm font-mono" style={{ color: TOKENS.inkMuted }}>{mm}:{ss}</span>
+          <div className="flex items-center gap-2">
+            <Clock size={14} color={secondsLeft < 300 ? TOKENS.red : TOKENS.amber} />
+            <span className="text-sm font-mono" style={{ color: secondsLeft < 300 ? TOKENS.red : TOKENS.ink }}>{mm}:{ss}</span>
+          </div>
         }
       />
 
@@ -234,17 +308,13 @@ export function MockExam({ exam, onExit }) {
         <span className="text-xs" style={{ color: TOKENS.inkMuted }}>{Object.keys(answers).length} answered</span>
       </div>
 
-      <div className="flex gap-1 mb-5">
+      <div className="flex gap-0.5 mb-5">
         {order.map((qq, i) => (
           <div
             key={qq.id}
             className="h-1.5 flex-1 rounded-full"
             style={{
-              background: answers[qq.id]
-                ? TOKENS.azure
-                : i === idx
-                ? TOKENS.inkMuted
-                : TOKENS.panelBorder,
+              background: answers[qq.id] ? TOKENS.azure : i === idx ? TOKENS.inkMuted : TOKENS.panelBorder,
             }}
           />
         ))}
@@ -282,4 +352,3 @@ export function MockExam({ exam, onExit }) {
     </div>
   );
 }
-

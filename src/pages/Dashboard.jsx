@@ -4,13 +4,13 @@ import { Link, Navigate, useOutletContext } from "react-router-dom";
 import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight, AlertCircle, Copy, Linkedin } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
-import { SITE_ORIGIN } from "../lib/examCatalog.js";
+import { SITE_ORIGIN, SHIELD_CONFIG } from "../lib/examCatalog.js";
 import { Footer } from "../components/Shared.jsx";
 import { BadgeShield } from "../components/BadgeShield.jsx";
 import { getOverallStats, getExamStats, getUser, getExamResults, getWeakDomainRecommendations, getWrongAnswerSummary, getPracticeMastery } from "../lib/progress.jsx";
 import { getAttempted, updateStreak } from "../lib/theme.jsx";
 import { useAuth } from "../lib/authContext.jsx";
-import { getEarnedBadges, badgeDocId, getTierForScore, BADGE_TIERS, MIN_PRACTICE_QUESTIONS_FOR_BADGE } from "../lib/badges.js";
+import { getEarnedBadges, badgeDocId, getTierForScore, BADGE_TIERS, SHIELD_TIERS, MIN_PRACTICE_QUESTIONS_FOR_BADGE } from "../lib/badges.js";
 
 function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
   const TOKENS = useTheme();
@@ -322,15 +322,23 @@ function AchievementsSection() {
             Earn a shareable badge for any exam
           </p>
           <p className="text-sm mb-3" style={{ color: TOKENS.inkMuted }}>
-            Practice at least {MIN_PRACTICE_QUESTIONS_FOR_BADGE} questions in one exam to unlock a shield — the
-            tier depends on your accuracy: {BADGE_TIERS.slice()
+            Sit the {SHIELD_CONFIG.totalQuestions}-question Shield exam for any exam and score{" "}
+            {SHIELD_CONFIG.passPercentage}%+ to earn a shield: {SHIELD_TIERS.slice()
+              .reverse()
+              .map((tier) => `${tier.label} at ${tier.minPercentage}%+`)
+              .join(", ")}
+            .
+          </p>
+          <p className="text-sm mb-3" style={{ color: TOKENS.inkMuted }}>
+            You can also earn one through practice alone — answer at least{" "}
+            {MIN_PRACTICE_QUESTIONS_FOR_BADGE} questions in one exam at {BADGE_TIERS.slice()
               .reverse()
               .map((tier) => `${tier.label} at ${tier.minPercentage}%+`)
               .join(", ")}
             .
           </p>
           <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
-            Only untimed practice questions count toward this — mock exams do not.
+            Only untimed practice questions count toward the practice route — mock exams do not.
           </p>
         </div>
       </div>

@@ -271,7 +271,7 @@ export function StudyGuides() {
                 3
               </span>
               <span style={{ color: TOKENS.inkMuted }}>
-                Take mock exams to assess your readiness
+                Sit the Shield exam to assess your readiness
               </span>
             </div>
           </div>
