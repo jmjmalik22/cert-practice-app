@@ -141,6 +141,46 @@ export const EXAM_CATALOG = {
       timeLimit: "Untimed",
     },
   },
+  "AI-200": {
+    slug: "ai-200",
+    label: "Azure AI Cloud Developer Associate",
+    questionCount: 60,
+    title: "Microsoft Azure AI-200 Practice Exam",
+    metaTitle: "AI-200 Practice Exams | FabricPrep",
+    metaDescription:
+      "Free AI-200 practice questions for the Microsoft Azure AI Cloud Developer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+    studyGuide: false,
+    mock: {
+      caseStudyQuestions: 0,
+      standaloneQuestions: 40,
+      totalQuestions: 40,
+      timeMinutes: 60,
+    },
+    practice: {
+      caseStudyCount: 0,
+      timeLimit: "Untimed",
+    },
+  },
+  "AI-300": {
+    slug: "ai-300",
+    label: "Machine Learning Operations Engineer Associate",
+    questionCount: 60,
+    title: "Microsoft Azure AI-300 Practice Exam",
+    metaTitle: "AI-300 Practice Exams | FabricPrep",
+    metaDescription:
+      "Free AI-300 practice questions for the Microsoft Machine Learning Operations Engineer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+    studyGuide: false,
+    mock: {
+      caseStudyQuestions: 0,
+      standaloneQuestions: 40,
+      totalQuestions: 40,
+      timeMinutes: 60,
+    },
+    practice: {
+      caseStudyCount: 0,
+      timeLimit: "Untimed",
+    },
+  },
   "DP-800": {
     slug: "dp-800",
     label: "Developing AI-Enabled Database Solutions",
@@ -190,8 +230,6 @@ export const EXAM_CODES = Object.freeze(Object.keys(EXAM_CATALOG));
 // sitemaps before content is available.
 export const COMING_SOON_EXAMS = Object.freeze([
   { code: "AI-103", label: "Azure AI Apps and Agents Developer Associate" },
-  { code: "AI-200", label: "Azure AI Cloud Developer Associate" },
-  { code: "AI-300", label: "Machine Learning Operations Engineer Associate" },
   { code: "AZ-305", label: "Azure Solutions Architect Expert" },
   { code: "AZ-400", label: "DevOps Engineer Expert" },
   { code: "DP-750", label: "Azure Databricks Data Engineer Associate" },
