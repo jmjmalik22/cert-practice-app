@@ -4,7 +4,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { RotateCcw, Clock, Bookmark, Flag, Lock, ArrowRight } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
-import { COMING_SOON_EXAMS, EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
+import { COMING_SOON_EXAMS, EXAM_CODES, EXAM_META, EXAM_CATEGORIES, CATEGORY_ORDER } from "../lib/examCatalog.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { BadgeShield } from "../components/BadgeShield.jsx";
 import { getEarnedBadges } from "../lib/badges.js";
@@ -125,6 +125,11 @@ export function Landing() {
   const TOKENS = useTheme();
   const totalQuestions = EXAM_CODES.reduce((sum, code) => sum + EXAM_META[code].questionCount, 0);
   const examCount = EXAM_CODES.length;
+
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const filterOptions = ["All", ...CATEGORY_ORDER];
+  const visibleExamCodes =
+    categoryFilter === "All" ? EXAM_CODES : EXAM_CODES.filter((code) => EXAM_CATEGORIES[code] === categoryFilter);
 
   const features = [
     { icon: RotateCcw, title: "Untimed practice", body: "Work through questions at your own pace, with instant explanations and domain filters." },
@@ -330,8 +335,29 @@ export function Landing() {
         <h2 className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
           Choose an exam
         </h2>
+        <div className="flex flex-wrap gap-2 mb-5" role="group" aria-label="Filter exams by category">
+          {filterOptions.map((option) => {
+            const active = option === categoryFilter;
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setCategoryFilter(option)}
+                aria-pressed={active}
+                className="text-xs font-medium px-3 py-1.5 rounded-full transition-colors"
+                style={{
+                  background: active ? TOKENS.azure : TOKENS.panel,
+                  color: active ? TOKENS.bgDeep : TOKENS.inkMuted,
+                  border: `1px solid ${active ? TOKENS.azure : TOKENS.panelBorder}`,
+                }}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14">
-          {EXAM_CODES.map((code) => {
+          {visibleExamCodes.map((code) => {
             const meta = EXAM_META[code];
             const attempted = getAttempted(code).length;
             const total = meta.questionCount;
