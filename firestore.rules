@@ -13,5 +13,14 @@ service cloud.firestore {
         && badgeId == request.auth.uid + '_' + request.resource.data.examCode;
       allow delete: if false;
     }
+
+    match /newsletterSignups/{signupId} {
+      allow create: if request.resource.data.keys().hasOnly(['email', 'createdAt'])
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() < 200
+        && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+[.][^@\\s]+$');
+      allow read, update, delete: if false;
+    }
   }
 }
