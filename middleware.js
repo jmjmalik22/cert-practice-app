@@ -57,7 +57,11 @@ export default async function middleware(request) {
     // next() doesn't reliably fall through to the vercel.json rewrite for a
     // path this same middleware matches, and 404s on Vercel — rewrite to the
     // SPA shell directly instead so real visitors reach the React app.
-    return rewrite(new URL("/index.html", request.url));
+    // Target "/" rather than "/index.html": with cleanUrls on, a request for
+    // the literal ".html" path 308-redirects, and a middleware rewrite
+    // destination goes through that same normalization, turning into a 404
+    // instead of served content.
+    return rewrite(new URL("/", request.url));
   }
 
   const url = new URL(request.url);
@@ -94,6 +98,6 @@ export default async function middleware(request) {
   } catch {
     // Firestore lookup failed for some other reason — fall through to the
     // normal SPA response rather than serve a broken crawler page.
-    return rewrite(new URL("/index.html", request.url));
+    return rewrite(new URL("/", request.url));
   }
 }
