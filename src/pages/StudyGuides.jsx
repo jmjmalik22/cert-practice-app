@@ -1,9 +1,16 @@
+import { useState } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
-import { COMING_SOON_EXAMS, EXAM_META, STUDY_GUIDE_EXAM_CODES } from "../lib/examCatalog.js";
+import {
+  COMING_SOON_EXAMS,
+  EXAM_META,
+  STUDY_GUIDE_EXAM_CODES,
+  EXAM_CATEGORIES,
+  CATEGORY_ORDER,
+} from "../lib/examCatalog.js";
 import { buildBreadcrumbSchema, SITE_ORIGIN } from "../lib/examCatalog.js";
 
 // Derived from STUDY_GUIDE_EXAM_CODES (driven by `studyGuide: true` in examCatalog.js)
@@ -70,6 +77,17 @@ function ResourceCard({ resource }) {
 export function StudyGuides() {
   const TOKENS = useTheme();
 
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const filterOptions = ["All", ...CATEGORY_ORDER];
+  const visibleResources =
+    categoryFilter === "All"
+      ? STUDY_RESOURCES
+      : STUDY_RESOURCES.filter((resource) => EXAM_CATEGORIES[resource.examCode] === categoryFilter);
+  const visibleComingSoon =
+    categoryFilter === "All"
+      ? COMING_SOON_EXAMS
+      : COMING_SOON_EXAMS.filter(({ code }) => EXAM_CATEGORIES[code] === categoryFilter);
+
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
@@ -111,18 +129,43 @@ export function StudyGuides() {
           </p>
         </div>
 
+        {/* Category filter */}
+        <div className="flex flex-wrap gap-2 mb-5" role="group" aria-label="Filter study guides by category">
+          {filterOptions.map((option) => {
+            const active = option === categoryFilter;
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setCategoryFilter(option)}
+                aria-pressed={active}
+                className="text-xs font-medium px-3 py-1.5 rounded-full transition-colors"
+                style={{
+                  background: active ? TOKENS.azure : TOKENS.panel,
+                  color: active ? TOKENS.bgDeep : TOKENS.inkMuted,
+                  border: `1px solid ${active ? TOKENS.azure : TOKENS.panelBorder}`,
+                }}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
+
         {/* Study Guides Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10 items-stretch">
-          {STUDY_RESOURCES.map((resource) => (
+          {visibleResources.map((resource) => (
             <ResourceCard key={resource.examCode} resource={resource} />
           ))}
         </div>
 
+        {visibleComingSoon.length > 0 && (
+        <>
         <h2 className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em" }}>
           More study guides coming soon
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10" aria-label="Study guides coming soon">
-          {COMING_SOON_EXAMS.map(({ code, label }) => (
+          {visibleComingSoon.map(({ code, label }) => (
             <div
               key={code}
               aria-disabled="true"
@@ -152,6 +195,8 @@ export function StudyGuides() {
             </div>
           ))}
         </div>
+        </>
+        )}
 
         {/* External Resources */}
         <div className="mb-8">

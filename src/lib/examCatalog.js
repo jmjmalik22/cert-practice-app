@@ -213,6 +213,13 @@ export const EXAM_CATEGORIES = Object.freeze({
   "AI-300": "AI",
   "DP-800": "Azure",
   "SC-900": "Security",
+  // Coming-soon exams (see COMING_SOON_EXAMS below) — categorized too so the
+  // study-guides category filter can place their placeholder cards correctly.
+  "AZ-305": "Azure",
+  "AZ-400": "Azure",
+  "DP-750": "Azure",
+  "SC-300": "Security",
+  "SC-500": "Security",
 });
 
 // Fixed display order for category filter pills, independent of catalog
