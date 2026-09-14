@@ -369,7 +369,7 @@ function AchievementsSection() {
           // domain mention in the caption silently replaces the correct
           // shield-image card (attached via the Share link itself) with a
           // generic homepage preview.
-          const shareCaption = `I just earned the ${badge.tierLabel} badge on FabricPrep's ${examName} Skills Assessment, scoring ${badge.score}%+! If you're studying for a Microsoft certification, FabricPrep has free practice questions and full mock exams to help you get there.`;
+          const shareCaption = `Just hit ${badge.tierLabel} on FabricPrep's ${examName} Skills Assessment — ${badge.score}%+! Free Microsoft cert practice if you're prepping too.`;
 
           return (
             <div
