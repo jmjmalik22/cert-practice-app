@@ -363,7 +363,13 @@ function AchievementsSection() {
               ? `${origin}/verify/${badgeDocId(user.uid, badge.examCode)}`
               : null;
           const examName = examMeta?.label ? `${badge.examCode} (${examMeta.label})` : badge.examCode;
-          const shareCaption = `I just earned the ${badge.tierLabel} badge on FabricPrep's ${examName} Skills Assessment, scoring ${badge.score}%+! If you're studying for a Microsoft certification, FabricPrep has free practice questions and full mock exams to help you get there — try it yourself at fabricprep.com.`;
+          // Deliberately no bare "fabricprep.com" mention here: LinkedIn's
+          // composer rescans pasted text for anything link-shaped and swaps
+          // the post's preview card to whatever it finds last, so a plain
+          // domain mention in the caption silently replaces the correct
+          // shield-image card (attached via the Share link itself) with a
+          // generic homepage preview.
+          const shareCaption = `I just earned the ${badge.tierLabel} badge on FabricPrep's ${examName} Skills Assessment, scoring ${badge.score}%+! If you're studying for a Microsoft certification, FabricPrep has free practice questions and full mock exams to help you get there.`;
 
           return (
             <div
