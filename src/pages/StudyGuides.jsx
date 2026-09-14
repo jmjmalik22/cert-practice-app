@@ -107,7 +107,7 @@ export function StudyGuides() {
             Study Guides
           </h1>
           <p style={{ color: TOKENS.inkMuted }}>
-            Comprehensive study materials for Microsoft certifications. Read online or download PDFs.
+            Comprehensive study materials for Microsoft certifications, free to read online.
           </p>
         </div>
 

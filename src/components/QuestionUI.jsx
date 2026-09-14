@@ -30,7 +30,7 @@ export function QuestionCard({ q, selected, revealed, onChoose, bookmarked, onTo
           </button>
         )}
       </div>
-      <div className="space-y-2.5">
+      <div className="space-y-2.5" role="radiogroup" aria-label="Answer options">
         {displayOptions.map((opt) => {
           const isSelected = selected === opt.id;
           const isCorrectOpt = opt.id === q.correct;
@@ -42,14 +42,26 @@ export function QuestionCard({ q, selected, revealed, onChoose, bookmarked, onTo
           } else if (isSelected) {
             border = TOKENS.azure; bg = `${TOKENS.azure}14`;
           }
+          const statusLabel = revealed
+            ? isCorrectOpt
+              ? " — correct answer"
+              : isSelected
+              ? " — your answer, incorrect"
+              : ""
+            : "";
           return (
             <button
               key={opt.id}
+              role="radio"
+              aria-checked={isSelected}
               onClick={() => onChoose(opt.id)}
               className="w-full text-left px-4 py-3 rounded-xl text-sm flex items-center justify-between transition-colors"
               style={{ border: `1px solid ${border}`, background: bg, color: TOKENS.ink }}
             >
-              <span>{opt.text}</span>
+              <span>
+                {opt.text}
+                {statusLabel && <span className="sr-only">{statusLabel}</span>}
+              </span>
               {revealed && isCorrectOpt && <CheckCircle2 size={16} color={TOKENS.green} />}
               {revealed && isSelected && !isCorrectOpt && <XCircle size={16} color={TOKENS.red} />}
             </button>

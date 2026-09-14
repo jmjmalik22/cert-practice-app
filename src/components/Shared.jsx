@@ -466,8 +466,18 @@ export function CookieConsent() {
   }, []);
 
   function choose(value) {
+    // Analytics dedupes its own script tag and never removes it once loaded,
+    // so declining after it already loaded under implied consent can't stop
+    // that tag mid-session — only a fresh page load reads the new choice
+    // before the script has a chance to inject itself again.
+    const analyticsAlreadyLoaded = !!document.head.querySelector(
+      'script[src*="vercel-scripts.com"], script[src*="_vercel/insights"], script[src*="_vercel/speed-insights"]'
+    );
     setCookieConsent(value);
     setVisible(false);
+    if (value === "declined" && analyticsAlreadyLoaded) {
+      window.location.reload();
+    }
   }
 
   if (!visible) return null;
@@ -481,7 +491,9 @@ export function CookieConsent() {
     >
       <div className="max-w-5xl mx-auto w-full flex flex-col sm:flex-row items-center gap-4">
         <p className="text-xs flex-1 text-center sm:text-left" style={{ color: TOKENS.inkMuted }}>
-          FabricPrep uses local storage to remember your theme, progress, and preferences on this device. We don&apos;t use it for third-party advertising.{" "}
+          FabricPrep uses local storage to remember your theme, progress, and preferences on this device, plus
+          privacy-friendly analytics to understand aggregate usage — never for third-party advertising. Declining
+          turns the analytics off for this device.{" "}
           <Link to="/privacy" className="underline" style={{ color: TOKENS.ink }}>Privacy Policy</Link>
         </p>
         <div className="flex gap-2 flex-shrink-0">

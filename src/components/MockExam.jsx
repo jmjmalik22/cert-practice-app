@@ -1,18 +1,20 @@
 import { useState, useEffect, useRef } from "react";
-import { CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+import { CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft, RotateCcw } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, markAttempted, shuffle } from "../lib/theme.jsx";
 import { MOCK_CONFIG } from "../lib/examCatalog.js";
 import { QUESTION_BANK } from "../lib/questionBank/index.js";
 import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
+import { useExamExitGuard, EXAM_EXIT_WARNING } from "../lib/examGuard.js";
 import { Chip } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
-export function MockExam({ exam, onExit }) {
+export function MockExam({ exam, onExit, isAuthenticated, onStartPractice }) {
   const TOKENS = useTheme();
   const pool = QUESTION_BANK[exam].questions;
   const totalQuestions = Math.min(MOCK_CONFIG.totalQuestions, pool.length);
 
-  const [order] = useState(() => shuffle(pool).slice(0, totalQuestions));
+  const [order, setOrder] = useState(() => shuffle(pool).slice(0, totalQuestions));
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -30,6 +32,10 @@ export function MockExam({ exam, onExit }) {
   useEffect(() => {
     elapsedRef.current = elapsedSeconds;
   }, [elapsedSeconds]);
+
+  // Only guard the active question screen — nothing is at stake yet on the
+  // setup screen, and the attempt is already saved once results are shown.
+  useExamExitGuard(!showSetup && !finished);
 
   function finishExam() {
     if (finishedRef.current) return;
@@ -79,6 +85,30 @@ export function MockExam({ exam, onExit }) {
     setIdx(Math.max(0, Math.min(order.length - 1, i)));
   }
 
+  function handleExit() {
+    if (window.confirm(EXAM_EXIT_WARNING)) onExit();
+  }
+
+  function handleSubmitClick() {
+    const unanswered = order.length - Object.keys(answers).length;
+    if (unanswered > 0) {
+      const noun = unanswered === 1 ? "question" : "questions";
+      if (!window.confirm(`You have ${unanswered} unanswered ${noun}. Submit anyway?`)) return;
+    }
+    finishExam();
+  }
+
+  function restart() {
+    setOrder(shuffle(pool).slice(0, totalQuestions));
+    setAnswers({});
+    setIdx(0);
+    setElapsedSeconds(0);
+    elapsedRef.current = 0;
+    finishedRef.current = false;
+    setFinished(false);
+    setShowSetup(false);
+  }
+
   if (finished) {
     const correctCount = order.filter((qq) => answers[qq.id] === qq.correct).length;
     return (
@@ -126,8 +156,46 @@ export function MockExam({ exam, onExit }) {
           })}
         </div>
 
-        <div className="flex justify-center mt-8">
-          <button onClick={onExit} className="px-5 py-2.5 rounded-full font-medium text-sm" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>
+        <div className="mt-8 rounded-2xl p-5 text-center" style={{ background: `${TOKENS.azure}0D`, border: `1px solid ${TOKENS.azure}35` }}>
+          {isAuthenticated ? (
+            <>
+              <div className="text-sm font-medium mb-3" style={{ color: TOKENS.ink }}>
+                That&apos;s just {order.length} of the {pool.length} {exam} questions available.
+              </div>
+              <button
+                onClick={onStartPractice}
+                className="px-5 py-2.5 rounded-full font-medium text-sm"
+                style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+              >
+                Practice all {pool.length} questions
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="text-sm font-medium mb-3" style={{ color: TOKENS.ink }}>
+                Create a free account to unlock all {pool.length} {exam} questions, save your progress, and sit
+                the scored Shield exam.
+              </div>
+              <Link
+                to="/login?mode=signup"
+                className="inline-block px-5 py-2.5 rounded-full font-medium text-sm"
+                style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+              >
+                Create free account
+              </Link>
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center justify-center gap-4 mt-5">
+          <button
+            onClick={restart}
+            className="flex items-center gap-1.5 text-sm font-medium"
+            style={{ color: TOKENS.ink }}
+          >
+            <RotateCcw size={14} /> Retake mock exam
+          </button>
+          <button onClick={onExit} className="text-sm" style={{ color: TOKENS.inkMuted }}>
             Back to home
           </button>
         </div>
@@ -220,7 +288,7 @@ export function MockExam({ exam, onExit }) {
     <div className="min-h-full flex flex-col px-6 py-8 max-w-2xl mx-auto w-full">
       <TopBar
         left={
-          <button onClick={onExit} className="flex items-center gap-1 text-sm" style={{ color: TOKENS.inkMuted }}>
+          <button onClick={handleExit} className="flex items-center gap-1 text-sm" style={{ color: TOKENS.inkMuted }}>
             <ChevronLeft size={16} /> Exit
           </button>
         }
@@ -263,7 +331,7 @@ export function MockExam({ exam, onExit }) {
         </button>
         {idx === order.length - 1 ? (
           <button
-            onClick={() => finishExam()}
+            onClick={handleSubmitClick}
             className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm"
             style={{ background: TOKENS.green, color: TOKENS.bgDeep }}
           >

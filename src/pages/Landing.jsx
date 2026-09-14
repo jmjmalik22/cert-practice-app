@@ -271,16 +271,25 @@ export function Landing() {
           Pass your Microsoft certification exam with <span style={{ color: TOKENS.azure }}>confidence</span>.
         </h1>
         <p className="mt-4 text-base max-w-lg relative z-10" style={{ color: TOKENS.inkMuted }}>
-          {totalQuestions}+ realistic practice questions for Fabric certification and Azure certification exams. Free DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, DP-800 prep with a scored Shield exam.
+          {totalQuestions}+ realistic practice questions across {examCount} Microsoft certification exams —{" "}
+          {CATEGORY_ORDER.join(", ")} — with a scored Shield exam.
         </p>
         <div className="mt-6 flex items-center gap-2 text-xs relative z-10">
           <div className="flex items-center gap-1 px-3 py-1 rounded-full" style={{ background: `${TOKENS.green}15`, color: TOKENS.green }}>
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: TOKENS.green }} /> Free forever
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: TOKENS.green }} /> Free while in beta
           </div>
           <div className="flex items-center gap-1 px-3 py-1 rounded-full" style={{ background: `${TOKENS.amber}15`, color: TOKENS.amber }}>
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: TOKENS.amber }} /> Completely free signup
           </div>
         </div>
+
+        <a
+          href="#choose-exam"
+          className="mt-7 inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium text-sm relative z-10"
+          style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+        >
+          Start practicing free <ArrowRight size={16} />
+        </a>
 
         <div className="mt-10 w-full max-w-md relative z-10">
           {/* Screenshot background cards */}
@@ -297,7 +306,7 @@ export function Landing() {
           >
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>DP-700 · sample question</span>
-              <span className="text-xs" style={{ color: TOKENS.inkMuted }}>1 of 52</span>
+              <span className="text-xs" style={{ color: TOKENS.inkMuted }}>1 of {EXAM_META["DP-700"].questionCount}</span>
             </div>
           <div className="text-sm mb-4" style={{ color: TOKENS.ink }}>
             Which file format is the default storage format for tables in a Fabric Lakehouse?
@@ -331,7 +340,7 @@ export function Landing() {
 
       <EarnedBadgeBanner />
 
-      <div className="px-6 sm:px-10 pb-14 max-w-3xl mx-auto w-full">
+      <div id="choose-exam" className="px-6 sm:px-10 pb-14 max-w-3xl mx-auto w-full">
         <h2 className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
           Choose an exam
         </h2>
