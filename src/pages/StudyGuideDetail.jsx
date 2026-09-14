@@ -38,6 +38,7 @@ const GUIDES = {
       { label: "Official DP-700 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-700", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
       { label: "DP-700 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/fabric-data-engineer-associate/", why: "Official exam facts — format, renewal period, and prerequisites" },
       { label: "Fabric data engineering docs", url: "https://learn.microsoft.com/en-us/fabric/data-engineering/data-engineering-overview", why: "Core lakehouse, pipeline, and Spark concepts the exam draws from" },
+      { label: "Learn Microsoft Fabric with Will — DP-700 Exam Full Course", url: "https://www.youtube.com/watch?v=KiB4eAeFRsw", why: "A single long-form video walkthrough of every DP-700 skill area, good for a structured one-sitting review" },
     ],
   },
   "DP-600": {
@@ -73,6 +74,9 @@ const GUIDES = {
       { label: "Official DP-600 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-600", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
       { label: "DP-600 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/fabric-analytics-engineer-associate/", why: "Official exam facts — format, renewal period, and prerequisites" },
       { label: "Fabric lakehouse & warehouse docs", url: "https://learn.microsoft.com/en-us/fabric/data-engineering/lakehouse-overview", why: "Core storage and modeling concepts the exam draws from" },
+      { label: "Learn Microsoft Fabric with Will — DP-600 Exam Full Course", url: "https://www.youtube.com/watch?v=Bjk93hi21QM", why: "Comprehensive single-video course spanning semantic models, DAX, and governance topics on the exam" },
+      { label: "Data Mozart (Nikola Ilic) — DP-600 Fabric Analytics Engineer free workshop", url: "https://www.youtube.com/watch?v=Xv4_ToKF66U", why: "A live workshop from a Fabric MVP walking through ingestion-to-modeling scenarios the exam draws on" },
+      { label: "Learn With Priyanka — DP-600 practice questions with explanations", url: "https://www.youtube.com/watch?v=gFscPTp7hb4", why: "A large bank of practice questions with explanations, useful for self-testing after studying the concepts" },
     ],
   },
   "AZ-900": {
@@ -111,6 +115,8 @@ const GUIDES = {
       { label: "Official AZ-900 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
       { label: "AZ-900 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/", why: "Official exam facts — confirms it never expires, so no renewal to track" },
       { label: "Cloud Adoption Framework", url: "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/", why: "Ties architecture and governance concepts together with real guidance" },
+      { label: "John Savill's Technical Training — AZ-900 Study Cram", url: "https://www.youtube.com/watch?v=tQp1YkB2Tgs", why: "A dense, whiteboard-driven last-minute review that hits every exam objective in one sitting" },
+      { label: "freeCodeCamp / ExamPro (Andrew Brown) — AZ-900 Full Course", url: "https://www.youtube.com/watch?v=5abffC-K40c", why: "A full beginner-friendly walkthrough of cloud concepts and core Azure services" },
     ],
   },
   "DP-900": {
@@ -150,6 +156,8 @@ const GUIDES = {
       { label: "DP-900 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-data-fundamentals/", why: "Official exam facts — confirms it never expires, so no renewal to track" },
       { label: "Azure Cosmos DB docs", url: "https://learn.microsoft.com/en-us/azure/cosmos-db/", why: "Canonical reference for the non-relational data domain" },
       { label: "Azure SQL docs", url: "https://learn.microsoft.com/en-us/azure/azure-sql/", why: "Canonical reference for the relational data domain" },
+      { label: "ExamPro (Andrew Brown) — DP-900 Full Course to PASS the Exam", url: "https://www.youtube.com/watch?v=P3qmqUZJ7l0", why: "Covers relational vs. non-relational data and the Azure data service lineup in depth with demos" },
+      { label: "John Savill's Technical Training — DP-900 Study Cram v2", url: "https://www.youtube.com/watch?v=0gtpasITVnk", why: "A compact, updated review pass that ties the data-service concepts together right before the exam" },
     ],
   },
   "AZ-104": {
@@ -184,6 +192,8 @@ const GUIDES = {
       { label: "AZ-104 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/", why: "Official exam facts — format, renewal period, and prerequisites" },
       { label: "Azure virtual machines docs", url: "https://learn.microsoft.com/en-us/azure/virtual-machines/", why: "Core compute concepts behind the deploy-and-manage-compute domain" },
       { label: "Azure virtual network docs", url: "https://learn.microsoft.com/en-us/azure/virtual-network/", why: "Core networking concepts behind the virtual-networking domain" },
+      { label: "John Savill's Technical Training — AZ-104 Study Cram v2", url: "https://www.youtube.com/watch?v=0Knf9nub4-k", why: "A nearly-4-hour high-density review spanning Entra ID, networking, storage, VMs, and RBAC" },
+      { label: "freeCodeCamp / ExamPro (Andrew Brown) — AZ-104 Full Course", url: "https://www.youtube.com/watch?v=10PbGbTUSAg", why: "An 11-hour full-length course that builds and configures the Azure resources AZ-104 covers, giving hands-on context" },
     ],
   },
   "AI-901": {
@@ -218,6 +228,9 @@ const GUIDES = {
       { label: "Official AI-901 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-901", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
       { label: "AI-901 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-fundamentals/", why: "Official exam facts — confirms it never expires, so no renewal to track" },
       { label: "Azure AI services docs", url: "https://learn.microsoft.com/en-us/azure/ai-services/", why: "Umbrella docs for the Foundry services referenced throughout the exam" },
+      { label: "BestITCourses — AI-901 Introduction to AI in Azure (Full Course)", url: "https://www.youtube.com/watch?v=fnNeyj9Y16E", why: "A complete beginner-to-advanced walkthrough of the whole AI-901 syllabus in one sitting" },
+      { label: "John Savill's Technical Training — AI-901 Study Cram", url: "https://www.youtube.com/watch?v=a-yuXz_uV30", why: "A dense, fast-paced cram session ideal for last-minute review right before the exam" },
+      { label: "Tech with Jaspal — AI-901 Weekend Exam Cram", url: "https://www.youtube.com/watch?v=zVLnZh5opG8", why: "Pairs concept review with sample practice questions and explanations to gauge readiness" },
     ],
   },
   "PL-300": {
@@ -258,6 +271,9 @@ const GUIDES = {
       { label: "PL-300 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/data-analyst-associate/", why: "Official exam facts — format, renewal period, and prerequisites" },
       { label: "Prepare data for analysis with Power BI", url: "https://learn.microsoft.com/en-us/training/paths/prepare-data-power-bi/", why: "Free hands-on learning path covering the largest exam domain" },
       { label: "Power BI docs", url: "https://learn.microsoft.com/en-us/power-bi/", why: "Canonical product reference for every domain" },
+      { label: "The Power BI Guy — How to Pass the PL-300 Power BI Exam", url: "https://www.youtube.com/watch?v=nd1oR7w9Cxw", why: "Concise, exam-strategy-focused video aimed specifically at first-time PL-300 candidates" },
+      { label: "Pragmatic Works — Conquering PL-300 [Full Course]", url: "https://www.youtube.com/watch?v=BDGzVpt1xCg", why: "An established BI training studio's full-length course covering the exam's data prep, modeling, and visualization domains" },
+      { label: "Matt Mike — How to pass the PL-300 Power BI exam", url: "https://www.youtube.com/watch?v=a35rFVTsuh4", why: "A blunt, updated review of what actually shows up on the current exam" },
     ],
   },
   "DP-800": {
@@ -333,6 +349,8 @@ const GUIDES = {
       { label: "SC-900 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/", why: "Official exam facts — confirms it never expires, so no renewal to track" },
       { label: "Security, compliance, and identity concepts", url: "https://learn.microsoft.com/en-us/training/paths/describe-concepts-of-security-compliance-identity/", why: "Free official 4-part learning path covering the whole exam" },
       { label: "Microsoft Purview docs", url: "https://learn.microsoft.com/en-us/purview/", why: "Canonical reference for the compliance domain" },
+      { label: "freeCodeCamp (Andrew Brown/ExamPro) — SC-900 Full Course to PASS the Exam", url: "https://www.youtube.com/watch?v=LLKza5oULAA", why: "A complete, well-structured walkthrough of every SC-900 domain — Zero Trust, shared responsibility, Entra ID, and compliance tooling" },
+      { label: "John Savill's Technical Training — SC-900 Study Cram", url: "https://youtu.be/Bz-8jM3jg-8", why: "A dense, fast-paced review video, ideal as a final recap once the fundamentals are covered" },
     ],
   },
   "AI-103": {
@@ -374,6 +392,9 @@ const GUIDES = {
       { label: "Official AI-103 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-103", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
       { label: "Develop AI agents on Azure", url: "https://learn.microsoft.com/en-us/training/paths/develop-ai-agents-on-azure/", why: "Free hands-on learning path matching the largest exam domain" },
       { label: "Azure AI services docs", url: "https://learn.microsoft.com/en-us/azure/ai-services/", why: "Canonical reference for the Foundry Tools covered throughout the exam" },
+      { label: "Citizen Developer — AI-103 Full Course: Pass the Exam!", url: "https://www.youtube.com/watch?v=nUIPbpVjOc4", why: "Built specifically around the current AI-103 objectives (Copilot Studio, MCP, agentic AI), reflecting the exam's newest content" },
+      { label: "John Savill's Technical Training — AI-103 Study Cram", url: "https://www.youtube.com/watch?v=WK2BvjOYTCQ", why: "A condensed cram session useful for reinforcing terminology and service boundaries after initial study" },
+      { label: "Tech with Jaspal — Microsoft Foundry Explained", url: "https://www.youtube.com/watch?v=0AQ1EbiJZhQ", why: "Focuses specifically on Microsoft Foundry, the platform the exam is centered on" },
     ],
   },
   "AI-200": {
@@ -410,6 +431,7 @@ const GUIDES = {
       { label: "Official AI-200 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
       { label: "Implement containerized solutions", url: "https://learn.microsoft.com/en-us/training/paths/az-204-implement-iaas-solutions/", why: "Covers Container Registry, Container Apps, and AKS — the largest exam domain" },
       { label: "Azure Cosmos DB docs", url: "https://learn.microsoft.com/en-us/azure/cosmos-db/", why: "Canonical reference for the data-management domain" },
+      { label: "Tech with Jaspal — Weekend Exam Cram: AI-200", url: "https://www.youtube.com/watch?v=7IEDtZlpw9I", why: "One of the few AI-200-specific videos so far, combining concept review with practice questions" },
     ],
   },
   "AI-300": {
