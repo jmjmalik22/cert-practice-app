@@ -7,6 +7,7 @@ import { getExamStats } from "../lib/progress.jsx";
 import { COMING_SOON_EXAMS, EXAM_CODES, EXAM_META, EXAM_CATEGORIES, CATEGORY_ORDER } from "../lib/examCatalog.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { BadgeShield } from "../components/BadgeShield.jsx";
+import { NewsletterSignup } from "../components/NewsletterSignup.jsx";
 import { getEarnedBadges } from "../lib/badges.js";
 
 const TIER_RANK = { elite: 0, mastery: 1, proven: 2 };
@@ -642,6 +643,8 @@ export function Landing() {
             </a>
           </div>
         </div>
+
+        <NewsletterSignup />
       </div>
 
       <Footer />
