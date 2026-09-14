@@ -541,17 +541,17 @@ export function StudyGuideDetail() {
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
-        <title>{code} Study Guide | FabricPrep</title>
+        <title>{code}: {meta.label} Study Guide | FabricPrep</title>
         <link rel="canonical" href={`https://fabricprep.com/study-guides/${examSlug}`} />
         <meta
           name="description"
-          content={`A step-by-step study path for the ${code} exam — prerequisites, official resources, and a study plan, plus free practice questions.`}
+          content={`A step-by-step study path for the ${code} (${meta.label}) exam — prerequisites, official resources, and a study plan, plus free practice questions.`}
         />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Article",
-            headline: `${code} Study Guide`,
+            headline: `${meta.label} Study Guide`,
             about: meta.title,
             author: { "@type": "Person", name: "Jitendra Singh Malik" },
             publisher: { "@type": "Organization", name: "FabricPrep" },
@@ -562,7 +562,7 @@ export function StudyGuideDetail() {
             buildBreadcrumbSchema([
               { name: "Home", path: "" },
               { name: "Study Guides", path: "study-guides" },
-              { name: `${code} Study Guide` },
+              { name: `${code}: ${meta.label} Study Guide` },
             ])
           )}
         </script>
@@ -580,7 +580,7 @@ export function StudyGuideDetail() {
           {code}
         </div>
         <h1 className="text-2xl sm:text-3xl font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-          {code} Study Guide
+          {meta.label} Study Guide
         </h1>
         <p className="mt-2 text-sm" style={{ color: TOKENS.inkMuted }}>
           A study path for {meta.title} — what to know before you start, and the order worth doing things in.
