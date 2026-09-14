@@ -126,6 +126,7 @@ export function Landing() {
   const TOKENS = useTheme();
   const totalQuestions = EXAM_CODES.reduce((sum, code) => sum + EXAM_META[code].questionCount, 0);
   const examCount = EXAM_CODES.length;
+  const examCodeList = `${EXAM_CODES.slice(0, -1).join(", ")}, and ${EXAM_CODES[EXAM_CODES.length - 1]}`;
 
   const [categoryFilter, setCategoryFilter] = useState("All");
   const filterOptions = ["All", ...CATEGORY_ORDER];
@@ -192,7 +193,7 @@ export function Landing() {
         <link rel="canonical" href="https://fabricprep.com/" />
         <meta
           name="description"
-          content={`${totalQuestions}+ free Fabric Prep certification practice questions for DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, and DP-800. Prepare for Microsoft Fabric and Azure exams with a scored Shield exam sourced from official Microsoft Learn documentation.`}
+          content={`${totalQuestions}+ free Fabric Prep certification practice questions for ${examCodeList}. Prepare for Microsoft Fabric and Azure exams with a scored Shield exam sourced from official Microsoft Learn documentation.`}
         />
         <meta name="keywords" content="fabric certification, microsoft fabric certification, fabric certification exam, fabric prep, fabricprep, dp 700 prep, dp 600 prep, dp 900 prep, az 900 prep, certification prep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, azure certification, fabric data engineer, fabric analytics engineer, data engineer prep, analytics engineer prep, fabric study guide, azure study guide" />
         <meta property="og:type" content="website" />
@@ -212,7 +213,7 @@ export function Landing() {
             "@type": "WebSite",
             name: "Fabric Prep",
             url: "https://fabricprep.com/",
-            description: "Free Fabric prep and Microsoft certification practice exams for DP-700, DP-600, AZ-900, DP-900, AZ-104, AI-901, PL-300, DP-800, and other Azure certifications.",
+            description: `Free Fabric prep and Microsoft certification practice exams for ${examCodeList}.`,
             alternateName: ["Fabric Prep", "fabric prep", "FabricPrep"],
           })}
         </script>
