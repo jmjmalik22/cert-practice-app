@@ -291,6 +291,21 @@ export const AZ104_TOPIC_IDS = Object.freeze([
   "monitoring",
 ]);
 
+export const AI200_TOPIC_IDS = Object.freeze([
+  "containerized-solutions",
+  "ai-data-management",
+  "connect-consume-services",
+  "secure-monitor-troubleshoot",
+]);
+
+export const AI300_TOPIC_IDS = Object.freeze([
+  "mlops-infrastructure",
+  "ml-lifecycle-operations",
+  "genaiops-infrastructure",
+  "genai-quality-observability",
+  "genai-optimization",
+]);
+
 export const DP800_TOPIC_IDS = Object.freeze([
   "design-develop-database-solutions",
   "secure-optimize-deploy-database-solutions",
@@ -303,6 +318,8 @@ export const DP800_TOPIC_IDS = Object.freeze([
 export const STUDY_GUIDE_TOPIC_IDS_BY_EXAM = Object.freeze({
   "DP-700": DP700_TOPIC_IDS,
   "AZ-104": AZ104_TOPIC_IDS,
+  "AI-200": AI200_TOPIC_IDS,
+  "AI-300": AI300_TOPIC_IDS,
   "DP-800": DP800_TOPIC_IDS,
 });
 
