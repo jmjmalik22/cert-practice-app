@@ -5,10 +5,26 @@ import { About } from "./pages/About.jsx";
 import { AuthProvider } from "./lib/authContext.jsx";
 import { ProgressSyncProvider } from "./lib/progressSyncProvider.jsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
+import { RouteErrorBoundary } from "./components/RouteErrorBoundary.jsx";
 import { ROUTE_PATHS } from "./lib/examCatalog.js";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./index.css";
+
+// A new deploy replaces JS chunk files with different hashed filenames. If a
+// visitor still has an older page open, navigating to a route whose chunk was
+// removed makes Vite's dynamic import() 404. Vite emits this event in that
+// case; reload once to pick up the current build instead of showing an error.
+if (typeof window !== "undefined") {
+  window.addEventListener("vite:preloadError", () => {
+    const key = "fp-preload-reload-at";
+    const last = Number(sessionStorage.getItem(key) || 0);
+    if (Date.now() - last > 10_000) {
+      sessionStorage.setItem(key, String(Date.now()));
+      window.location.reload();
+    }
+  });
+}
 
 // Wrap the App with AuthProvider
 function AppWithAuth() {
@@ -29,6 +45,7 @@ const routes = [
   {
     path: "/",
     element: <AppWithAuth />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       { index: true, element: <Landing /> },
       { path: "about", element: <About /> },
