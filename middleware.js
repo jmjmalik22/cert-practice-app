@@ -1,4 +1,4 @@
-import { next } from "@vercel/edge";
+import { rewrite } from "@vercel/edge";
 
 // Only intervene on badge verification links — everywhere else falls
 // straight through to the normal static/SPA response.
@@ -54,7 +54,10 @@ function metaResponse(fields) {
 export default async function middleware(request) {
   const userAgent = request.headers.get("user-agent") || "";
   if (!CRAWLER_USER_AGENT.test(userAgent)) {
-    return next();
+    // next() doesn't reliably fall through to the vercel.json rewrite for a
+    // path this same middleware matches, and 404s on Vercel — rewrite to the
+    // SPA shell directly instead so real visitors reach the React app.
+    return rewrite(new URL("/index.html", request.url));
   }
 
   const url = new URL(request.url);
@@ -91,6 +94,6 @@ export default async function middleware(request) {
   } catch {
     // Firestore lookup failed for some other reason — fall through to the
     // normal SPA response rather than serve a broken crawler page.
-    return next();
+    return rewrite(new URL("/index.html", request.url));
   }
 }
