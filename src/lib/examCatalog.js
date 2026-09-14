@@ -214,6 +214,29 @@ export function getProductIcon(examCode) {
   return PRODUCT_ICONS[examCode] || null;
 }
 
+// Broad product category each exam belongs to, used for the landing-page
+// exam filter. Distinct from PRODUCT_ICONS: SC-900 has no single logo but
+// still needs a category, and AI-* exams share Azure's icon but read as
+// their own category to users.
+export const EXAM_CATEGORIES = Object.freeze({
+  "DP-700": "Fabric",
+  "DP-600": "Fabric",
+  "AZ-900": "Azure",
+  "DP-900": "Azure",
+  "AZ-104": "Azure",
+  "AI-901": "AI",
+  "PL-300": "Power BI",
+  "AI-103": "AI",
+  "AI-200": "AI",
+  "AI-300": "AI",
+  "DP-800": "Azure",
+  "SC-900": "Security",
+});
+
+// Fixed display order for category filter pills, independent of catalog
+// insertion order.
+export const CATEGORY_ORDER = Object.freeze(["Fabric", "Azure", "AI", "Power BI", "Security"]);
+
 // Exams planned for future question-bank releases. These are intentionally
 // separate from EXAM_CATALOG so they cannot create routes or appear in SEO
 // sitemaps before content is available.
