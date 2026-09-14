@@ -473,6 +473,14 @@ const GUIDES = {
   },
 };
 
+// Exam codes with a downloadable PDF cheatsheet in /public, keyed to the filename.
+const PDF_GUIDE_FILES = {
+  "DP-700": "DP_700_Guide.pdf",
+  "AI-200": "AI_200_Guide.pdf",
+  "AI-300": "AI_300_Guide.pdf",
+  "DP-800": "DP_800_Guide.pdf",
+};
+
 // Example activities for the "Get hands-on practice" step, tailored to the
 // broad product category (see EXAM_CATEGORIES) so the suggestion doesn't read
 // as a non-sequitur on exams outside data engineering.
@@ -556,12 +564,12 @@ export function StudyGuideDetail() {
   const steps = buildSteps(code, meta, guide);
 
   const quickLinks = [];
-  if (code === "DP-700") {
+  if (PDF_GUIDE_FILES[code]) {
     quickLinks.push({
-      href: "/DP_700_Guide.pdf",
+      href: `/${PDF_GUIDE_FILES[code]}`,
       icon: FileText,
       label: "Download PDF cheatsheet",
-      desc: "Complete DP-700 study guide in PDF format",
+      desc: `Complete ${code} study guide in PDF format`,
     });
   }
   if (code === "DP-700" || code === "DP-600") {
