@@ -362,6 +362,8 @@ function AchievementsSection() {
             isAuthenticated && user?.uid
               ? `${origin}/verify/${badgeDocId(user.uid, badge.examCode)}`
               : null;
+          const examName = examMeta?.label ? `${badge.examCode} (${examMeta.label})` : badge.examCode;
+          const shareCaption = `I just earned the ${badge.tierLabel} badge on FabricPrep's ${examName} Skills Assessment, scoring ${badge.score}%+! If you're studying for a Microsoft certification, FabricPrep has free practice questions and full mock exams to help you get there — try it yourself at fabricprep.com.`;
 
           return (
             <div
@@ -377,8 +379,14 @@ function AchievementsSection() {
                 size={160}
               />
               {verifyUrl ? (
-                <div className="flex flex-col items-center mt-3">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col items-center mt-3 w-full">
+                  <p
+                    className="text-xs text-left w-full p-2.5 rounded-lg mb-2"
+                    style={{ background: TOKENS.bgDeep, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.inkMuted }}
+                  >
+                    {shareCaption}
+                  </p>
+                  <div className="flex items-center gap-2 flex-wrap justify-center">
                     <button
                       onClick={() => {
                         navigator.clipboard?.writeText(verifyUrl);
@@ -390,28 +398,30 @@ function AchievementsSection() {
                     >
                       <Copy size={13} /> {copiedExam === badge.examCode ? "Copied!" : "Copy link"}
                     </button>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard?.writeText(shareCaption);
+                        setCaptionCopiedExam(badge.examCode);
+                        setTimeout(() => setCaptionCopiedExam(null), 2000);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                      style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}
+                    >
+                      <Copy size={13} /> {captionCopiedExam === badge.examCode ? "Copied!" : "Copy caption"}
+                    </button>
                     <a
                       href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={() => {
-                        const examName = examMeta?.label ? `${badge.examCode} (${examMeta.label})` : badge.examCode;
-                        const caption = `I just earned the ${badge.tierLabel} badge on FabricPrep's ${examName} Skills Assessment, scoring ${badge.score}%+! If you're studying for a Microsoft certification, FabricPrep has free practice questions and full mock exams to help you get there — try it yourself at fabricprep.com.`;
-                        navigator.clipboard?.writeText(caption);
-                        setCaptionCopiedExam(badge.examCode);
-                        setTimeout(() => setCaptionCopiedExam(null), 4000);
-                      }}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
                       style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
                     >
                       <Linkedin size={13} /> Share
                     </a>
                   </div>
-                  {captionCopiedExam === badge.examCode && (
-                    <p className="text-xs mt-2" style={{ color: TOKENS.inkMuted }}>
-                      Caption copied — paste it into the LinkedIn post box.
-                    </p>
-                  )}
+                  <p className="text-[11px] mt-2" style={{ color: TOKENS.inkMuted }}>
+                    LinkedIn can't pre-fill post text — copy the caption above and paste it in.
+                  </p>
                 </div>
               ) : (
                 <Link to="/login" className="text-xs mt-3" style={{ color: TOKENS.azure }}>
