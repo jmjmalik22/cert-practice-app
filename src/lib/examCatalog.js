@@ -291,12 +291,19 @@ export const AZ104_TOPIC_IDS = Object.freeze([
   "monitoring",
 ]);
 
+export const DP800_TOPIC_IDS = Object.freeze([
+  "design-develop-database-solutions",
+  "secure-optimize-deploy-database-solutions",
+  "implement-ai-capabilities-database-solutions",
+]);
+
 // Registry of exam -> topic-page IDs, used to generate SSG routes and
 // sitemap entries. Keep in sync with src/lib/studyTopics/index.js, which
 // holds the actual page content for the same topic IDs.
 export const STUDY_GUIDE_TOPIC_IDS_BY_EXAM = Object.freeze({
   "DP-700": DP700_TOPIC_IDS,
   "AZ-104": AZ104_TOPIC_IDS,
+  "DP-800": DP800_TOPIC_IDS,
 });
 
 export const ROUTE_PATHS = Object.freeze({

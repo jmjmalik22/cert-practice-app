@@ -1,5 +1,6 @@
 import { DP700_TOPICS } from "./dp700.js";
 import { AZ104_TOPICS } from "./az104.js";
+import { DP800_TOPICS } from "./dp800.js";
 
 // Registry of exam -> in-depth, per-domain study guide topics.
 // Adding a new exam here (plus its topic IDs in examCatalog.js) is
@@ -7,6 +8,7 @@ import { AZ104_TOPICS } from "./az104.js";
 export const STUDY_TOPICS_BY_EXAM = {
   "DP-700": DP700_TOPICS,
   "AZ-104": AZ104_TOPICS,
+  "DP-800": DP800_TOPICS,
 };
 
 export function getStudyTopics(examCode) {
