@@ -3,7 +3,7 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, CheckCircle2, FileText, BookOpen } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { EXAM_META, SLUG_TO_EXAM, QUESTION_BANK } from "../lib/questionBank/index.js";
-import { buildBreadcrumbSchema } from "../lib/examCatalog.js";
+import { buildBreadcrumbSchema, EXAM_CATEGORIES } from "../lib/examCatalog.js";
 import { getStudyTopics } from "../lib/studyTopics/index.js";
 import { Footer } from "../components/Shared.jsx";
 
@@ -451,12 +451,25 @@ const GUIDES = {
   },
 };
 
+// Example activities for the "Get hands-on practice" step, tailored to the
+// broad product category (see EXAM_CATEGORIES) so the suggestion doesn't read
+// as a non-sequitur on exams outside data engineering.
+const HANDS_ON_EXAMPLES = {
+  Fabric: "ingestion, transformations, security settings",
+  Azure: "resource provisioning, networking, access controls",
+  "Power BI": "data modeling, DAX measures, report settings",
+  AI: "model deployment, prompt evaluation, monitoring configs",
+  Security: "policy configuration, access reviews, compliance settings",
+};
+const DEFAULT_HANDS_ON_EXAMPLE = "core configuration, security settings, monitoring";
+
 function buildSteps(code, meta, guide) {
+  const handsOnExample = HANDS_ON_EXAMPLES[EXAM_CATEGORIES[code]] || DEFAULT_HANDS_ON_EXAMPLE;
   return [
     {
       title: "Review the official study guide",
       body: "Open Microsoft's official skills-measured breakdown and use it as your checklist — it's updated whenever the exam changes.",
-      link: { url: guide.officialGuideUrl, label: "Official DP study guide" },
+      link: { url: guide.officialGuideUrl, label: `Official ${code} study guide` },
     },
     {
       title: "Schedule your exam",
@@ -470,7 +483,7 @@ function buildSteps(code, meta, guide) {
     },
     {
       title: "Get hands-on practice",
-      body: `${code} rewards recognizing real scenarios and trade-offs, not memorization. Spin up a free-tier environment and actually try the concepts — ingestion, transformations, security settings — rather than just reading about them.`,
+      body: `${code} rewards recognizing real scenarios and trade-offs, not memorization. Spin up a free-tier environment and actually try the concepts — ${handsOnExample} — rather than just reading about them.`,
     },
     {
       title: "Benchmark your knowledge",
