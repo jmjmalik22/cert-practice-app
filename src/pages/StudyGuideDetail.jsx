@@ -260,6 +260,42 @@ const GUIDES = {
       { label: "Power BI docs", url: "https://learn.microsoft.com/en-us/power-bi/", why: "Canonical product reference for every domain" },
     ],
   },
+  "DP-750": {
+    prereq: "No formal prerequisite, but the exam assumes subject matter expertise integrating and modeling data, building and deploying pipelines, and troubleshooting workloads in Azure Databricks. You should know SQL and Python, be comfortable with Git-based software development lifecycle practices, and have some familiarity with Microsoft Entra, Azure Data Factory, and Azure Monitor.",
+    background: [
+      "Unity Catalog fundamentals — catalogs, schemas, volumes, and access control",
+      "Apache Spark and Delta Lake basics — DataFrames, Structured Streaming, and Delta table internals",
+      "SQL and Python for data transformation, plus Git-based version control",
+      "Job/pipeline orchestration concepts — triggers, scheduling, and error handling",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-750",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/azure-databricks-data-engineer-associate/",
+    docsUrl: "https://learn.microsoft.com/en-us/azure/databricks/",
+    glance: {
+      length: "100–120 min (may include labs)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: null,
+    },
+    domains: [
+      { title: "Set up and configure an Azure Databricks environment", weight: "15-20%", description: "Compute types and sizing, and structuring Unity Catalog objects" },
+      { title: "Secure and govern Unity Catalog objects", weight: "15-20%", description: "Access control, secrets, lineage, audit logging, and Delta Sharing" },
+      { title: "Prepare and process data", weight: "30-35%", description: "Data modeling, ingestion methods, transformations, and data quality constraints" },
+      { title: "Deploy and maintain data pipelines and workloads", weight: "30-35%", description: "Pipeline design, Lakeflow Jobs, SDLC practices, and monitoring/troubleshooting" },
+    ],
+    certPath: {
+      before: [],
+      after: [],
+    },
+    resources: [
+      { label: "Official DP-750 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-750", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "Azure Databricks docs", url: "https://learn.microsoft.com/en-us/azure/databricks/", why: "Canonical reference for Unity Catalog, Lakeflow, and Spark on Azure Databricks" },
+      { label: "Azure Data Factory docs", url: "https://learn.microsoft.com/en-us/azure/data-factory/introduction", why: "One of the ingestion tools the exam expects you to know alongside native Databricks options" },
+    ],
+  },
   "DP-800": {
     prereq: "No strict prerequisites, but the exam assumes subject matter expertise designing and developing AI-enabled database solutions across Microsoft SQL Server, Azure SQL, and SQL databases in Microsoft Fabric. You should be comfortable writing T-SQL, familiar with CI/CD in GitHub, and know AI concepts such as embeddings, vectors, and models.",
     background: [

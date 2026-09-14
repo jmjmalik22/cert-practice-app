@@ -141,6 +141,20 @@ export const EXAM_CATALOG = {
       timeLimit: "Untimed",
     },
   },
+  "DP-750": {
+    slug: "dp-750",
+    label: "Azure Databricks Data Engineer Associate",
+    questionCount: 60,
+    title: "Microsoft Azure DP-750 Practice Exam",
+    metaTitle: "DP-750 Practice Exams | FabricPrep",
+    metaDescription:
+      "Free DP-750 practice questions for the Microsoft Azure Databricks Data Engineer Associate exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
+    studyGuide: true,
+    practice: {
+      caseStudyCount: 0,
+      timeLimit: "Untimed",
+    },
+  },
   "DP-800": {
     slug: "dp-800",
     label: "Developing AI-Enabled Database Solutions",
@@ -189,6 +203,7 @@ export const PRODUCT_ICONS = Object.freeze({
   "AZ-104": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "AI-901": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "DP-800": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
+  "DP-750": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "PL-300": { src: "/product-icons/power-bi.svg", alt: "Power BI" },
 });
 
@@ -213,6 +228,7 @@ export const EXAM_CATEGORIES = Object.freeze({
   "AI-300": "AI",
   "DP-800": "Azure",
   "SC-900": "Security",
+  "DP-750": "Azure",
 });
 
 // Fixed display order for category filter pills, independent of catalog
@@ -225,7 +241,6 @@ export const CATEGORY_ORDER = Object.freeze(["Fabric", "Azure", "AI", "Power BI"
 export const COMING_SOON_EXAMS = Object.freeze([
   { code: "AZ-305", label: "Azure Solutions Architect Expert" },
   { code: "AZ-400", label: "DevOps Engineer Expert" },
-  { code: "DP-750", label: "Azure Databricks Data Engineer Associate" },
   { code: "SC-300", label: "Identity and Access Administrator Associate" },
   { code: "SC-500", label: "Cloud and AI Security Engineer Associate" },
 ]);
