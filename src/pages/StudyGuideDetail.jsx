@@ -186,6 +186,43 @@ const GUIDES = {
       { label: "Azure virtual network docs", url: "https://learn.microsoft.com/en-us/azure/virtual-network/", why: "Core networking concepts behind the virtual-networking domain" },
     ],
   },
+  "AZ-305": {
+    prereq: "No formal prerequisite to sit the exam, but you must already hold an active AZ-104 (Azure Administrator Associate) certification to actually be awarded the Solutions Architect Expert title — you can take AZ-305 first, but the certification won't post until AZ-104 is also passed. Expect scenario-based design decisions, not hands-on implementation steps.",
+    background: [
+      "Azure Well-Architected Framework and Cloud Adoption Framework fundamentals",
+      "Core compute, storage, and networking concepts from AZ-104",
+      "Identity and governance — Microsoft Entra ID, RBAC, management groups, and Azure Policy",
+      "Business continuity concepts — backup, geo-redundancy, and high-availability patterns",
+    ],
+    officialGuideUrl: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-305",
+    examPageUrl: "https://learn.microsoft.com/en-us/credentials/certifications/exams/az-305",
+    docsUrl: "https://learn.microsoft.com/en-us/azure/architecture/",
+    glance: {
+      length: "120 min (140 min seat time)",
+      questionCount: "40–60",
+      passingScore: "700 / 1000",
+      formats: "Multiple choice, drag-and-drop, case studies, possibly labs",
+      learnAccess: "Available (split-screen)",
+      renewal: "Every 12 months, free online assessment",
+      prerequisite: "Active AZ-104 certification — required to earn this title, not to sit the exam",
+    },
+    domains: [
+      { title: "Design identity, governance, and monitoring solutions", weight: "25-30%", description: "Logging and monitoring, authentication/authorization, and governance structures like management groups and Azure Policy" },
+      { title: "Design data storage solutions", weight: "20-25%", description: "Relational and non-relational storage design, database scalability, and data integration/analysis" },
+      { title: "Design business continuity solutions", weight: "15-20%", description: "Backup and disaster recovery, plus high-availability patterns for compute and data" },
+      { title: "Design infrastructure solutions", weight: "30-35%", description: "Compute, application architecture, migrations, and network design" },
+    ],
+    certPath: {
+      before: [{ code: "AZ-104", label: "required — active cert needed to earn this title" }],
+      after: [],
+    },
+    resources: [
+      { label: "Official AZ-305 study guide", url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-305", why: "The authoritative skills-measured breakdown, updated whenever the exam changes" },
+      { label: "AZ-305 certification page", url: "https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/", why: "Official exam facts — format, renewal period, and the AZ-104 prerequisite" },
+      { label: "Azure Architecture Center", url: "https://learn.microsoft.com/en-us/azure/architecture/", why: "Reference architectures and design patterns behind almost every exam domain" },
+      { label: "Azure Well-Architected Framework", url: "https://learn.microsoft.com/en-us/azure/well-architected/", why: "The design principles the exam expects you to apply across every scenario" },
+    ],
+  },
   "AI-901": {
     prereq: "You should have conceptual knowledge of AI solutions in Azure and foundational technical skills to work with them, including knowledge of Python coding syntax and familiarity with Azure resources. No formal data science or software engineering background is assumed.",
     background: [

@@ -71,6 +71,20 @@ export const EXAM_CATALOG = {
       timeLimit: "Untimed",
     },
   },
+  "AZ-305": {
+    slug: "az-305",
+    label: "Azure Solutions Architect Expert",
+    questionCount: 60,
+    title: "Microsoft Azure AZ-305 Practice Exam",
+    metaTitle: "AZ-305 Practice Exams | FabricPrep",
+    metaDescription:
+      "Free AZ-305 practice questions for the Microsoft Azure Solutions Architect Expert exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
+    studyGuide: true,
+    practice: {
+      caseStudyCount: 0,
+      timeLimit: "Untimed",
+    },
+  },
   "AI-901": {
     slug: "ai-901",
     label: "Azure AI Fundamentals (Foundry)",
@@ -187,6 +201,7 @@ export const PRODUCT_ICONS = Object.freeze({
   "AZ-900": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "DP-900": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "AZ-104": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
+  "AZ-305": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "AI-901": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "DP-800": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "PL-300": { src: "/product-icons/power-bi.svg", alt: "Power BI" },
@@ -213,6 +228,7 @@ export const EXAM_CATEGORIES = Object.freeze({
   "AI-300": "AI",
   "DP-800": "Azure",
   "SC-900": "Security",
+  "AZ-305": "Azure",
 });
 
 // Fixed display order for category filter pills, independent of catalog
@@ -223,7 +239,6 @@ export const CATEGORY_ORDER = Object.freeze(["Fabric", "Azure", "AI", "Power BI"
 // separate from EXAM_CATALOG so they cannot create routes or appear in SEO
 // sitemaps before content is available.
 export const COMING_SOON_EXAMS = Object.freeze([
-  { code: "AZ-305", label: "Azure Solutions Architect Expert" },
   { code: "AZ-400", label: "DevOps Engineer Expert" },
   { code: "DP-750", label: "Azure Databricks Data Engineer Associate" },
   { code: "SC-300", label: "Identity and Access Administrator Associate" },

@@ -1,4 +1,5 @@
 import { AZ_104 } from "./az104.js";
+import { AZ_305 } from "./az305.js";
 import { AI_103 } from "./ai103.js";
 import { AI_200 } from "./ai200.js";
 import { AI_300 } from "./ai300.js";
@@ -18,6 +19,7 @@ export const QUESTION_BANK = {
   "AZ-900": AZ_900,
   "DP-900": DP_900,
   "AZ-104": AZ_104,
+  "AZ-305": AZ_305,
   "AI-103": AI_103,
   "AI-200": AI_200,
   "AI-300": AI_300,
