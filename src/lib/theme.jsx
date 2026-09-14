@@ -104,6 +104,10 @@ export function markAttempted(examCode, qid) {
   }
 }
 
+// Fired whenever the stored consent value changes, so anything gated on it
+// (analytics) can react immediately instead of waiting for a page reload.
+export const COOKIE_CONSENT_EVENT = "fp:cookie-consent-changed";
+
 export function getCookieConsent() {
   if (typeof window === "undefined") return "";
   try {
@@ -119,6 +123,7 @@ export function setCookieConsent(value) {
   } catch {
     // ignore
   }
+  window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
 }
 
 export function getBookmarks() {

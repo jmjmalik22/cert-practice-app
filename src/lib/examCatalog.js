@@ -106,14 +106,8 @@ export const EXAM_CATALOG = {
     title: "Microsoft Azure AI-103 Practice Exam",
     metaTitle: "AI-103 Practice Exams | FabricPrep",
     metaDescription:
-      "Free AI-103 practice questions for the Microsoft Azure AI Apps and Agents Developer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free AI-103 practice questions for the Microsoft Azure AI Apps and Agents Developer Associate exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 40,
-      totalQuestions: 40,
-      timeMinutes: 60,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -126,14 +120,8 @@ export const EXAM_CATALOG = {
     title: "Microsoft Azure AI-200 Practice Exam",
     metaTitle: "AI-200 Practice Exams | FabricPrep",
     metaDescription:
-      "Free AI-200 practice questions for the Microsoft Azure AI Cloud Developer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free AI-200 practice questions for the Microsoft Azure AI Cloud Developer Associate exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 40,
-      totalQuestions: 40,
-      timeMinutes: 60,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",
@@ -146,14 +134,8 @@ export const EXAM_CATALOG = {
     title: "Microsoft Azure AI-300 Practice Exam",
     metaTitle: "AI-300 Practice Exams | FabricPrep",
     metaDescription:
-      "Free AI-300 practice questions for the Microsoft Machine Learning Operations Engineer Associate exam, sourced from official Microsoft Learn docs. Timed mock exams included.",
+      "Free AI-300 practice questions for the Microsoft Machine Learning Operations Engineer Associate exam, sourced from official Microsoft Learn docs. Includes mock and Shield exams.",
     studyGuide: true,
-    mock: {
-      caseStudyQuestions: 0,
-      standaloneQuestions: 40,
-      totalQuestions: 40,
-      timeMinutes: 60,
-    },
     practice: {
       caseStudyCount: 0,
       timeLimit: "Untimed",

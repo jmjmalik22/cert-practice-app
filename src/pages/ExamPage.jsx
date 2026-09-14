@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, Navigate, useOutletContext, useSearchParams } from "react-router-dom";
+import { useParams, Link, useOutletContext, useSearchParams } from "react-router-dom";
 import { Head as Helmet } from "vite-react-ssg";
 import { RotateCcw, Clock, ChevronLeft, BookOpen, Lock, Shield } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
@@ -9,13 +9,26 @@ import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { Practice } from "../components/Practice.jsx";
 import { MockExam } from "../components/MockExam.jsx";
 import { ShieldExam } from "../components/ShieldExam.jsx";
+import { NotFound } from "./NotFound.jsx";
 
-function buildFaqs(code, meta, total) {
+function buildFaqs(code, meta, total, shieldAvailable) {
   return [
     { q: `How many questions are in the ${code} practice bank?`, a: `There are currently ${total} practice questions for ${code}, covering every domain in the official Microsoft exam skills outline.` },
-    { q: `Is FabricPrep's ${code} practice free?`, a: `Yes — all questions and exams are free. A free account is required for untimed practice, bookmarks, saved progress, and the Shield exam; the mock exam remains available without signing in.` },
+    {
+      q: `Is FabricPrep's ${code} practice free?`,
+      a: shieldAvailable
+        ? `Yes — all questions and exams are free. A free account is required for untimed practice, bookmarks, saved progress, and the Shield exam; the mock exam remains available without signing in.`
+        : `Yes — all questions and exams are free. A free account is required for untimed practice, bookmarks, and saved progress; the mock exam remains available without signing in.`,
+    },
     { q: `Where do the ${code} questions come from?`, a: `Questions are written from official Microsoft Learn documentation and the published exam skills outline for ${code}, not guesswork.` },
-    { q: `What's the difference between Practice, Mock and Shield exams?`, a: `Practice mode is untimed with instant explanations and domain filters, so you can study one topic at a time. The mock exam is a quick, untimed ${MOCK_CONFIG.totalQuestions}-question check with no feedback until you submit. The Shield exam is a timed ${SHIELD_CONFIG.totalQuestions}-question scored sitting — score ${SHIELD_CONFIG.passPercentage}% or more and you earn a shareable, verifiable shield.` },
+    {
+      q: shieldAvailable
+        ? `What's the difference between Practice, Mock and Shield exams?`
+        : `What's the difference between Practice and Mock exams?`,
+      a: shieldAvailable
+        ? `Practice mode is untimed with instant explanations and domain filters, so you can study one topic at a time. The mock exam is a quick, untimed ${MOCK_CONFIG.totalQuestions}-question check with no feedback until you submit. The Shield exam is a timed ${SHIELD_CONFIG.totalQuestions}-question scored sitting — score ${SHIELD_CONFIG.passPercentage}% or more and you earn a shareable, verifiable shield.`
+        : `Practice mode is untimed with instant explanations and domain filters, so you can study one topic at a time. The mock exam is a quick, untimed ${MOCK_CONFIG.totalQuestions}-question check with no feedback until you submit. ${code}'s bank isn't yet large enough to offer a full scored Shield sitting — that unlocks once it reaches ${SHIELD_CONFIG.totalQuestions} questions.`,
+    },
     { q: `How hard is the ${code} exam?`, a: `Difficulty depends on your hands-on experience with the technology. Working through the full question bank in both modes is a good way to find your weak spots before exam day.` },
   ];
 }
@@ -38,15 +51,17 @@ export function ExamPage() {
     }
   }, [code, autoPractice, reviewWrongAnswers, isAuthenticated]);
 
-  if (!code) return <Navigate to="/" replace />;
+  // An unrecognized slug (typo, stale link, removed exam) should read as a
+  // real 404, not silently redirect to the homepage as if nothing were wrong.
+  if (!code) return <NotFound />;
 
   const data = QUESTION_BANK[code];
   const meta = EXAM_META[code];
   const total = data.questions.length;
   const attempted = getAttempted(code).length;
   const pct = total ? Math.min(100, Math.round((attempted / total) * 100)) : 0;
-  const faqs = buildFaqs(code, meta, total);
   const shieldAvailable = isShieldAvailable(code);
+  const faqs = buildFaqs(code, meta, total, shieldAvailable);
 
   function clearPracticeParams() {
     setSearchParams({}, { replace: true });
@@ -67,7 +82,16 @@ export function ExamPage() {
       />
     );
   }
-  if (mode === "mock") return <MockExam exam={code} onExit={() => setMode(null)} />;
+  if (mode === "mock") {
+    return (
+      <MockExam
+        exam={code}
+        onExit={() => setMode(null)}
+        isAuthenticated={isAuthenticated}
+        onStartPractice={() => setMode("practice")}
+      />
+    );
+  }
   if (mode === "shield") return <ShieldExam exam={code} onExit={() => setMode(null)} />;
 
   return (
@@ -116,13 +140,14 @@ export function ExamPage() {
         </Link>
 
         <div className="text-center mb-8 flex flex-col items-center">
-          <MedallionMotif opacity={0.5} />
+          {shieldAvailable && <MedallionMotif opacity={0.5} />}
           <h1 className="text-2xl sm:text-3xl font-semibold mt-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
             {code} — {meta.title}
           </h1>
           <p className="mt-3 text-sm max-w-md" style={{ color: TOKENS.inkMuted }}>
-            {total} free practice questions, sourced from official Microsoft Learn documentation. Practice
-            untimed, try a quick mock, or sit the scored Shield exam to earn a badge.
+            {shieldAvailable
+              ? `${total} free practice questions, sourced from official Microsoft Learn documentation. Practice untimed, try a quick mock, or sit the scored Shield exam to earn a badge.`
+              : `${total} free practice questions, sourced from official Microsoft Learn documentation. Practice untimed or try a quick mock.`}
           </p>
         </div>
 

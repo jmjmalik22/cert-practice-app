@@ -5,6 +5,7 @@ import { SHIELD_CONFIG } from "../lib/examCatalog.js";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
 import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
 import { SHIELD_TIERS, recordShieldResult } from "../lib/badges.js";
+import { useExamExitGuard, EXAM_EXIT_WARNING } from "../lib/examGuard.js";
 import { Chip } from "./Shared.jsx";
 import { BadgeShield } from "./BadgeShield.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
@@ -33,6 +34,10 @@ export function ShieldExam({ exam, onExit }) {
   useEffect(() => {
     secondsLeftRef.current = secondsLeft;
   }, [secondsLeft]);
+
+  // Only guard the active question screen — nothing is at stake yet on the
+  // setup screen, and the sitting is already saved once results are shown.
+  useExamExitGuard(!showSetup && !finished);
 
   function finishExam(remainingSeconds = secondsLeftRef.current) {
     if (finishedRef.current) return;
@@ -87,6 +92,19 @@ export function ShieldExam({ exam, onExit }) {
 
   function goto(i) {
     setIdx(Math.max(0, Math.min(order.length - 1, i)));
+  }
+
+  function handleExit() {
+    if (window.confirm(EXAM_EXIT_WARNING)) onExit();
+  }
+
+  function handleSubmitClick() {
+    const unanswered = order.length - Object.keys(answers).length;
+    if (unanswered > 0) {
+      const noun = unanswered === 1 ? "question" : "questions";
+      if (!window.confirm(`You have ${unanswered} unanswered ${noun}. Submit anyway?`)) return;
+    }
+    finishExam();
   }
 
   if (finished) {
@@ -291,7 +309,7 @@ export function ShieldExam({ exam, onExit }) {
     <div className="min-h-full flex flex-col px-6 py-8 max-w-2xl mx-auto w-full">
       <TopBar
         left={
-          <button onClick={onExit} className="flex items-center gap-1 text-sm" style={{ color: TOKENS.inkMuted }}>
+          <button onClick={handleExit} className="flex items-center gap-1 text-sm" style={{ color: TOKENS.inkMuted }}>
             <ChevronLeft size={16} /> Exit
           </button>
         }
@@ -333,7 +351,7 @@ export function ShieldExam({ exam, onExit }) {
         </button>
         {idx === order.length - 1 ? (
           <button
-            onClick={() => finishExam()}
+            onClick={handleSubmitClick}
             className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm"
             style={{ background: TOKENS.green, color: TOKENS.bgDeep }}
           >

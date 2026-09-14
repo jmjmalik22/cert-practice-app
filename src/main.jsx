@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ViteReactSSG } from "vite-react-ssg";
 import App from "./App.jsx";
 import { Landing } from "./pages/Landing.jsx";
@@ -7,9 +8,35 @@ import { ProgressSyncProvider } from "./lib/progressSyncProvider.jsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 import { RouteErrorBoundary } from "./components/RouteErrorBoundary.jsx";
 import { ROUTE_PATHS } from "./lib/examCatalog.js";
+import { getCookieConsent, COOKIE_CONSENT_EVENT } from "./lib/theme.jsx";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./index.css";
+
+// Vercel Analytics/Speed Insights are the only things the cookie banner's
+// choice actually affects (local storage for theme/progress is functional,
+// not tracking, so it always runs regardless of consent). Mount them only
+// once the visitor hasn't declined, and react immediately if they later
+// change their mind from the footer's "Cookie Settings" link.
+function ConsentedAnalytics() {
+  const [consent, setConsent] = useState(getCookieConsent());
+
+  useEffect(() => {
+    function handleChange() {
+      setConsent(getCookieConsent());
+    }
+    window.addEventListener(COOKIE_CONSENT_EVENT, handleChange);
+    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, handleChange);
+  }, []);
+
+  if (consent === "declined") return null;
+  return (
+    <>
+      <Analytics />
+      <SpeedInsights />
+    </>
+  );
+}
 
 // A new deploy replaces JS chunk files with different hashed filenames. If a
 // visitor still has an older page open, navigating to a route whose chunk was
@@ -33,8 +60,7 @@ function AppWithAuth() {
       <AuthProvider>
         <ProgressSyncProvider>
           <App />
-          <Analytics />
-          <SpeedInsights />
+          <ConsentedAnalytics />
         </ProgressSyncProvider>
       </AuthProvider>
     </ErrorBoundary>
