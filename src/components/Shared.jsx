@@ -51,8 +51,8 @@ export function SponsorButton({ compact = false }) {
       href="https://github.com/sponsors/jmjmalik22"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Support Fabric Prep on GitHub"
-      title="Support Fabric Prep on GitHub"
+      aria-label="Support FabricPrep on GitHub"
+      title="Support FabricPrep on GitHub"
       className={
         compact
           ? "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
@@ -113,7 +113,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
             FP
           </div>
           <span className="text-sm font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            Fabric Prep
+            FabricPrep
           </span>
         </button>
 

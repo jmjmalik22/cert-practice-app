@@ -53,7 +53,7 @@ export function About() {
           </p>
           <div className="flex flex-wrap justify-center gap-3 mt-8 relative z-10">
             <Link to="/" className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>
-              Start Fabric Prep practice <ArrowRight size={16} />
+              Start FabricPrep practice <ArrowRight size={16} />
             </Link>
             <Link to="/study-guides" className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium" style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink, background: `${TOKENS.panel}80` }}>
               Browse study guides
@@ -118,7 +118,7 @@ export function About() {
             <h2 className="text-2xl sm:text-3xl font-bold mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>Start with one useful session.</h2>
             <p className="text-sm max-w-xl mx-auto mb-6" style={{ color: TOKENS.inkMuted }}>You do not need a perfect study plan to begin. Pick an exam, answer a few questions, and use what you learn to decide what to study next.</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link to="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>Start Fabric Prep practice <ArrowRight size={15} /></Link>
+              <Link to="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium" style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}>Start FabricPrep practice <ArrowRight size={15} /></Link>
               <a href="mailto:support@fabricprep.com" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium" style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}><Mail size={15} /> Contact us</a>
               <a href="https://www.linkedin.com/in/jitendra123/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium" style={{ border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.inkMuted }}><ExternalLink size={15} /> LinkedIn</a>
             </div>
