@@ -20,15 +20,16 @@
       of the homepage.
 
       The tags below are the exception — identical on every route, so no page
-      sets them. No og:image:width/height on purpose: og-image.png is 446x228,
-      under the 1200x630 social platforms want, so declaring its real size
-      would lock in a small card. Undeclared, each platform measures the file,
-      and re-exporting it at 1200x630 (og-image-template.html) upgrades every
-      card with no code change.
+      sets them. og-image.png is generated at exactly 1200x630 by
+      `npm run generate:og`; the dimensions are declared so platforms render
+      the large card immediately instead of waiting to measure the file. Keep
+      all three in sync if the image size ever changes.
     -->
     <meta property="og:site_name" content="FabricPrep" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content="https://fabricprep.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="FabricPrep — free Microsoft Fabric and Azure certification practice questions" />
     <meta name="twitter:image" content="https://fabricprep.com/og-image.png" />
     <!-- PWA / Mobile -->
