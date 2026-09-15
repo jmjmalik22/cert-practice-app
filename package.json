@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "validate:questions": "node scripts/validate-question-bank.js",
-    "generate:badges": "node scripts/generate-badge-images.mjs"
+    "generate:badges": "node scripts/generate-badge-images.mjs",
+    "generate:og": "node scripts/generate-og-image.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

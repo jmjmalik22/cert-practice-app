@@ -8,9 +8,16 @@ export default [
   { ignores: ["dist", "node_modules"] },
   js.configs.recommended,
   {
-    files: ["**/*.{js,jsx}"],
+    // .mjs included so the Node build scripts (scripts/*.mjs) get Node
+    // globals. Without it they matched no config block, fell back to bare
+    // recommended rules with no globals defined, and reported `console` and
+    // `URL` as undefined.
+    files: ["**/*.{js,jsx,mjs}"],
     languageOptions: {
-      ecmaVersion: 2022,
+      // "latest" rather than a pinned year so the parser keeps up with syntax
+      // Node already runs — import attributes (`with { type: "json" }`) parse
+      // under ES2025 but not 2022.
+      ecmaVersion: "latest",
       sourceType: "module",
       parserOptions: { ecmaFeatures: { jsx: true } },
       globals: { ...globals.browser, ...globals.node },

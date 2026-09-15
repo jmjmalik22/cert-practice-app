@@ -234,10 +234,14 @@
   </div>
 
   <div class="instructions">
-    <strong>📸 How to save:</strong> Open browser dev tools (F12) → Toggle device toolbar (Ctrl+Shift+M) → 
-    Set dimensions to <strong>1200 x 630</strong> → Screenshot and save as <code>public/og-image.png</code>
+    <strong>⚠️ Do not screenshot this page.</strong> Run <code>npm run generate:og</code> instead —
+    it renders <code>public/og-image.png</code> at exactly 1200 x 630.
     <br><br>
-    Or use: <a href="https://html2canvas.hertzen.com/" target="_blank" style="color: #3b82f6;">html2canvas</a> or any screenshot tool at exact 1200x630
+    Screenshotting is what produced the old 446x228 image: the
+    <code>@media (max-width: 1300px)</code> rule below scales this card to 50% for on-screen
+    viewing, so any capture in a window under 1300px wide comes out half size.
+    This page is now a <strong>design reference only</strong>; the generator is authoritative
+    (and counts the questions from the catalog rather than hardcoding "1000+").
   </div>
 </body>
 </html>
