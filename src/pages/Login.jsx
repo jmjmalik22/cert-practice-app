@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Head as Helmet } from "vite-react-ssg";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, CheckCircle, ArrowLeft } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../lib/theme.jsx";
@@ -153,13 +154,24 @@ export function Login() {
     }
   }
 
+  // Repeated on every branch below, the loading state included: the
+  // prerendered (SSG) HTML takes that branch, since there is no auth at build
+  // time. Without it dist/login.html shipped title-less and indexable.
+  const seo = (
+    <Helmet>
+      <title>Sign In | FabricPrep</title>
+      <meta name="robots" content="noindex, nofollow" />
+    </Helmet>
+  );
+
   if (authLoading || (user && !formSubmittedRef.current)) {
-    return null;
+    return seo;
   }
 
   if (verificationPending) {
     return (
       <div className="min-h-full flex flex-col px-6 py-8 max-w-md mx-auto w-full">
+        {seo}
         <div className="flex-1 flex flex-col items-center justify-center">
           <MedallionMotif opacity={0.5} />
           <div
@@ -245,6 +257,7 @@ export function Login() {
 
   return (
     <div className="min-h-full flex flex-col px-4 sm:px-6 py-8 w-full">
+      {seo}
       <div className="flex-1 flex items-center justify-center">
         <div
           className="w-full max-w-md rounded-2xl p-6 sm:p-8"

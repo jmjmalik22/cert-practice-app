@@ -1,9 +1,9 @@
-import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
 import { ArrowRight, BarChart3, BookOpen, CheckCircle2, Clock3, Database, ExternalLink, FileText, Layers3, Mail, ShieldCheck, Smartphone } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { EXAM_CODES, EXAM_META } from "../lib/examCatalog.js";
 import { Footer } from "../components/Shared.jsx";
+import { PageSeo } from "../components/PageSeo.jsx";
 
 const FEATURES = [
   { icon: FileText, title: "Practice with purpose", body: "Use focused question sets built around the knowledge areas you are expected to apply on Microsoft certification exams." },
@@ -32,11 +32,7 @@ export function About() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <Helmet>
-        <title>About FabricPrep | Microsoft Certification Practice</title>
-        <link rel="canonical" href="https://fabricprep.com/about" />
-        <meta name="description" content="Learn how FabricPrep helps you prepare for Microsoft Fabric, Azure, Power BI, and data certification exams with realistic practice questions and study guides." />
-      </Helmet>
+      <PageSeo title="About FabricPrep | Microsoft Certification Practice" description="Learn how FabricPrep helps you prepare for Microsoft Fabric, Azure, Power BI, and data certification exams with realistic practice questions and study guides." path="about" />
 
       <main className="flex-1">
         <section

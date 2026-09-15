@@ -581,15 +581,21 @@ export function StudyGuideDetail() {
     });
   }
 
+  const pageTitle = `${code}: ${meta.label} Study Guide | FabricPrep`;
+  const pageUrl = `https://fabricprep.com/study-guides/${examSlug}`;
+  const pageDescription = `A step-by-step study path for the ${code} (${meta.label}) exam — prerequisites, official resources, and a study plan, plus free practice questions.`;
+
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
-        <title>{code}: {meta.label} Study Guide | FabricPrep</title>
-        <link rel="canonical" href={`https://fabricprep.com/study-guides/${examSlug}`} />
-        <meta
-          name="description"
-          content={`A step-by-step study path for the ${code} (${meta.label}) exam — prerequisites, official resources, and a study plan, plus free practice questions.`}
-        />
+        <title>{pageTitle}</title>
+        <link rel="canonical" href={pageUrl} />
+        <meta name="description" content={pageDescription} />
+        {/* og:image and og:site_name come from index.html — identical on every route. */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

@@ -636,9 +636,22 @@ export function Dashboard() {
     return () => window.removeEventListener("fp-progress-synced", loadStats);
   }, [isAuthenticated]);
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated.
+  //
+  // The prerendered (SSG) HTML always takes this branch — there is no auth at
+  // build time — so the noindex below has to be repeated here rather than only
+  // on the signed-in render. Without it, dist/dashboard.html shipped as an
+  // indexable, title-less shell that Google was free to put in the index.
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return (
+      <>
+        <Helmet>
+          <title>Dashboard | FabricPrep</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+        <Navigate to="/login" replace />
+      </>
+    );
   }
 
   if (!stats) return null;
