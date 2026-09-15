@@ -189,16 +189,16 @@ export function Landing() {
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
-        <title>Fabric Prep | Microsoft Fabric & Azure Certification Practice</title>
+        <title>Fabric Certification & Azure Certification Practice | FabricPrep</title>
         <link rel="canonical" href="https://fabricprep.com/" />
         <meta
           name="description"
-          content={`${totalQuestions}+ free Fabric Prep certification practice questions for ${examCodeList}. Prepare for Microsoft Fabric and Azure exams with a scored Shield exam sourced from official Microsoft Learn documentation.`}
+          content={`${totalQuestions}+ free FabricPrep certification practice questions for ${examCodeList}. Prepare for Microsoft Fabric and Azure exams with a scored Shield exam sourced from official Microsoft Learn documentation.`}
         />
         <meta name="keywords" content="fabric certification, microsoft fabric certification, fabric certification exam, fabric prep, fabricprep, dp 700 prep, dp 600 prep, dp 900 prep, az 900 prep, certification prep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, azure certification, fabric data engineer, fabric analytics engineer, data engineer prep, analytics engineer prep, fabric study guide, azure study guide" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fabricprep.com/" />
-        <meta property="og:title" content="Fabric Prep | Microsoft Fabric & Azure Certification Practice" />
+        <meta property="og:title" content="Microsoft Fabric & Azure Certification Practice Questions | FabricPrep" />
         <meta
           property="og:description"
           content={`${totalQuestions}+ free practice questions across ${examCount} Microsoft certifications, sourced from official Microsoft Learn docs.`}
@@ -211,17 +211,17 @@ export function Landing() {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "Fabric Prep",
+            name: "FabricPrep",
             url: "https://fabricprep.com/",
-            description: `Free Fabric prep and Microsoft certification practice exams for ${examCodeList}.`,
-            alternateName: ["Fabric Prep", "fabric prep", "FabricPrep"],
+            description: `Free FabricPrep practice exams for Microsoft certifications including ${examCodeList}.`,
+            alternateName: ["FabricPrep", "fabricprep"],
           })}
         </script>
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "SiteNavigationElement",
-            name: ["Fabric Prep Home", "Microsoft Fabric Study Guides", "About Fabric Prep"],
+            name: ["FabricPrep Home", "Microsoft Fabric Study Guides", "About FabricPrep"],
             url: [
               "https://fabricprep.com/",
               "https://fabricprep.com/study-guides",
@@ -233,8 +233,8 @@ export function Landing() {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "Fabric Prep",
-            alternateName: ["FabricPrep", "fabric prep"],
+            name: "FabricPrep",
+            alternateName: ["fabricprep"],
             url: "https://fabricprep.com/",
             logo: "https://fabricprep.com/icon-512.png",
             description: "Free Microsoft certification practice platform for Fabric and Azure exams, built and maintained by Jitendra Singh Malik.",
@@ -539,7 +539,7 @@ export function Landing() {
             </ul>
           </div>
           <div className="rounded-2xl p-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.azure}` }}>
-            <div className="text-xs font-medium mb-3" style={{ color: TOKENS.azure }}>Fabric Prep</div>
+            <div className="text-xs font-medium mb-3" style={{ color: TOKENS.azure }}>FabricPrep</div>
             <ul className="flex flex-col gap-2.5">
               {[
                 "Every question sourced from official Microsoft Learn docs",
