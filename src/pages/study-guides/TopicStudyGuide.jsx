@@ -76,15 +76,21 @@ export function TopicStudyGuide() {
   const meta = EXAM_META[code];
   const Icon = topic.icon;
 
+  const pageTitle = `${topic.title} | ${code} Study Guide | FabricPrep`;
+  const pageUrl = `https://fabricprep.com/study-guides/${examSlug}/${topicId}`;
+  const pageDescription = `Study guide for ${topic.title} - ${code} ${meta.label} exam. Covers ${topic.weight} of the exam.`;
+
   return (
     <div className="min-h-full flex flex-col">
       <Helmet>
-        <title>{topic.title} | {code} Study Guide | FabricPrep</title>
-        <link rel="canonical" href={`https://fabricprep.com/study-guides/${examSlug}/${topicId}`} />
-        <meta
-          name="description"
-          content={`Study guide for ${topic.title} - ${code} ${meta.label} exam. Covers ${topic.weight} of the exam.`}
-        />
+        <title>{pageTitle}</title>
+        <link rel="canonical" href={pageUrl} />
+        <meta name="description" content={pageDescription} />
+        {/* og:image and og:site_name come from index.html — identical on every route. */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

@@ -13,14 +13,24 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@fabricprep" />
     <!--
-      NOTE: title, description, keywords, canonical, and og:* tags are
-      intentionally NOT set here. Every route sets these itself via
-      <Head>/<Helmet> in its page component (see src/pages/**/*.jsx).
-      A static tag here would duplicate and conflict with each page's own
-      tag — in particular a static canonical pointing at "/" told search
-      engines every single page (including every exam and study guide
-      page) was just a duplicate of the homepage.
+      Per-page tags (title, description, keywords, canonical, og:title,
+      og:description, og:url) are set by each route via PageSeo/<Head> — see
+      src/components/PageSeo.jsx. A static one here would conflict: a static
+      canonical pointing at "/" once told Google every page was a duplicate
+      of the homepage.
+
+      The tags below are the exception — identical on every route, so no page
+      sets them. No og:image:width/height on purpose: og-image.png is 446x228,
+      under the 1200x630 social platforms want, so declaring its real size
+      would lock in a small card. Undeclared, each platform measures the file,
+      and re-exporting it at 1200x630 (og-image-template.html) upgrades every
+      card with no code change.
     -->
+    <meta property="og:site_name" content="FabricPrep" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://fabricprep.com/og-image.png" />
+    <meta property="og:image:alt" content="FabricPrep — free Microsoft Fabric and Azure certification practice questions" />
+    <meta name="twitter:image" content="https://fabricprep.com/og-image.png" />
     <!-- PWA / Mobile -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="application-name" content="FabricPrep" />

@@ -1,8 +1,8 @@
-import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Activity, Database, Gauge, Radio } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
 import { Footer } from "../../components/Shared.jsx";
+import { PageSeo } from "../../components/PageSeo.jsx";
 
 const TOPICS = [
   {
@@ -36,11 +36,7 @@ export function EventhouseFoundations() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <Helmet>
-        <title>Eventhouse and KQL | DP-700 & DP-600 | FabricPrep</title>
-        <link rel="canonical" href="https://fabricprep.com/study-guides/shared/eventhouse-kql" />
-        <meta name="description" content="Study Eventstreams, Eventhouse, KQL optimization, Real-Time Dashboards, and Activator for Microsoft Fabric DP-700 and DP-600." />
-      </Helmet>
+      <PageSeo title="Eventhouse and KQL | DP-700 & DP-600 | FabricPrep" description="Study Eventstreams, Eventhouse, KQL optimization, Real-Time Dashboards, and Activator for Microsoft Fabric DP-700 and DP-600." path="study-guides/shared/eventhouse-kql" type="article" />
 
       <main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full">
         <Link to="/study-guides/shared" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>

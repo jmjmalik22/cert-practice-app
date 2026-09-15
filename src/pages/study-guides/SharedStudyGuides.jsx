@@ -1,8 +1,8 @@
-import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Database, Layers, Radio, Sparkles, Warehouse, Activity, Shield, ListChecks } from "lucide-react";
 import { useTheme, FONT_DISPLAY } from "../../lib/theme.jsx";
 import { Footer } from "../../components/Shared.jsx";
+import { PageSeo } from "../../components/PageSeo.jsx";
 
 const LEARNING_PATH = [
   {
@@ -92,11 +92,7 @@ export function SharedStudyGuides() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <Helmet>
-        <title>In-Depth Fabric Learning Path | DP-700 & DP-600 | FabricPrep</title>
-        <link rel="canonical" href="https://fabricprep.com/study-guides/shared" />
-        <meta name="description" content="A step-by-step Microsoft Fabric learning path for DP-700 and DP-600, covering ingestion, Spark, Delta, Eventhouse, and KQL." />
-      </Helmet>
+      <PageSeo title="In-Depth Fabric Learning Path | DP-700 & DP-600 | FabricPrep" description="A step-by-step Microsoft Fabric learning path for DP-700 and DP-600, covering ingestion, Spark, Delta, Eventhouse, and KQL." path="study-guides/shared" />
 
       <main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full">
         <Link to="/study-guides" className="text-xs" style={{ color: TOKENS.inkMuted }}>

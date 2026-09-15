@@ -1,8 +1,8 @@
-import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, Database, GitBranch, Layers, Workflow } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
 import { Footer } from "../../components/Shared.jsx";
+import { PageSeo } from "../../components/PageSeo.jsx";
 
 const TOPICS = [
   {
@@ -36,14 +36,7 @@ export function IngestionFoundations() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <Helmet>
-        <title>Dataflows and Pipelines | DP-700 & DP-600 | FabricPrep</title>
-        <link rel="canonical" href="https://fabricprep.com/study-guides/shared/dataflows-pipelines" />
-        <meta
-          name="description"
-          content="Study Dataflows Gen2, Fabric pipelines, Copy Data, and ingestion tool selection for DP-700 and DP-600."
-        />
-      </Helmet>
+      <PageSeo title="Dataflows and Pipelines | DP-700 & DP-600 | FabricPrep" description="Study Dataflows Gen2, Fabric pipelines, Copy Data, and ingestion tool selection for DP-700 and DP-600." path="study-guides/shared/dataflows-pipelines" type="article" />
 
       <main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full">
         <Link to="/study-guides/shared" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>

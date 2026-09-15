@@ -1,10 +1,10 @@
-import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { Footer } from "../components/Shared.jsx";
 import { COMING_SOON_EXAMS, EXAM_META, STUDY_GUIDE_EXAM_CODES } from "../lib/examCatalog.js";
 import { buildBreadcrumbSchema, SITE_ORIGIN } from "../lib/examCatalog.js";
+import { PageSeo } from "../components/PageSeo.jsx";
 
 // Derived from STUDY_GUIDE_EXAM_CODES (driven by `studyGuide: true` in examCatalog.js)
 // instead of a hand-maintained list, so a new exam's guide shows up here the moment
@@ -72,10 +72,7 @@ export function StudyGuides() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <Helmet>
-        <title>Study Guides | FabricPrep</title>
-        <link rel="canonical" href="https://fabricprep.com/study-guides" />
-        <meta name="description" content="Free study guides and resources for Microsoft Fabric and Azure certifications." />
+      <PageSeo title="Study Guides | FabricPrep" description="Free study guides and resources for Microsoft Fabric and Azure certifications." path="study-guides">
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -98,7 +95,7 @@ export function StudyGuides() {
             ])
           )}
         </script>
-      </Helmet>
+      </PageSeo>
 
       <main className="flex-1 px-6 sm:px-10 py-8">
         {/* Header */}

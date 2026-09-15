@@ -1,8 +1,8 @@
-import { Head as Helmet } from "vite-react-ssg";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, BookOpen, Database, FileCode2, Layers, Sparkles } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../../lib/theme.jsx";
 import { Footer } from "../../components/Shared.jsx";
+import { PageSeo } from "../../components/PageSeo.jsx";
 
 const ROWS = [
   ["Spark pool", "Compute cluster that runs the driver and executor processes", "Choose capacity and autoscale settings for workload size"],
@@ -16,11 +16,7 @@ export function SparkDeltaFoundations() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <Helmet>
-        <title>Spark Notebooks and Delta | DP-700 & DP-600 | FabricPrep</title>
-        <link rel="canonical" href="https://fabricprep.com/study-guides/shared/spark-notebooks-delta" />
-        <meta name="description" content="Learn Spark pools, DataFrames, Spark SQL, partitioning, and Delta tables for Microsoft Fabric DP-700 and DP-600." />
-      </Helmet>
+      <PageSeo title="Spark Notebooks and Delta | DP-700 & DP-600 | FabricPrep" description="Learn Spark pools, DataFrames, Spark SQL, partitioning, and Delta tables for Microsoft Fabric DP-700 and DP-600." path="study-guides/shared/spark-notebooks-delta" type="article" />
       <main className="flex-1 px-6 sm:px-10 py-8 max-w-3xl mx-auto w-full">
         <Link to="/study-guides/shared" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>
           <ArrowLeft size={14} /> In-Depth Fabric Learning Path
