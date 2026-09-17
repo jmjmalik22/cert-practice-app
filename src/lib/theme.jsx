@@ -12,6 +12,10 @@ export const DARK_TOKENS = {
   amber: "#F0A93A",
   green: "#3ED9A0",
   red: "#FF6B7A",
+  violet: "#9B7BFF",
+  heroWash: "#0E1729",
+  ctaBand: "#132039",
+  script: "#6F82A6",
 };
 
 export const LIGHT_TOKENS = {
@@ -26,6 +30,10 @@ export const LIGHT_TOKENS = {
   amber: "#B97314",
   green: "#0F7A54",
   red: "#C13040",
+  violet: "#6D4AE0",
+  heroWash: "#F1F6FE",
+  ctaBand: "#E7EFFD",
+  script: "#8194B4",
 };
 
 export const ThemeContext = createContext(DARK_TOKENS);
@@ -141,6 +149,9 @@ export function toggleBookmarkStorage(key) {
 export const FONT_DISPLAY = "'Space Grotesk', sans-serif";
 export const FONT_BODY = "'Inter', sans-serif";
 export const FONT_MONO = "'JetBrains Mono', monospace";
+// Handwritten accent used sparingly on the landing page ("Small steps, big
+// opportunities"). Decorative only — never the sole carrier of meaning.
+export const FONT_SCRIPT = "'Caveat', cursive";
 
 export const MOCK_LENGTH = 5;
 export const MOCK_SECONDS = 5 * 60;

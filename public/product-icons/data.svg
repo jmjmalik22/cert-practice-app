@@ -1,0 +1,12 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fp-data-a" x1="3" y1="2.6" x2="19.6" y2="21.4" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3FA7FF"/>
+      <stop offset="1" stop-color="#0F5FBF"/>
+    </linearGradient>
+  </defs>
+  <path d="M12 1.6c-4.7 0-8.5 1.34-8.5 3v14.8c0 1.66 3.8 3 8.5 3s8.5-1.34 8.5-3V4.6c0-1.66-3.8-3-8.5-3Z" fill="url(#fp-data-a)"/>
+  <ellipse cx="12" cy="4.6" rx="8.5" ry="3" fill="#EAF4FF"/>
+  <ellipse cx="12" cy="4.6" rx="5.9" ry="2" fill="#BFDDFF"/>
+  <path d="M3.5 9.6c0 1.66 3.8 3 8.5 3s8.5-1.34 8.5-3M3.5 14.5c0 1.66 3.8 3 8.5 3s8.5-1.34 8.5-3" stroke="#EAF4FF" stroke-width="1.3" stroke-linecap="round" opacity=".75"/>
+</svg>
