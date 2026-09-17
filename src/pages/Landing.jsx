@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Head as Helmet } from "vite-react-ssg";
 import { Link, useOutletContext } from "react-router-dom";
-import { ArrowRight, BookOpen, Clock, FileText, Check } from "lucide-react";
+import { ArrowRight, BookOpen, Clock, FileText, Check, BarChart3, Users } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, FONT_SCRIPT, getAttempted } from "../lib/theme.jsx";
 import { getExamStats } from "../lib/progress.jsx";
 import {
@@ -159,7 +159,7 @@ function SampleQuestionCard() {
 
   return (
     <div
-      className="text-left rounded-2xl p-6 sm:p-7 w-full"
+      className="text-left rounded-2xl p-5 sm:p-6 w-full"
       style={{
         background: TOKENS.panel,
         border: `1px solid ${TOKENS.panelBorder}`,
@@ -179,11 +179,11 @@ function SampleQuestionCard() {
         Which file format is the default storage format for tables in a Fabric Lakehouse?
       </p>
 
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2">
         {options.map((opt) => (
           <div
             key={opt.letter}
-            className="flex items-center gap-3 px-3.5 py-3 rounded-xl"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
             style={{
               background: opt.correct ? `${TOKENS.green}12` : TOKENS.panel,
               border: `1px solid ${opt.correct ? TOKENS.green : TOKENS.panelBorder}`,
@@ -415,7 +415,7 @@ export function Landing() {
       {/* ---------- Hero: copy left, product shot right ---------- */}
       <div
         className="relative overflow-hidden"
-        style={{ background: `linear-gradient(180deg, ${TOKENS.heroWash} 0%, ${TOKENS.bg} 100%)` }}
+        style={{ background: `linear-gradient(180deg, ${TOKENS.heroWash} 0%, ${TOKENS.panel} 100%)` }}
       >
         {/* Anchored to the full-width hero, not the centred column, so the
             script sits in the page margin beside the card the way the design
@@ -431,32 +431,26 @@ export function Landing() {
           achievement.
         </ScriptAccent>
 
-        <div className="px-6 sm:px-10 pt-14 pb-20 max-w-6xl mx-auto w-full relative">
+        <div className="px-6 sm:px-10 pt-12 pb-14 max-w-6xl mx-auto w-full relative">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-10 items-center">
             <div>
-              {/* The badge tiers you can earn — styled as chips, not as the
-                  breadcrumb trail the arrow-separated version read like. */}
-              <div className="flex items-center gap-2 mb-6">
-                <span className="text-xs uppercase mr-1" style={{ color: TOKENS.inkMuted, letterSpacing: "0.14em", fontFamily: FONT_MONO }}>
-                  Earn a shield
-                </span>
-                {[
-                  { label: "Bronze", color: "#B0703C" },
-                  { label: "Silver", color: "#8A93A6" },
-                  { label: "Gold", color: TOKENS.amber },
-                ].map((tier) => (
-                  <span
-                    key={tier.label}
-                    className="text-xs font-medium px-2.5 py-1 rounded-full"
-                    style={{ background: `${tier.color}18`, color: tier.color, border: `1px solid ${tier.color}40` }}
-                  >
-                    {tier.label}
-                  </span>
-                ))}
-              </div>
+              {/* The shield tiers, as the design has them. A plain line of
+                  text with an aria-label, so it cannot be mistaken for
+                  breadcrumb navigation by a screen reader. */}
+              <p
+                className="flex items-center gap-2.5 mb-5 text-base"
+                style={{ color: TOKENS.inkMuted }}
+                aria-label="Shield tiers you can earn: Bronze, then Silver, then Gold"
+              >
+                <span>Bronze</span>
+                <ArrowRight size={15} aria-hidden="true" />
+                <span>Silver</span>
+                <ArrowRight size={15} aria-hidden="true" />
+                <span>Gold</span>
+              </p>
 
               <h1
-                className="text-4xl sm:text-5xl lg:text-[3.4rem] font-bold leading-[1.08]"
+                className="text-4xl sm:text-[2.7rem] lg:text-[2.95rem] font-bold leading-[1.07] tracking-tight"
                 style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
               >
                 Pass your Microsoft certification exam with confidence.
@@ -484,10 +478,23 @@ export function Landing() {
               </div>
 
               <div className="mt-9 flex flex-wrap gap-3">
+                {/* "Free in beta" gets a filled tick the way the design has
+                    it; the other two carry a plain outline icon. */}
+                <div
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium"
+                  style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}
+                >
+                  <span
+                    className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: TOKENS.green, color: TOKENS.panel }}
+                  >
+                    <Check size={10} strokeWidth={3} />
+                  </span>
+                  Free in beta
+                </div>
                 {[
-                  { icon: Check, tone: TOKENS.green, label: "Free in beta" },
-                  { icon: FileText, tone: TOKENS.azure, label: `${totalQuestions}+ questions` },
-                  { icon: BookOpen, tone: TOKENS.violet, label: `${examCount} exams` },
+                  { icon: BarChart3, tone: TOKENS.azure, label: `${totalQuestions}+ questions` },
+                  { icon: Users, tone: TOKENS.azure, label: `${examCount} exams` },
                 ].map((stat) => (
                   <div
                     key={stat.label}
@@ -510,8 +517,9 @@ export function Landing() {
 
       <EarnedBadgeBanner />
 
-      {/* ---------- Pick your exam ---------- */}
-      <div id="choose-exam" className="px-6 sm:px-10 pt-16 pb-14 max-w-6xl mx-auto w-full">
+      {/* ---------- Pick your exam (white) ---------- */}
+      <div style={{ background: TOKENS.panel }}>
+      <div id="choose-exam" className="px-6 sm:px-10 pt-14 pb-16 max-w-6xl mx-auto w-full">
         <p className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.16em", fontFamily: FONT_MONO }}>
           Microsoft certification practice
         </p>
@@ -544,17 +552,19 @@ export function Landing() {
           })}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-16">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {visibleExamCodes.map((code) => (
             <ExamCard key={code} code={code} />
           ))}
         </div>
+      </div>
+      </div>
 
-        {/* ---------- What the product does ---------- */}
-        <div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6 rounded-2xl px-6 sm:px-8 py-9 mb-16"
-          style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
-        >
+      {/* ---------- What the product does: a full-width tinted band. The
+           band itself is what separates this from the white exam grid, so it
+           needs no card border of its own. ---------- */}
+      <div style={{ background: TOKENS.bg }}>
+        <div className="px-6 sm:px-10 py-12 max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
           {pillars.map((p, i) => (
             <div
               key={p.title}
@@ -576,6 +586,11 @@ export function Landing() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* ---------- Everything below the band sits back on white ---------- */}
+      <div style={{ background: TOKENS.panel }}>
+      <div className="px-6 sm:px-10 pt-16 pb-14 max-w-6xl mx-auto w-full">
 
         {/* ---------- Mid-page call to action ---------- */}
         <div
@@ -752,6 +767,7 @@ export function Landing() {
         </div>
 
         <NewsletterSignup />
+      </div>
       </div>
 
       <Footer />
