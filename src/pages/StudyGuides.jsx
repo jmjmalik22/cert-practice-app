@@ -38,7 +38,7 @@ function ResourceCard({ resource }) {
   return (
     <Link
       to={`/study-guides/${meta.slug}`}
-      className="rounded-xl p-4 flex flex-col h-full transition-colors hover:opacity-90"
+      className="rounded-2xl p-4 flex flex-col h-full transition-colors hover:opacity-90"
       style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, textDecoration: "none" }}
     >
       <div className="flex items-center gap-2 mb-2">
@@ -97,17 +97,23 @@ export function StudyGuides() {
         </script>
       </PageSeo>
 
-      <main className="flex-1 px-6 sm:px-10 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+      {/* Header on the landing hero's tinted wash, with the eyebrow +
+          display heading pairing the rest of the site now uses. */}
+      <div style={{ background: TOKENS.heroWash }}>
+        <div className="px-6 sm:px-10 pt-10 pb-11 max-w-6xl mx-auto w-full">
+          <p className="text-xs uppercase mb-3" style={{ color: TOKENS.inkMuted, letterSpacing: "0.16em", fontFamily: FONT_MONO }}>
+            Free to read online
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
             Study Guides
           </h1>
-          <p style={{ color: TOKENS.inkMuted }}>
+          <p className="mt-3 text-base max-w-xl" style={{ color: TOKENS.inkMuted }}>
             Comprehensive study materials for Microsoft certifications, free to read online.
           </p>
         </div>
+      </div>
 
+      <main className="flex-1 px-6 sm:px-10 pt-10 pb-8 max-w-6xl mx-auto w-full">
         {/* Study Guides Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10 items-stretch">
           {STUDY_RESOURCES.map((resource) => (
@@ -123,7 +129,7 @@ export function StudyGuides() {
             <div
               key={code}
               aria-disabled="true"
-              className="rounded-xl p-5 opacity-75"
+              className="rounded-2xl p-5 opacity-75"
               style={{ background: `${TOKENS.panel}90`, border: `1px dashed ${TOKENS.panelBorder}` }}
             >
               <div className="flex items-start justify-between gap-3 mb-3">
@@ -162,7 +168,7 @@ export function StudyGuides() {
                 href={resource.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-3 p-4 rounded-xl transition-colors"
+                className="flex items-start gap-3 p-4 rounded-2xl transition-colors"
                 style={{
                   background: TOKENS.panel,
                   border: `1px solid ${TOKENS.panelBorder}`,
@@ -189,7 +195,7 @@ export function StudyGuides() {
 
         {/* How to Use */}
         <div
-          className="rounded-xl p-5"
+          className="rounded-2xl p-5"
           style={{
             background: TOKENS.panel,
             border: `1px solid ${TOKENS.panelBorder}`,
