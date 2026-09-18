@@ -23,7 +23,7 @@ function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
 
   return (
     <div
-      className="rounded-xl p-5"
+      className="rounded-2xl p-5 sm:p-6"
       style={{
         background: TOKENS.panel,
         border: `1px solid ${TOKENS.panelBorder}`,
@@ -37,14 +37,14 @@ function StatCard({ icon: Icon, label, value, subtext, color = "azure" }) {
           <Icon size={20} style={{ color: colors[color] }} />
         </div>
       </div>
-      <div className="text-2xl font-bold mb-1" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+      <div className="text-3xl font-bold tracking-tight mb-1" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
         {value}
       </div>
       <div className="text-sm mb-1" style={{ color: TOKENS.inkMuted }}>
         {label}
       </div>
       {subtext && (
-        <div className="text-xs" style={{ color: TOKENS.inkMuted, opacity: 0.8 }}>
+        <div className="text-xs leading-relaxed" style={{ color: TOKENS.inkMuted }}>
           {subtext}
         </div>
       )}
@@ -657,6 +657,10 @@ export function Dashboard() {
   if (!stats) return null;
   const displayName = user?.displayName || localUser?.name;
   const activity = aggregateActivity(examStats);
+  const recentExam = examStats[0]?.code;
+  const recentMeta = recentExam ? EXAM_META[recentExam] : null;
+  const recentTotal = recentExam ? QUESTION_BANK[recentExam]?.questions.length || 0 : 0;
+  const recentCoverage = recentTotal ? Math.min(100, Math.round(getAttempted(recentExam).length / recentTotal * 100)) : 0;
 
   return (
     <div className="min-h-full flex flex-col">
@@ -671,22 +675,54 @@ export function Dashboard() {
       {/* Header on the same tinted wash the landing hero and the other pages
           use, in place of the gradient card this page carried on its own. */}
       <div style={{ background: TOKENS.heroWash }}>
-        <div className="px-4 sm:px-8 lg:px-10 pt-10 pb-11 max-w-7xl mx-auto">
+        <div className="px-4 sm:px-8 lg:px-10 pt-10 pb-8 max-w-6xl mx-auto">
           <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
-            Study overview
+            Your learning space
           </p>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            {displayName ? `Hello, ${displayName}` : "Your progress"}
+            {displayName ? `Hello, ${displayName}` : "A little practice. Real progress."}
           </h1>
           <p className="text-base max-w-xl" style={{ color: TOKENS.inkMuted }}>
-            Keep your momentum going. Review your performance and choose your next practice session.
+            Pick up where you left off and keep building confidence.
           </p>
         </div>
       </div>
 
-      <main className="flex-1 px-4 sm:px-8 lg:px-10 pt-10 pb-8">
-        <div className="max-w-7xl mx-auto">
-        <AchievementsSection />
+      <main className="flex-1 px-4 sm:px-8 lg:px-10 pt-6 pb-8">
+        <div className="max-w-6xl mx-auto">
+        <section
+          className="rounded-2xl p-6 sm:p-8 mb-6 flex flex-wrap items-center justify-between gap-6"
+          style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, borderTop: `3px solid ${TOKENS.azure}`, boxShadow: `0 10px 35px ${TOKENS.ink}08` }}
+          aria-labelledby="continue-study-heading"
+        >
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: TOKENS.inkMuted }}>
+              {recentMeta ? `Continue studying · ${recentExam}` : "Your next step"}
+            </p>
+            <h2 id="continue-study-heading" className="text-2xl font-semibold tracking-tight mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              {recentMeta?.label || "Start your certification journey"}
+            </h2>
+            <p className="text-sm sm:text-base leading-relaxed" style={{ color: TOKENS.inkMuted }}>
+              {recentMeta ? "Build on your progress with another practice session." : "Choose an exam and build confidence, one question at a time."}
+            </p>
+            <Link
+              to={recentMeta ? `/${recentMeta.slug}?mode=practice` : "/"}
+              className="inline-flex items-center gap-4 mt-6 px-5 py-3 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90"
+              style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+            >
+              {recentMeta ? "Continue practice" : "Explore certifications"}
+              <ChevronRight size={18} aria-hidden="true" />
+            </Link>
+          </div>
+          {recentMeta && (
+            <div className="w-32 h-32 rounded-full p-2 shrink-0" style={{ background: `conic-gradient(${TOKENS.azure} ${recentCoverage}%, ${TOKENS.panelBorder} 0)` }}>
+              <div className="w-full h-full rounded-full flex flex-col items-center justify-center" style={{ background: TOKENS.panel }}>
+                <span className="text-3xl font-bold tracking-tight" style={{ color: TOKENS.ink }}>{recentCoverage}%</span>
+                <span className="text-xs" style={{ color: TOKENS.inkMuted }}>questions seen</span>
+              </div>
+            </div>
+          )}
+        </section>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8">
@@ -695,21 +731,21 @@ export function Dashboard() {
             label="Total Attempts"
             value={stats.totalAttempts}
             subtext={`${stats.uniqueQuestionsAnswered} unique questions`}
-            color="amber"
+            color="azure"
           />
           <StatCard
             icon={Target}
             label="Correct Answers"
             value={stats.totalCorrect}
             subtext={`${stats.accuracy}% accuracy rate`}
-            color="green"
+            color="azure"
           />
           <StatCard
             icon={Flame}
             label="Study Streak"
             value={`${visitStreak} day${visitStreak === 1 ? "" : "s"}`}
             subtext="Keep it up!"
-            color="amber"
+            color="azure"
           />
         </div>
 
@@ -724,7 +760,7 @@ export function Dashboard() {
               style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
             >
               <Award size={20} style={{ color: TOKENS.azure }} />
-              Exam Progress
+              Your certifications
             </h2>
 
             {examStats.length > 0 ? (
@@ -793,7 +829,7 @@ export function Dashboard() {
                 className="font-semibold mb-4"
                 style={{ color: TOKENS.ink }}
               >
-                Continue Studying
+                Explore exams
               </h3>
               <div className="space-y-2">
                 {Object.entries(EXAM_META).slice(0, 4).map(([code, meta]) => (
@@ -814,6 +850,7 @@ export function Dashboard() {
             </div>
           </div>
         </div>
+        <div className="mt-8"><AchievementsSection /></div>
         </div>
       </main>
 
