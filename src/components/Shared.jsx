@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, Home, BookOpen, Info, Menu, X, Lock, Heart, Linkedin } from "lucide-react";
+import { LayoutDashboard, FileText, BookOpen, Info, Menu, X, Lock, Heart, Linkedin } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getCookieConsent, setCookieConsent } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
@@ -77,9 +77,12 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
   const [pendingRoute, setPendingRoute] = useState(null);
   const hasFullAccess = isAuthenticated ?? !!user;
 
+  // "Home" is gone from the list because the wordmark already goes there.
+  // "Exams" is an anchor rather than a route: the exam picker lives in the
+  // landing page, so there is no /exams page to send people to.
   const navItems = [
-    { to: "/", label: "Home", icon: Home, public: true },
     { to: "/study-guides", label: "Study Guides", icon: BookOpen, public: true },
+    { to: "/#choose-exam", label: "Exams", icon: FileText, public: true, anchor: true },
     { to: "/about", label: "About", icon: Info, public: true },
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, public: false },
   ];
@@ -102,67 +105,49 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
       <div className="relative flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4 sm:py-5">
         <button
           onClick={onLogoClick}
-          className="flex items-center gap-2.5"
+          className="flex items-center gap-3 flex-shrink-0"
           style={{ background: "transparent", border: "none", cursor: onLogoClick ? "pointer" : "default", padding: 0 }}
           disabled={!onLogoClick}
         >
-          <div
-            className="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold"
-            style={{ background: `linear-gradient(135deg, ${TOKENS.azure}, ${TOKENS.azureDeep})`, color: TOKENS.bgDeep, fontFamily: FONT_MONO }}
-          >
-            FP
-          </div>
-          <span className="text-sm font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            FabricPrep
+          <span className="flex flex-col items-end">
+            <span className="text-xl sm:text-2xl font-bold leading-none" style={{ fontFamily: FONT_DISPLAY, color: TOKENS.ink }}>
+              Fabric<span style={{ color: TOKENS.azure }}>Prep</span>
+            </span>
+            {/* Pen-stroke underline, weighted under the "Prep" half of the
+                wordmark the way the design has it. */}
+            <svg width="62" height="7" viewBox="0 0 62 7" fill="none" aria-hidden="true" className="mt-1">
+              <path d="M2 4.8C12 1.9 34 1.3 60 3.6" stroke={TOKENS.azure} strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+          </span>
+          <span className="hidden sm:block text-left text-[11px] leading-snug" style={{ color: TOKENS.inkMuted }}>
+            Practice today.
+            <br />
+            Certify tomorrow.
           </span>
         </button>
 
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-2.5 flex-wrap justify-end">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isLocked = !item.public && !hasFullAccess;
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={(e) => handleNavClick(item, e)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap"
-                style={{
-                  color: TOKENS.ink,
-                  background: TOKENS.panel,
-                  border: `1px solid ${TOKENS.panelBorder}`,
-                  opacity: isLocked ? 0.6 : 1,
-                }}
-              >
-                <Icon size={14} />
+        {/* Desktop navigation — centred on the bar, plain text links rather
+            than the old row of bordered pills. */}
+        <div className="hidden lg:flex items-center justify-center gap-8 flex-1 mx-8">
+          {/* Dashboard is simply absent until sign-in rather than shown with a
+              padlock — the bar has no room for a locked state this size. */}
+          {navItems.filter((item) => item.public || hasFullAccess).map((item) => {
+            const className = "text-sm font-medium transition-colors whitespace-nowrap hover:opacity-70";
+            const style = { color: TOKENS.ink, textDecoration: "none" };
+            return item.anchor ? (
+              <a key={item.to} href={item.to} className={className} style={style}>
                 {item.label}
-                {isLocked && <Lock size={10} />}
+              </a>
+            ) : (
+              <Link key={item.to} to={item.to} onClick={(e) => handleNavClick(item, e)} className={className} style={style}>
+                {item.label}
               </Link>
             );
           })}
-          {user ? (
-            <div className="flex items-center gap-2">
-              <span className="text-xs" style={{ color: TOKENS.inkMuted }}>
-                {user.displayName || user.email}
-              </span>
-              <button
-                onClick={onLogout}
-                className="text-xs px-2 py-1 rounded-lg"
-                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.inkMuted }}
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              className="text-xs px-3 py-1.5 rounded-lg font-medium"
-              style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
-            >
-              Sign In
-            </Link>
-          )}
+        </div>
+
+        {/* Desktop actions */}
+        <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
           {streak > 0 && (
             <div
               className="flex items-center gap-1 rounded-full px-2.5 py-1 whitespace-nowrap"
@@ -176,7 +161,7 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
           <button
             onClick={onToggleTheme}
             aria-label="Toggle theme"
-            className="relative ml-1"
+            className="relative"
             style={{ width: 34, height: 20, borderRadius: 999, background: TOKENS.panelBorder, border: `1px solid ${TOKENS.panelBorder}`, cursor: "pointer", padding: 0 }}
           >
             <span
@@ -193,6 +178,38 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
             />
           </button>
           <SponsorButton />
+
+          {user ? (
+            <>
+              <span className="text-xs max-w-[12rem] truncate" style={{ color: TOKENS.inkMuted }}>
+                {user.displayName || user.email}
+              </span>
+              <button
+                onClick={onLogout}
+                className="text-sm font-medium px-4 py-2 rounded-xl"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink, cursor: "pointer" }}
+              >
+                Log out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-medium px-5 py-2.5 rounded-xl whitespace-nowrap"
+                style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink, textDecoration: "none" }}
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/login"
+                className="text-sm font-semibold px-5 py-2.5 rounded-xl whitespace-nowrap"
+                style={{ background: TOKENS.azure, color: TOKENS.panel, textDecoration: "none" }}
+              >
+                Start Free
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -234,7 +251,34 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
             {navItems.map((item) => {
               const Icon = item.icon;
               const isLocked = !item.public && !hasFullAccess;
-              return (
+              const className = "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors";
+              const style = {
+                color: TOKENS.ink,
+                background: TOKENS.panel,
+                border: `1px solid ${TOKENS.panelBorder}`,
+                opacity: isLocked ? 0.6 : 1,
+                textDecoration: "none",
+              };
+              const body = (
+                <>
+                  <Icon size={18} color={TOKENS.azure} />
+                  {item.label}
+                  {isLocked && <Lock size={14} />}
+                </>
+              );
+              // The exam picker is an in-page anchor, so it needs a real <a>
+              // to get the browser's own scroll-to-hash behaviour.
+              return item.anchor ? (
+                <a
+                  key={item.to}
+                  href={item.to}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={className}
+                  style={style}
+                >
+                  {body}
+                </a>
+              ) : (
                 <Link
                   key={item.to}
                   to={item.to}
@@ -242,17 +286,10 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
                     handleNavClick(item, e);
                     if (!isLocked) setMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
-                  style={{ 
-                    color: TOKENS.ink, 
-                    background: TOKENS.panel, 
-                    border: `1px solid ${TOKENS.panelBorder}`,
-                    opacity: isLocked ? 0.6 : 1,
-                  }}
+                  className={className}
+                  style={style}
                 >
-                  <Icon size={18} color={TOKENS.azure} />
-                  {item.label}
-                  {isLocked && <Lock size={14} />}
+                  {body}
                 </Link>
               );
             })}

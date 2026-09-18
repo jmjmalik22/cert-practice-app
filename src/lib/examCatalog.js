@@ -179,17 +179,22 @@ export const EXAM_CODES = Object.freeze(Object.keys(EXAM_CATALOG));
 // Power BI hosted on Microsoft's CDN; Azure via the widely-used devicon
 // recreation of Microsoft's Azure logo) — used only to identify the subject
 // of each exam, not to imply endorsement.
-// SC-900 spans several products (Entra, Defender, Purview) rather than one,
-// so it intentionally has no single logo here.
+// Exams that span several products (SC-900 across Entra/Defender/Purview, the
+// AI and data exams across many services) get a neutral subject mark drawn for
+// FabricPrep — a sparkle, a cylinder, a shield — rather than any one product logo.
 export const PRODUCT_ICONS = Object.freeze({
   "DP-700": { src: "/product-icons/fabric.svg", alt: "Microsoft Fabric" },
   "DP-600": { src: "/product-icons/fabric.svg", alt: "Microsoft Fabric" },
   "AZ-900": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
-  "DP-900": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
   "AZ-104": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
-  "AI-901": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
-  "DP-800": { src: "/product-icons/azure.svg", alt: "Microsoft Azure" },
+  "DP-900": { src: "/product-icons/data.svg", alt: "Azure data services" },
+  "DP-800": { src: "/product-icons/data.svg", alt: "Azure data services" },
+  "AI-901": { src: "/product-icons/ai.svg", alt: "Azure AI" },
+  "AI-103": { src: "/product-icons/ai.svg", alt: "Azure AI" },
+  "AI-200": { src: "/product-icons/ai.svg", alt: "Azure AI" },
+  "AI-300": { src: "/product-icons/ai.svg", alt: "Azure AI" },
   "PL-300": { src: "/product-icons/power-bi.svg", alt: "Power BI" },
+  "SC-900": { src: "/product-icons/security.svg", alt: "Microsoft security and compliance" },
 });
 
 export function getProductIcon(examCode) {

@@ -3,7 +3,7 @@ import { useParams, Link, useOutletContext, useSearchParams } from "react-router
 import { Head as Helmet } from "vite-react-ssg";
 import { RotateCcw, Clock, ChevronLeft, BookOpen, Lock, Shield } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getAttempted } from "../lib/theme.jsx";
-import { MOCK_CONFIG, SHIELD_CONFIG, STUDY_GUIDE_EXAMS, isShieldAvailable, buildBreadcrumbSchema } from "../lib/examCatalog.js";
+import { MOCK_CONFIG, SHIELD_CONFIG, STUDY_GUIDE_EXAMS, isShieldAvailable, buildBreadcrumbSchema, getProductIcon } from "../lib/examCatalog.js";
 import { QUESTION_BANK, EXAM_META, SLUG_TO_EXAM } from "../lib/questionBank/index.js";
 import { Footer, MedallionMotif } from "../components/Shared.jsx";
 import { Practice } from "../components/Practice.jsx";
@@ -61,6 +61,7 @@ export function ExamPage() {
   const attempted = getAttempted(code).length;
   const pct = total ? Math.min(100, Math.round((attempted / total) * 100)) : 0;
   const shieldAvailable = isShieldAvailable(code);
+  const productIcon = getProductIcon(code);
   const faqs = buildFaqs(code, meta, total, shieldAvailable);
 
   function clearPracticeParams() {
@@ -134,39 +135,50 @@ export function ExamPage() {
         </script>
       </Helmet>
 
-      <div className="flex-1 px-6 py-8 max-w-2xl mx-auto w-full">
-        <Link to="/" className="flex items-center gap-1 text-xs mb-6" style={{ color: TOKENS.inkMuted }}>
-          <ChevronLeft size={14} /> All exams
-        </Link>
+      {/* The exam header sits on the same tinted wash as the landing hero, so
+          clicking through from the homepage is not a change of language. */}
+      <div style={{ background: TOKENS.heroWash }}>
+        <div className="px-6 pt-8 pb-11 max-w-3xl mx-auto w-full">
+          <Link to="/" className="inline-flex items-center gap-1 text-xs mb-7" style={{ color: TOKENS.inkMuted }}>
+            <ChevronLeft size={14} /> All exams
+          </Link>
 
-        <div className="text-center mb-8 flex flex-col items-center">
-          {shieldAvailable && <MedallionMotif opacity={0.5} />}
-          <h1 className="text-2xl sm:text-3xl font-semibold mt-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-            {code} — {meta.title}
-          </h1>
-          <p className="mt-3 text-sm max-w-md" style={{ color: TOKENS.inkMuted }}>
-            {shieldAvailable
-              ? `${total} free practice questions, sourced from official Microsoft Learn documentation. Practice untimed, try a quick mock, or sit the scored Shield exam to earn a badge.`
-              : `${total} free practice questions, sourced from official Microsoft Learn documentation. Practice untimed or try a quick mock.`}
-          </p>
-        </div>
+          <div className="text-center flex flex-col items-center">
+            {productIcon ? (
+              <img src={productIcon.src} alt="" width={44} height={44} className="mb-4" aria-hidden="true" />
+            ) : (
+              shieldAvailable && <MedallionMotif opacity={0.5} />
+            )}
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+              {code} — {meta.title}
+            </h1>
+            <p className="mt-4 text-base max-w-lg" style={{ color: TOKENS.inkMuted }}>
+              {shieldAvailable
+                ? `${total} free practice questions, sourced from official Microsoft Learn documentation. Practice untimed, try a quick mock, or sit the scored Shield exam to earn a badge.`
+                : `${total} free practice questions, sourced from official Microsoft Learn documentation. Practice untimed or try a quick mock.`}
+            </p>
+          </div>
 
-        <div className="rounded-xl p-4 mb-6" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
-          <div className="flex justify-between text-xs mb-2" style={{ color: TOKENS.inkMuted }}>
-            <span>Your progress</span>
-            <span style={{ fontFamily: FONT_MONO }}>{attempted}/{total} attempted</span>
-          </div>
-          <div className="rounded-full overflow-hidden" style={{ height: 5, background: TOKENS.panelBorder }}>
-            <div style={{ width: `${pct}%`, height: "100%", background: TOKENS.azure }} />
+          <div className="rounded-2xl p-5 mt-8" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+            <div className="flex justify-between text-xs mb-2" style={{ color: TOKENS.inkMuted }}>
+              <span>Your progress</span>
+              <span style={{ fontFamily: FONT_MONO }}>{attempted}/{total} attempted</span>
+            </div>
+            <div className="rounded-full overflow-hidden" style={{ height: 5, background: TOKENS.panelBorder }}>
+              <div style={{ width: `${pct}%`, height: "100%", background: TOKENS.azure }} />
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className="flex-1 px-6 pt-10 pb-8 max-w-3xl mx-auto w-full">
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           {/* Practice Mode - Locked for guests */}
           {isAuthenticated ? (
             <button
               onClick={() => setMode("practice")}
-              className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+              className="rounded-2xl p-4 text-left transition-transform hover:-translate-y-0.5"
               style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
             >
               <div className="flex items-center gap-2 mb-1">
@@ -178,26 +190,29 @@ export function ExamPage() {
           ) : (
             <Link
               to="/login"
-              className="rounded-xl p-4 text-left relative overflow-hidden"
+              className="rounded-2xl p-4 text-left block"
               style={{ background: `${TOKENS.panel}80`, border: `1px solid ${TOKENS.panelBorder}` }}
             >
-              <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${TOKENS.bg}60` }}>
-                <div className="flex items-center gap-1 text-xs" style={{ color: TOKENS.inkMuted }}>
-                  <Lock size={12} /> Sign in to unlock
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mb-1 opacity-40">
+              <div className="flex items-center gap-2 mb-1">
                 <RotateCcw size={16} color={TOKENS.inkMuted} />
                 <span className="font-semibold text-sm" style={{ color: TOKENS.inkMuted }}>Practice mode</span>
               </div>
-              <p className="text-xs opacity-40" style={{ color: TOKENS.inkMuted }}>Untimed, with domain filters and bookmarks.</p>
+              <p className="text-xs" style={{ color: TOKENS.inkMuted }}>Untimed, with domain filters and bookmarks.</p>
+              {/* The lock sits in the card's own flow. It used to be a
+                  centred overlay, which landed on top of the title. */}
+              <span
+                className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full mt-3"
+                style={{ color: TOKENS.inkMuted, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+              >
+                <Lock size={12} /> Sign in to unlock
+              </span>
             </Link>
           )}
 
           {/* Mock Exam - Always available */}
           <button
             onClick={() => setMode("mock")}
-            className="rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+            className="rounded-2xl p-4 text-left transition-transform hover:-translate-y-0.5"
             style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
           >
             <div className="flex items-center gap-2 mb-1">
@@ -216,7 +231,7 @@ export function ExamPage() {
             {isAuthenticated ? (
               <button
                 onClick={() => setMode("shield")}
-                className="w-full rounded-xl p-4 text-left transition-transform hover:-translate-y-0.5"
+                className="w-full rounded-2xl p-4 text-left transition-transform hover:-translate-y-0.5"
                 style={{ background: `${TOKENS.amber}10`, border: `1px solid ${TOKENS.amber}40` }}
               >
                 <div className="flex items-center gap-2 mb-1">
@@ -231,21 +246,22 @@ export function ExamPage() {
             ) : (
               <Link
                 to="/login"
-                className="block w-full rounded-xl p-4 text-left relative overflow-hidden"
+                className="block w-full rounded-2xl p-4 text-left"
                 style={{ background: `${TOKENS.panel}80`, border: `1px solid ${TOKENS.panelBorder}` }}
               >
-                <div className="absolute inset-0 flex items-center justify-center" style={{ background: `${TOKENS.bg}60` }}>
-                  <div className="flex items-center gap-1 text-xs" style={{ color: TOKENS.inkMuted }}>
-                    <Lock size={12} /> Sign in to unlock
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mb-1 opacity-40">
+                <div className="flex items-center gap-2 mb-1">
                   <Shield size={16} color={TOKENS.inkMuted} />
                   <span className="font-semibold text-sm" style={{ color: TOKENS.inkMuted }}>Shield exam</span>
                 </div>
-                <p className="text-xs opacity-40" style={{ color: TOKENS.inkMuted }}>
+                <p className="text-xs" style={{ color: TOKENS.inkMuted }}>
                   {SHIELD_CONFIG.totalQuestions} scored questions. Earn a shareable shield.
                 </p>
+                <span
+                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full mt-3"
+                  style={{ color: TOKENS.inkMuted, background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+                >
+                  <Lock size={12} /> Sign in to unlock
+                </span>
               </Link>
             )}
           </div>
@@ -255,7 +271,7 @@ export function ExamPage() {
         {STUDY_GUIDE_EXAMS.has(code) && (
           <Link
             to={`/study-guides/${meta.slug}`}
-            className="flex items-center justify-center gap-2 rounded-xl p-3 mb-10 text-sm font-medium transition-transform hover:-translate-y-0.5"
+            className="flex items-center justify-center gap-2 rounded-2xl p-3 mb-10 text-sm font-medium transition-transform hover:-translate-y-0.5"
             style={{ background: `${TOKENS.green}15`, border: `1px solid ${TOKENS.green}40`, color: TOKENS.green }}
           >
             <BookOpen size={16} />
@@ -269,7 +285,7 @@ export function ExamPage() {
         </h2>
         <div className="flex flex-col gap-2">
           {faqs.map((f) => (
-            <details key={f.q} className="rounded-xl p-4" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
+            <details key={f.q} className="rounded-2xl p-4" style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}>
               <summary className="text-sm font-medium cursor-pointer" style={{ color: TOKENS.ink }}>{f.q}</summary>
               <p className="text-xs mt-2" style={{ color: TOKENS.inkMuted }}>{f.a}</p>
             </details>

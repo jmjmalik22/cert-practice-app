@@ -668,30 +668,24 @@ export function Dashboard() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      <main className="flex-1 px-4 sm:px-8 lg:px-10 py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div
-          className="relative overflow-hidden rounded-2xl p-6 sm:p-8 mb-6"
-          style={{
-            background: `linear-gradient(120deg, ${TOKENS.panel}, ${TOKENS.bgDeep})`,
-            border: `1px solid ${TOKENS.panelBorder}`,
-          }}
-        >
-          <div className="relative z-10 max-w-2xl">
-            <div className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: TOKENS.azure, fontFamily: FONT_MONO }}>
-              Study overview
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-              {displayName ? `Hello, ${displayName}` : "Your progress"}
-            </h1>
-            <p className="text-sm sm:text-base" style={{ color: TOKENS.inkMuted }}>
-              Keep your momentum going. Review your performance and choose your next practice session.
-            </p>
-          </div>
-          <div className="absolute -right-10 -bottom-16 w-52 h-52 rounded-full opacity-20" style={{ background: TOKENS.azure }} />
+      {/* Header on the same tinted wash the landing hero and the other pages
+          use, in place of the gradient card this page carried on its own. */}
+      <div style={{ background: TOKENS.heroWash }}>
+        <div className="px-4 sm:px-8 lg:px-10 pt-10 pb-11 max-w-7xl mx-auto">
+          <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: TOKENS.inkMuted, fontFamily: FONT_MONO }}>
+            Study overview
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            {displayName ? `Hello, ${displayName}` : "Your progress"}
+          </h1>
+          <p className="text-base max-w-xl" style={{ color: TOKENS.inkMuted }}>
+            Keep your momentum going. Review your performance and choose your next practice session.
+          </p>
         </div>
+      </div>
 
+      <main className="flex-1 px-4 sm:px-8 lg:px-10 pt-10 pb-8">
+        <div className="max-w-7xl mx-auto">
         <AchievementsSection />
 
         {/* Stats Grid */}
