@@ -133,7 +133,15 @@ export function recordAttempt(examCode, questionId, isCorrect, timeSpent = 0, is
   notifyProgressChanged();
 }
 
-// Toggle bookmark for a question
+// Toggle bookmark for a question.
+//
+// Alongside the plain `bookmarked` array (unchanged — everything that reads
+// it, here and in the UI, keeps working as before), this records the action
+// and its timestamp in `bookmarkLog`. A plain array union can only ever add a
+// question back in on the next sync; it has no way to represent "this was
+// removed". `bookmarkLog` is what lets progressSync's merge tell a real
+// removal apart from a copy that simply hasn't seen it yet — see
+// `mergeBookmarkState` in progressSync.js.
 export function toggleBookmark(examCode, questionId) {
   const progress = getProgress();
   if (!progress[examCode]) {
@@ -141,12 +149,16 @@ export function toggleBookmark(examCode, questionId) {
   }
 
   const exam = progress[examCode];
+  if (!exam.bookmarkLog) exam.bookmarkLog = {};
   const index = exam.bookmarked.indexOf(questionId);
+  const now = new Date().toISOString();
 
   if (index > -1) {
     exam.bookmarked.splice(index, 1);
+    exam.bookmarkLog[questionId] = { action: "remove", at: now };
   } else {
     exam.bookmarked.push(questionId);
+    exam.bookmarkLog[questionId] = { action: "add", at: now };
   }
 
   scopedSet(PROGRESS_KEY, progress);

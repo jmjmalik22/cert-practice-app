@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // Fake Firestore: an in-memory document store plus a gate that lets a test
 // change the signed-in identity while a `getDoc` is still in flight.
@@ -50,7 +50,13 @@ import {
   scopedSet,
   userScopeId,
 } from "./storageScope.js";
-import { getProgress, recordAttempt, saveExamResult, getExamResults } from "./progress.jsx";
+import {
+  getProgress,
+  recordAttempt,
+  saveExamResult,
+  getExamResults,
+  toggleBookmark,
+} from "./progress.jsx";
 import { getAttempted, getBookmarks, toggleBookmarkStorage } from "./theme.jsx";
 
 // --- helpers for the concurrency tests -------------------------------------
@@ -67,6 +73,12 @@ function localAttemptIds(uid, examCode = "DP-700") {
 function remoteAttemptIds(uid, examCode = "DP-700") {
   const exam = firestore.remote.get(`users/${uid}`)?.progress?.[examCode];
   return (exam?.attempts || []).map((a) => a.questionId).sort();
+}
+
+/** Bookmarked ids for `examCode` in the fake Firestore document, sorted. */
+function remoteBookmarks(uid, examCode = "DP-700") {
+  const exam = firestore.remote.get(`users/${uid}`)?.progress?.[examCode];
+  return (exam?.bookmarked || []).slice().sort();
 }
 
 function attempt(questionId, day = 1) {
@@ -130,6 +142,99 @@ describe("mergeExamProgress", () => {
   it("treats missing local/remote exam data as empty", () => {
     const merged = mergeExamProgress(undefined, undefined);
     expect(merged).toEqual({ attempts: [], correct: 0, total: 0, bookmarked: [], lastUpdated: undefined });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Bookmark removal is a deletion, and a plain array union (the old behavior)
+// cannot represent a deletion at all: the id is either present forever or
+// never. `bookmarkLog` records the timestamped add/remove action per question
+// so a merge can tell a real removal apart from a copy that simply hasn't
+// seen it yet.
+// ---------------------------------------------------------------------------
+
+describe("mergeExamProgress bookmark tombstones", () => {
+  // Pin "now" close to the sample timestamps below — the retention window
+  // that bounds bookmarkLog's growth (see mergeBookmarkState) prunes any
+  // dated event more than 90 days old, and these tests want that pruning to
+  // stay out of the way except where it's the thing under test.
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-01T00:00:00.000Z"));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("keeps a bookmark removed on one side even when the other side's stale copy still lists it", () => {
+    const removedAt = "2026-02-25T00:00:00.000Z";
+    // This side already recorded the removal.
+    const afterRemoval = {
+      attempts: [],
+      bookmarked: [],
+      bookmarkLog: { q1: { action: "remove", at: removedAt } },
+    };
+    // This side never saw the removal: a plain, undated array entry from
+    // before it happened.
+    const staleCopy = { attempts: [], bookmarked: ["q1"] };
+
+    const merged = mergeExamProgress(staleCopy, afterRemoval);
+
+    expect(merged.bookmarked).toEqual([]);
+    expect(merged.bookmarkLog.q1).toEqual({ action: "remove", at: removedAt });
+  });
+
+  it("still unions a plain add when neither side has a dated event for it", () => {
+    const local = { attempts: [], bookmarked: ["q1"] };
+    const remote = { attempts: [], bookmarked: ["q2"] };
+
+    const merged = mergeExamProgress(local, remote);
+
+    expect(merged.bookmarked.sort()).toEqual(["q1", "q2"]);
+    expect(merged.bookmarkLog).toBeUndefined();
+  });
+
+  it("lets a later re-add win over an earlier removal", () => {
+    const removedAt = "2026-02-20T00:00:00.000Z";
+    const reAddedAt = "2026-02-25T00:00:00.000Z";
+
+    const remote = {
+      attempts: [],
+      bookmarked: [],
+      bookmarkLog: { q1: { action: "remove", at: removedAt } },
+    };
+    const local = {
+      attempts: [],
+      bookmarked: ["q1"],
+      bookmarkLog: { q1: { action: "add", at: reAddedAt } },
+    };
+
+    const merged = mergeExamProgress(local, remote);
+
+    expect(merged.bookmarked).toEqual(["q1"]);
+    expect(merged.bookmarkLog.q1).toEqual({ action: "add", at: reAddedAt });
+  });
+
+  it("still resolves an ancient tombstone correctly but stops carrying it forward", () => {
+    // A dated event always outranks an undated one for THIS merge, no matter
+    // its age — an old, definite fact still beats no information at all.
+    const ancient = {
+      attempts: [],
+      bookmarked: [],
+      bookmarkLog: { q1: { action: "remove", at: "2000-01-01T00:00:00.000Z" } },
+    };
+    const stale = { attempts: [], bookmarked: ["q1"] };
+
+    const merged = mergeExamProgress(stale, ancient);
+    expect(merged.bookmarked).toEqual([]);
+
+    // But the log entry itself is well past the retention window, so it is
+    // not carried into the merged output — this is what bounds bookmarkLog's
+    // growth instead of keeping every tombstone forever. A future merge
+    // against a copy that (implausibly) still disagrees would fall back to
+    // plain-union behavior for this one question rather than staying blocked
+    // on a decades-old timestamp.
+    expect(merged.bookmarkLog).toBeUndefined();
   });
 });
 
@@ -785,5 +890,90 @@ describe("identity guards hold across an account switch mid-flight", () => {
     }
 
     expect(firestore.remote.has("users/userA")).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// End-to-end regression for the bookmark-tombstone bug: `pushProgress` now
+// merges instead of blindly overwriting (see the "pushProgress merges
+// instead of overwriting" tests above), which means a removal that used to
+// "accidentally" survive because the last blind write happened to win now
+// reliably loses to any stale copy still holding the old array — unless the
+// merge is tombstone-aware. These drive the whole toggleBookmark ->
+// pushProgress path (not just the pure mergeExamProgress function) to prove
+// the fix holds together with everything else changed on this branch.
+// ---------------------------------------------------------------------------
+
+describe("bookmark removal propagates across devices (tombstone regression)", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("keeps a bookmark removed after a second device's stale copy syncs later", async () => {
+    setActiveSyncUid("userA");
+
+    toggleBookmark("DP-700", "q1");
+    await pushProgress("userA");
+    expect(remoteBookmarks("userA")).toEqual(["q1"]);
+
+    vi.setSystemTime(new Date("2026-01-02T00:00:00.000Z"));
+    toggleBookmark("DP-700", "q1"); // removed on this device, and pushed
+    await pushProgress("userA");
+    expect(remoteBookmarks("userA")).toEqual([]);
+
+    // Simulate a second device: its local copy still has q1 bookmarked from
+    // before the removal, and — being a plain older snapshot — carries no
+    // bookmarkLog entry of its own.
+    scopedSet(
+      PROGRESS_KEY,
+      { "DP-700": { attempts: [], correct: 0, total: 0, bookmarked: ["q1"] } },
+      SCOPE_A()
+    );
+
+    vi.setSystemTime(new Date("2026-01-03T00:00:00.000Z"));
+    await pushProgress("userA");
+
+    // The removal must stick — not reappear because of the stale copy.
+    expect(remoteBookmarks("userA")).toEqual([]);
+    expect(scopedGet(PROGRESS_KEY, {}, SCOPE_A())["DP-700"].bookmarked).toEqual([]);
+  });
+
+  it("lets a bookmark removed then re-added later be added again", async () => {
+    setActiveSyncUid("userA");
+
+    toggleBookmark("DP-700", "q1");
+    await pushProgress("userA");
+    expect(remoteBookmarks("userA")).toEqual(["q1"]);
+
+    vi.setSystemTime(new Date("2026-01-02T00:00:00.000Z"));
+    toggleBookmark("DP-700", "q1"); // remove
+    await pushProgress("userA");
+    expect(remoteBookmarks("userA")).toEqual([]);
+
+    vi.setSystemTime(new Date("2026-01-03T00:00:00.000Z"));
+    toggleBookmark("DP-700", "q1"); // re-add — a tombstone must not block this
+    await pushProgress("userA");
+
+    expect(remoteBookmarks("userA")).toEqual(["q1"]);
+    expect(getProgress()["DP-700"].bookmarked).toEqual(["q1"]);
+  });
+
+  it("still syncs a newly added bookmark normally, with no prior removal involved", async () => {
+    setActiveSyncUid("userA");
+
+    toggleBookmark("DP-700", "q1");
+    await pushProgress("userA");
+
+    expect(remoteBookmarks("userA")).toEqual(["q1"]);
+    expect(getProgress()["DP-700"].bookmarked).toEqual(["q1"]);
+
+    // And a pull from a fresh reload of the same account sees it too.
+    const pulled = await pullAndMergeProgress("userA");
+    expect(pulled.progress["DP-700"].bookmarked).toEqual(["q1"]);
   });
 });

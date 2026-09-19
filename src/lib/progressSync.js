@@ -94,6 +94,92 @@ function applyLocalSnapshot({ progress, examResults }, scopeId = getActiveScopeI
   syncDerivedLocalKeys(progress || {}, scopeId);
 }
 
+// How long a per-question bookmark event needs to stick around after a merge
+// before it's safe to forget it. A dated event (add or remove) only earns its
+// keep while some other copy of this exam's progress might still be older
+// than it and need to be overruled by it — once every device that could
+// plausibly hold that older copy has synced, the plain `bookmarked` array it
+// already folded into reflects the outcome, and the timestamp has done its
+// job. There's no reliable signal for "every device has caught up" (this app
+// has no server-side fan-out to ask), so this is bounded by calendar time
+// instead: sync runs on every login and every tab focus, so any device that
+// is still in use is never more than a session away from syncing — 90 days
+// is far longer than that. A copy older than the window either belongs to an
+// abandoned device or one that will simply degrade to the old plain-union
+// behavior for that one question on its next sync, which is an acceptable
+// fallback, not a correctness bug.
+const BOOKMARK_LOG_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
+
+// Last-write-wins between two `{ action: "add"|"remove", at?: ISOString }`
+// bookmark events for the same question. A missing `at` means "no dated
+// event on this side" — either legacy data written before bookmarks were
+// logged, or a side that never touched this question at all — and always
+// loses to a side that has a dated event, since that side is definitely
+// newer information. If neither side has a timestamp there is nothing to
+// arbitrate, so this falls back to the old union behavior (present on either
+// side wins) instead of inventing an ordering. An exact-timestamp tie also
+// favors "add": the point of a tombstone is to make a real removal stick,
+// not to win a coin flip against a simultaneous add.
+function pickLatestBookmarkEvent(a, b) {
+  if (a.at && b.at) {
+    if (a.at === b.at) return a.action === "add" ? a : b;
+    return a.at > b.at ? a : b;
+  }
+  if (a.at) return a;
+  if (b.at) return b;
+  return a.action === "add" ? a : b;
+}
+
+// A plain union of `bookmarked` arrays (the old behavior) can only ever grow:
+// there is no way to encode "this was removed", so a removal made on one
+// device is silently undone the moment it merges against any other copy that
+// still has the old entry. `bookmarkLog` is a per-question record of the most
+// recent add/remove action and when it happened, which is what lets a merge
+// tell a real removal apart from a copy that simply never saw the addition
+// (or never saw the removal). `bookmarked` itself stays a plain array of
+// currently-bookmarked ids — everything that already reads `exam.bookmarked`
+// (getExamStats, getOverallStats, the UI) keeps working unchanged; the log is
+// purely the extra history that makes merging that array correct.
+function mergeBookmarkState(local, remote, now = Date.now()) {
+  const localBookmarked = new Set(local.bookmarked || []);
+  const remoteBookmarked = new Set(remote.bookmarked || []);
+  const localLog = local.bookmarkLog || {};
+  const remoteLog = remote.bookmarkLog || {};
+
+  const questionIds = new Set([
+    ...localBookmarked,
+    ...remoteBookmarked,
+    ...Object.keys(localLog),
+    ...Object.keys(remoteLog),
+  ]);
+
+  const bookmarked = [];
+  const bookmarkLog = {};
+
+  questionIds.forEach((questionId) => {
+    const localEvent = localLog[questionId] || {
+      action: localBookmarked.has(questionId) ? "add" : "remove",
+      at: undefined,
+    };
+    const remoteEvent = remoteLog[questionId] || {
+      action: remoteBookmarked.has(questionId) ? "add" : "remove",
+      at: undefined,
+    };
+
+    const winner = pickLatestBookmarkEvent(localEvent, remoteEvent);
+
+    if (winner.action === "add") bookmarked.push(questionId);
+
+    // Drop undated (legacy) entries — nothing to carry forward — and entries
+    // old enough that every device has almost certainly synced past them.
+    if (winner.at && now - Date.parse(winner.at) <= BOOKMARK_LOG_RETENTION_MS) {
+      bookmarkLog[questionId] = { action: winner.action, at: winner.at };
+    }
+  });
+
+  return { bookmarked, bookmarkLog };
+}
+
 export function mergeExamProgress(localExam, remoteExam) {
   const local = localExam || emptyExamProgress();
   const remote = remoteExam || emptyExamProgress();
@@ -106,7 +192,7 @@ export function mergeExamProgress(localExam, remoteExam) {
   const attempts = Array.from(attemptsByKey.values()).sort(
     (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
   );
-  const bookmarked = [...new Set([...(local.bookmarked || []), ...(remote.bookmarked || [])])];
+  const { bookmarked, bookmarkLog } = mergeBookmarkState(local, remote);
   const correct = attempts.filter((attempt) => attempt.isCorrect).length;
   const lastUpdated = [local.lastUpdated, remote.lastUpdated].filter(Boolean).sort().at(-1);
 
@@ -116,7 +202,9 @@ export function mergeExamProgress(localExam, remoteExam) {
     total: attempts.length,
     bookmarked,
     // Firestore's setDoc rejects explicit `undefined` fields — omit entirely
-    // when neither side has recorded a lastUpdated timestamp yet.
+    // when there is no dated bookmark event to carry forward (see
+    // mergeBookmarkState) or no lastUpdated timestamp yet.
+    ...(Object.keys(bookmarkLog).length ? { bookmarkLog } : {}),
     ...(lastUpdated ? { lastUpdated } : {}),
   };
 }

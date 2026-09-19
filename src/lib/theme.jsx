@@ -145,6 +145,23 @@ export function setCookieConsent(value) {
   window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
 }
 
+// `fp_bookmarks` is a derived, flat `"examCode:questionId"` cache used for
+// fast local UI lookups (e.g. "bookmarked only" filters). It is NOT the
+// source of truth for sync: progressSync's `syncDerivedLocalKeys` fully
+// recomputes it from the merged `progress.<examCode>.bookmarked` field after
+// every successful pull/push that has a remote document to merge against, so
+// whatever a stale entry here might say gets overwritten with the
+// tombstone-resolved result on the very next sync. That's why this plain
+// toggle (unlike `progress.jsx`'s `toggleBookmark`) doesn't need its own
+// add/remove timestamps — it would just be redundant bookkeeping that the
+// next sync throws away. The one path that does NOT recompute it immediately
+// is the one-shot guest-to-account claim on first sign-in (storageScope.js's
+// `registerClaimMerge(BOOKMARKS_KEY, unionArrays)`), but that is safe too: a
+// signed-out guest's own local writes here are always self-consistent (no
+// remote copy is ever merged into guest storage), and claiming into a
+// brand-new account (no remote doc yet) has no prior account data to
+// conflict with. Any account that has synced before already gets this key
+// overwritten by the pull that runs immediately after sign-in.
 export function getBookmarks() {
   return scopedGet("fp_bookmarks", []);
 }
