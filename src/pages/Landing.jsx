@@ -367,7 +367,7 @@ export function Landing() {
           name="description"
           content={`${totalQuestions}+ free FabricPrep certification practice questions for ${examCodeList}. Prepare for Microsoft Fabric and Azure exams with a scored Shield exam sourced from official Microsoft Learn documentation.`}
         />
-        <meta name="keywords" content="fabric certification, microsoft fabric certification, fabric certification exam, fabric prep, fabricprep, dp 700 prep, dp 600 prep, dp 900 prep, az 900 prep, certification prep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, azure certification, fabric data engineer, fabric analytics engineer, data engineer prep, analytics engineer prep, fabric study guide, azure study guide" />
+        <meta name="keywords" content="fabric certification, microsoft fabric certification, fabric certification exam, fabricprep, dp 700 prep, dp 600 prep, dp 900 prep, az 900 prep, certification prep, microsoft fabric practice exam, dp-700 practice questions, dp-600 practice exam, az-900 practice test, dp-900 practice questions, microsoft certification, azure certification, fabric data engineer, fabric analytics engineer, data engineer prep, analytics engineer prep, fabric study guide, azure study guide" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://fabricprep.com/" />
         <meta property="og:title" content="Microsoft Fabric & Azure Certification Practice Questions | FabricPrep" />
