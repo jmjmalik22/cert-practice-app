@@ -1,4 +1,10 @@
 import { useContext, createContext } from "react";
+import {
+  scopedGet,
+  scopedGetString,
+  scopedSet,
+  scopedSetString,
+} from "./storageScope.js";
 
 export const DARK_TOKENS = {
   bg: "#0B1220",
@@ -41,7 +47,14 @@ export function useTheme() {
   return useContext(ThemeContext);
 }
 
-// --- localStorage-backed helpers (session/device only, no backend) ---
+// --- localStorage-backed helpers ---
+//
+// `safeGet`/`safeSet` are DEVICE-level and UNSCOPED: the key you pass is the
+// key that is written. Do NOT use them for anything that belongs to a
+// particular account (progress, bookmarks, badges, results) — that data must
+// go through `scopedGet`/`scopedSet` in ./storageScope.js so two accounts
+// sharing a browser can never read each other's data. These remain for
+// genuinely per-device settings such as the theme and cookie consent.
 export function safeGet(key, fallback) {
   if (typeof window === "undefined") return fallback;
   try {
@@ -77,38 +90,36 @@ export function setStoredTheme(t) {
   }
 }
 
+// Visit streak is per-account activity, so it lives in the active storage
+// scope rather than the shared device pool. Stored as raw strings (not JSON)
+// to match how it shipped.
 export function updateStreak() {
   const today = new Date().toISOString().slice(0, 10);
-  let last = "";
-  let streak = 0;
-  try {
-    last = localStorage.getItem("fp_last_visit") || "";
-    streak = parseInt(localStorage.getItem("fp_streak") || "0", 10) || 0;
-  } catch {
-    return 0;
-  }
-  if (last === today) return streak;
+  if (typeof window === "undefined") return 0;
+
+  const last = scopedGetString("fp_last_visit", "");
+  const streakValue = parseInt(scopedGetString("fp_streak", "0"), 10) || 0;
+
+  if (last === today) return streakValue;
+
   const y = new Date();
   y.setDate(y.getDate() - 1);
   const yesterday = y.toISOString().slice(0, 10);
-  streak = last === yesterday ? streak + 1 : 1;
-  try {
-    localStorage.setItem("fp_last_visit", today);
-    localStorage.setItem("fp_streak", String(streak));
-  } catch {
-    // ignore
-  }
+  const streak = last === yesterday ? streakValue + 1 : 1;
+
+  scopedSetString("fp_last_visit", today);
+  scopedSetString("fp_streak", streak);
   return streak;
 }
 
 export function getAttempted(examCode) {
-  return safeGet(`fp_attempted_${examCode}`, []);
+  return scopedGet(`fp_attempted_${examCode}`, []);
 }
 export function markAttempted(examCode, qid) {
   const arr = getAttempted(examCode);
   if (!arr.includes(qid)) {
     arr.push(qid);
-    safeSet(`fp_attempted_${examCode}`, arr);
+    scopedSet(`fp_attempted_${examCode}`, arr);
   }
 }
 
@@ -135,14 +146,14 @@ export function setCookieConsent(value) {
 }
 
 export function getBookmarks() {
-  return safeGet("fp_bookmarks", []);
+  return scopedGet("fp_bookmarks", []);
 }
 export function toggleBookmarkStorage(key) {
   const arr = getBookmarks();
   const idx = arr.indexOf(key);
   if (idx >= 0) arr.splice(idx, 1);
   else arr.push(key);
-  safeSet("fp_bookmarks", arr);
+  scopedSet("fp_bookmarks", arr);
   return arr;
 }
 

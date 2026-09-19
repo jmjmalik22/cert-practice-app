@@ -11,6 +11,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
+import { setActiveScope } from "./storageScope.js";
 
 const AuthContext = createContext(null);
 
@@ -86,6 +87,13 @@ export function AuthProvider({ children }) {
 
   // Sign out
   const logout = async () => {
+    // Detach local storage from the signed-out account *before* Firebase's
+    // async listener fires. The account's data stays on the device under its
+    // own scope (`fp_*::uid:<uid>`), but from this moment nothing reads or
+    // writes it: whoever signs in next starts from an empty guest scope and
+    // can never inherit it. `signOut` alone used to leave every progress key
+    // sitting in a shared pool for the next account to absorb.
+    setActiveScope(null);
     await signOut(auth);
   };
 

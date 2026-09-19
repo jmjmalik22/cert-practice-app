@@ -1,6 +1,9 @@
 // Progress tracking utilities - localStorage with optional cloud sync for signed-in users
 
-import { safeGet, safeSet } from "./theme.jsx";
+// Every key touched in this file is per-account data, so it goes through the
+// scoped storage helpers — two accounts sharing a browser must never read each
+// other's progress. See src/lib/storageScope.js.
+import { scopedGet, scopedSet } from "./storageScope.js";
 import { notifyProgressChanged } from "./progressSync.js";
 
 const PROGRESS_KEY = "fp_progress";
@@ -19,17 +22,17 @@ export function getDefaultUser() {
 
 // Get or create user profile
 export function getUser() {
-  return safeGet(USER_KEY, getDefaultUser());
+  return scopedGet(USER_KEY, getDefaultUser());
 }
 
 // Save user profile
 export function saveUser(user) {
-  safeSet(USER_KEY, { ...user, lastVisit: new Date().toISOString() });
+  scopedSet(USER_KEY, { ...user, lastVisit: new Date().toISOString() });
 }
 
 // Get all progress data
 export function getProgress() {
-  return safeGet(PROGRESS_KEY, {});
+  return scopedGet(PROGRESS_KEY, {});
 }
 
 // Import old progress data and merge with new
@@ -40,8 +43,8 @@ export function migrateOldProgress() {
 
   exams.forEach((examCode) => {
     // Check for old format data
-    const oldAttempted = safeGet(`fp_attempted_${examCode}`, []);
-    const oldBookmarks = safeGet("fp_bookmarks", []);
+    const oldAttempted = scopedGet(`fp_attempted_${examCode}`, []);
+    const oldBookmarks = scopedGet("fp_bookmarks", []);
 
     if (oldAttempted.length > 0 && !progress[examCode]?.attempts?.length) {
       // Migrate old data to new format
@@ -77,7 +80,7 @@ export function migrateOldProgress() {
   });
 
   if (migrated) {
-    safeSet(PROGRESS_KEY, progress);
+    scopedSet(PROGRESS_KEY, progress);
   }
 
   return progress;
@@ -91,17 +94,17 @@ export function saveExamProgress(examCode, data) {
     ...data,
     lastUpdated: new Date().toISOString(),
   };
-  safeSet(PROGRESS_KEY, progress);
+  scopedSet(PROGRESS_KEY, progress);
   notifyProgressChanged();
 }
 
 // Record a question attempt
 export function recordAttempt(examCode, questionId, isCorrect, timeSpent = 0, isMockExam = false) {
   // Also update old system for compatibility with existing UI
-  const oldAttempted = safeGet(`fp_attempted_${examCode}`, []);
+  const oldAttempted = scopedGet(`fp_attempted_${examCode}`, []);
   if (!oldAttempted.includes(questionId)) {
     oldAttempted.push(questionId);
-    safeSet(`fp_attempted_${examCode}`, oldAttempted);
+    scopedSet(`fp_attempted_${examCode}`, oldAttempted);
   }
 
   const progress = getProgress();
@@ -126,7 +129,7 @@ export function recordAttempt(examCode, questionId, isCorrect, timeSpent = 0, is
   exam.total += 1;
   if (isCorrect) exam.correct += 1;
 
-  safeSet(PROGRESS_KEY, progress);
+  scopedSet(PROGRESS_KEY, progress);
   notifyProgressChanged();
 }
 
@@ -146,7 +149,7 @@ export function toggleBookmark(examCode, questionId) {
     exam.bookmarked.push(questionId);
   }
 
-  safeSet(PROGRESS_KEY, progress);
+  scopedSet(PROGRESS_KEY, progress);
   notifyProgressChanged();
   return index === -1; // returns true if bookmarked, false if removed
 }
@@ -430,7 +433,7 @@ export function getStudyStreak() {
 
 // Save a mock exam result
 export function saveExamResult(examCode, result) {
-  const results = safeGet(EXAM_RESULTS_KEY, []);
+  const results = scopedGet(EXAM_RESULTS_KEY, []);
   results.push({
     examCode,
     score: result.score,
@@ -442,13 +445,13 @@ export function saveExamResult(examCode, result) {
     timestamp: new Date().toISOString(),
     isMockExam: true, // Flag to identify mock exam attempts
   });
-  safeSet(EXAM_RESULTS_KEY, results);
+  scopedSet(EXAM_RESULTS_KEY, results);
   notifyProgressChanged();
 }
 
 // Get all exam results
 export function getExamResults(examCode = null) {
-  const results = safeGet(EXAM_RESULTS_KEY, []);
+  const results = scopedGet(EXAM_RESULTS_KEY, []);
   if (examCode) {
     return results.filter((r) => r.examCode === examCode);
   }
@@ -466,14 +469,14 @@ export function getBestScore(examCode) {
 
 // Get latest exam result
 export function getLatestResult(examCode = null) {
-  const results = examCode ? getExamResults(examCode) : safeGet(EXAM_RESULTS_KEY, []);
+  const results = examCode ? getExamResults(examCode) : scopedGet(EXAM_RESULTS_KEY, []);
   if (results.length === 0) return null;
   return results.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
 }
 
 // Clear all progress (for testing/reset)
 export function clearProgress() {
-  safeSet(PROGRESS_KEY, {});
-  safeSet(EXAM_RESULTS_KEY, []);
+  scopedSet(PROGRESS_KEY, {});
+  scopedSet(EXAM_RESULTS_KEY, []);
   notifyProgressChanged();
 }

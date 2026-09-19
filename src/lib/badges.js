@@ -3,12 +3,32 @@
 // signed-in users.
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
-import { safeGet, safeSet } from "./theme.jsx";
+import { registerClaimMerge, scopedGet, scopedSet, userScopeId } from "./storageScope.js";
 import { getPracticeMastery } from "./progress.jsx";
 import { EXAM_CODES } from "./examCatalog.js";
 
-const BADGES_KEY = "fp_badges";
-const SHIELD_RESULTS_KEY = "fp_shield_results";
+// Per-account keys — read/written through the scoped storage helpers so a
+// second account on the same browser can never inherit these. See
+// src/lib/storageScope.js.
+export const BADGES_KEY = "fp_badges";
+export const SHIELD_RESULTS_KEY = "fp_shield_results";
+
+// When guest progress is claimed by an account signing in for the first time:
+//
+//  - `fp_badges` is only a cache of which badge documents have already been
+//    minted for a given uid. It means nothing under a different identity, so
+//    drop it; syncBadgesToCloud re-mints from scratch (it is idempotent).
+//  - `fp_shield_results` keeps the best sitting per exam, mirroring
+//    recordShieldResult, so a claim can never downgrade an existing shield.
+registerClaimMerge(BADGES_KEY, () => undefined);
+registerClaimMerge(SHIELD_RESULTS_KEY, (guestResults, accountResults) => {
+  const merged = { ...(accountResults || {}) };
+  Object.entries(guestResults || {}).forEach(([examCode, result]) => {
+    const existing = merged[examCode];
+    if (!existing || (result?.score ?? 0) > existing.score) merged[examCode] = result;
+  });
+  return merged;
+});
 
 // Minimum distinct practice questions an exam needs before it's eligible
 // for a badge at all — keeps a badge from being earned off a handful of
@@ -41,7 +61,7 @@ export function getShieldTierForScore(percentage) {
 }
 
 export function getShieldResults() {
-  return safeGet(SHIELD_RESULTS_KEY, {});
+  return scopedGet(SHIELD_RESULTS_KEY, {});
 }
 
 export function getShieldResult(examCode) {
@@ -61,7 +81,7 @@ export function recordShieldResult(examCode, percentage) {
       tier: tier?.id ?? null,
       earnedAt: new Date().toISOString(),
     };
-    safeSet(SHIELD_RESULTS_KEY, results);
+    scopedSet(SHIELD_RESULTS_KEY, results);
   }
 
   return tier;
@@ -106,22 +126,27 @@ export function badgeDocId(uid, examCode) {
   return `${uid}_${examCode}`;
 }
 
-function getBadgeCache() {
-  return safeGet(BADGES_KEY, {});
+function getBadgeCache(scopeId) {
+  return scopedGet(BADGES_KEY, {}, scopeId);
 }
 
-function saveBadgeCacheEntry(examCode, entry) {
-  const cache = getBadgeCache();
+function saveBadgeCacheEntry(examCode, entry, scopeId) {
+  const cache = getBadgeCache(scopeId);
   cache[examCode] = entry;
-  safeSet(BADGES_KEY, cache);
+  scopedSet(BADGES_KEY, cache, scopeId);
 }
 
 // Mint (or upgrade) a public verification record for every badge the user
 // has earned but hasn't yet minted at this tier. Safe to call repeatedly.
+//
+// The mint cache is written into `uid`'s own storage scope explicitly: this
+// loop awaits between iterations, and if the signed-in identity changes
+// mid-flight the remaining writes must not land in the new identity's scope.
 export async function syncBadgesToCloud(uid) {
   if (!uid) return;
 
-  const cache = getBadgeCache();
+  const scopeId = userScopeId(uid);
+  const cache = getBadgeCache(scopeId);
 
   for (const badge of getEarnedBadges()) {
     const cached = cache[badge.examCode];
@@ -141,7 +166,11 @@ export async function syncBadgesToCloud(uid) {
         },
         { merge: true }
       );
-      saveBadgeCacheEntry(badge.examCode, { uid, tier: badge.tier, source: badge.source, badgeId });
+      saveBadgeCacheEntry(
+        badge.examCode,
+        { uid, tier: badge.tier, source: badge.source, badgeId },
+        scopeId
+      );
     } catch (error) {
       console.error("Failed to sync badge:", error);
     }
