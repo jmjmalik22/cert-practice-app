@@ -173,20 +173,56 @@ async function writeRemoteSnapshot(uid, snapshot) {
 }
 
 /**
- * Merge `uid`'s Firestore progress with the copy held in `uid`'s *own* local
- * storage scope, then write the result back to both.
+ * The one read-merge-write path shared by `pullAndMergeProgress` and
+ * `pushProgress`. Both directions are the *same* operation — reconcile this
+ * device's local scope with the remote document — so they share one
+ * implementation rather than two subtly different ones.
  *
- * Identity safety:
- *  - all local reads and writes target `userScopeId(uid)` explicitly, never
+ * WHY THE LOCAL SNAPSHOT IS READ *AFTER* THE AWAIT
+ * ------------------------------------------------
+ * The previous code captured the local snapshot before `await getDoc(...)`.
+ * A `getDoc` is a real network round-trip, and the app writes to local storage
+ * throughout it: answering a question calls `recordAttempt` / `toggleBookmark`
+ * in progress.jsx, which write straight to the scoped keys. Anything written
+ * during that window was invisible to the pre-await copy, so the subsequent
+ * `applyLocalSnapshot(merged)` overwrote it — the user's answer vanished.
+ * Since this runs on every login and every tab `visibilitychange`, the window
+ * is routinely hit in practice.
+ *
+ * The fix is to re-read local state immediately before computing what to
+ * persist. The merge helpers are pure and dedupe by `questionId:timestamp`, so
+ * re-merging against fresher state is cheap and can only ever *add* rows.
+ *
+ * WHY THE READ/MERGE/APPLY BLOCK MUST STAY SYNCHRONOUS
+ * ---------------------------------------------------
+ * The re-read, the merge, and `applyLocalSnapshot` below contain no `await`.
+ * On JavaScript's single thread that makes the three of them atomic with
+ * respect to every other task: no local write, and no *other* in-flight sync,
+ * can interleave between reading local state and writing the merged result
+ * back. That is what stops two overlapping calls (the login pull and a
+ * visibility-change pull, or a pull and a debounced push) from clobbering one
+ * another — whichever enters the block second sees the first one's merged
+ * output as its local input and folds it straight back in.
+ *
+ * Do not introduce an `await` inside that block.
+ *
+ * IDENTITY SAFETY
+ * ---------------
+ *  - every local read and write targets `userScopeId(uid)` explicitly, never
  *    "whatever scope happens to be active";
- *  - it refuses to run at all if `uid` is not the active identity;
- *  - after the `await getDoc(...)` it re-checks the scope token, so a pull
- *    started before a logout / account switch never persists anything once it
+ *  - it refuses to start if `uid` is not the active identity;
+ *  - it re-checks the scope token after the `await getDoc(...)`, so a call
+ *    started before a logout / account switch persists nothing once it
  *    resolves. Those calls resolve to a snapshot flagged `stale: true`.
+ *
+ * @param {string} uid
+ * @param {{ createRemoteWhenEmpty?: boolean }} options
+ *   `createRemoteWhenEmpty` writes the remote document even when this device
+ *   has nothing worth saving. A push says yes (it was triggered by a real
+ *   local change); a pull says no, so merely visiting the app never creates an
+ *   empty document.
  */
-export async function pullAndMergeProgress(uid) {
-  if (!uid) return getLocalSnapshot();
-
+async function reconcileWithRemote(uid, { createRemoteWhenEmpty = false } = {}) {
   const scopeId = userScopeId(uid);
 
   // Someone else is signed in — this call belongs to a superseded identity.
@@ -195,42 +231,78 @@ export async function pullAndMergeProgress(uid) {
   }
 
   const scopeToken = captureScopeToken();
-  const localSnapshot = getLocalSnapshot(scopeId);
   const remoteRef = doc(db, "users", uid);
   const remoteSnap = await getDoc(remoteRef);
 
   // The signed-in identity changed while the read was in flight. Persisting
   // now would leak this identity's data into whoever is signed in instead.
   if (!isScopeTokenCurrent(scopeToken)) {
-    return { ...localSnapshot, stale: true };
+    return { ...getLocalSnapshot(scopeId), stale: true };
   }
 
-  if (!remoteSnap.exists()) {
-    if (hasProgressData(localSnapshot)) {
-      await writeRemoteSnapshot(uid, localSnapshot);
-    }
-    return localSnapshot;
+  const remoteSnapshot = remoteSnap.exists()
+    ? {
+        progress: remoteSnap.data().progress || {},
+        examResults: remoteSnap.data().examResults || [],
+      }
+    : null;
+
+  // --- atomic section: no `await` from here until applyLocalSnapshot returns.
+  const localSnapshot = getLocalSnapshot(scopeId);
+  const mergedSnapshot = remoteSnapshot
+    ? mergeSnapshots(localSnapshot, remoteSnapshot)
+    : localSnapshot;
+
+  // Nothing to apply when the remote document does not exist yet: the merged
+  // result is the local snapshot, byte for byte.
+  if (remoteSnapshot) applyLocalSnapshot(mergedSnapshot, scopeId);
+  // --- end atomic section
+
+  if (remoteSnapshot || createRemoteWhenEmpty || hasProgressData(mergedSnapshot)) {
+    await writeRemoteSnapshot(uid, mergedSnapshot);
   }
-
-  const remoteSnapshot = {
-    progress: remoteSnap.data().progress || {},
-    examResults: remoteSnap.data().examResults || [],
-  };
-  const mergedSnapshot = mergeSnapshots(localSnapshot, remoteSnapshot);
-
-  applyLocalSnapshot(mergedSnapshot, scopeId);
-  await writeRemoteSnapshot(uid, mergedSnapshot);
 
   return mergedSnapshot;
 }
 
-export async function pushProgress(uid = activeSyncUid) {
-  if (!uid) return;
-  // Never push a superseded identity's local data.
-  if (getActiveScopeUid() !== uid) return;
+/**
+ * Merge `uid`'s Firestore progress with the copy held in `uid`'s own local
+ * storage scope, then write the result back to both. See
+ * `reconcileWithRemote` for the concurrency and identity guarantees.
+ */
+export async function pullAndMergeProgress(uid) {
+  if (!uid) return getLocalSnapshot();
+  return reconcileWithRemote(uid);
+}
 
-  const snapshot = getLocalSnapshot(userScopeId(uid));
-  await writeRemoteSnapshot(uid, snapshot);
+/**
+ * Publish this device's local progress to Firestore.
+ *
+ * This used to be a blind `setDoc` of the local arrays. `progress` and
+ * `examResults` are stored as whole arrays, and Firestore's `{ merge: true }`
+ * merges at the *field* level — it does not merge *inside* an array — so with
+ * two tabs or two devices signed into the same account, whichever push landed
+ * last replaced the other's array outright and silently dropped whatever that
+ * other writer had contributed.
+ *
+ * So a push is now a merge-then-write: read the current remote document, merge
+ * it with the current local snapshot, write the merged result, and apply that
+ * same merged result back to local storage so this device converges on exactly
+ * the state a pull would have produced.
+ *
+ * Cost: one extra `getDoc` per push. That is not per keystroke or per answer —
+ * `scheduleCloudSync` below debounces pushes to one per 2s quiet period, and
+ * it is the only caller in the app (progressSyncProvider's `fp-progress-changed`
+ * handler), so a burst of answers still costs a single read plus a single
+ * write.
+ *
+ * Deliberately does *not* call `notifyProgressChanged()`: that event is what
+ * triggers `scheduleCloudSync` in the first place, so firing it here would
+ * make every push schedule another push forever.
+ */
+export async function pushProgress(uid = activeSyncUid) {
+  if (!uid) return undefined;
+  return reconcileWithRemote(uid, { createRemoteWhenEmpty: true });
 }
 
 export function scheduleCloudSync(uid = activeSyncUid) {

@@ -31,7 +31,9 @@ import {
   mergeExamResults,
   pullAndMergeProgress,
   pushProgress,
+  scheduleCloudSync,
   setActiveSyncUid,
+  EXAM_RESULTS_KEY,
   PROGRESS_KEY,
   SYNC_META_KEY,
 } from "./progressSync.js";
@@ -45,10 +47,42 @@ import {
   resetStorageScopeForTests,
   scopedGet,
   scopedKey,
+  scopedSet,
   userScopeId,
 } from "./storageScope.js";
 import { getProgress, recordAttempt, saveExamResult, getExamResults } from "./progress.jsx";
 import { getAttempted, getBookmarks, toggleBookmarkStorage } from "./theme.jsx";
+
+// --- helpers for the concurrency tests -------------------------------------
+
+const SCOPE_A = () => userScopeId("userA");
+
+/** Attempt ids recorded for `examCode` in `uid`'s local scope, sorted. */
+function localAttemptIds(uid, examCode = "DP-700") {
+  const exam = scopedGet(PROGRESS_KEY, {}, userScopeId(uid))[examCode];
+  return (exam?.attempts || []).map((a) => a.questionId).sort();
+}
+
+/** Attempt ids for `examCode` in the fake Firestore document, sorted. */
+function remoteAttemptIds(uid, examCode = "DP-700") {
+  const exam = firestore.remote.get(`users/${uid}`)?.progress?.[examCode];
+  return (exam?.attempts || []).map((a) => a.questionId).sort();
+}
+
+function attempt(questionId, day = 1) {
+  return {
+    questionId,
+    isCorrect: true,
+    timestamp: `2026-01-${String(day).padStart(2, "0")}T00:00:00.000Z`,
+  };
+}
+
+/** A whole-exam progress blob as one device's localStorage would hold it. */
+function deviceProgress(questionId, day) {
+  return {
+    "DP-700": { attempts: [attempt(questionId, day)], correct: 1, total: 1, bookmarked: [] },
+  };
+}
 
 beforeEach(() => {
   localStorage.clear();
@@ -448,5 +482,308 @@ describe("pushProgress identity safety", () => {
     await pushProgress("userA");
 
     expect(firestore.setDocCalls).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Lost-update bugs. Both of these are about a write that happens *while* a
+// sync is mid-flight, and both were silent data loss before the fix:
+//
+//   1. `pullAndMergeProgress` captured the local snapshot BEFORE `await
+//      getDoc(...)`, then unconditionally overwrote local storage with a merge
+//      computed from that stale copy. Any answer recorded during the network
+//      round-trip was erased. This runs on every login and every tab
+//      visibilitychange, so the window is hit routinely.
+//
+//   2. `pushProgress` did a blind `setDoc` of the local arrays. `{merge:true}`
+//      merges fields, not array *contents*, so with two devices on one account
+//      the last push to land replaced the other device's array wholesale.
+// ---------------------------------------------------------------------------
+
+describe("pullAndMergeProgress does not lose writes made during the getDoc await", () => {
+  it("keeps an answer recorded while the remote read was in flight", async () => {
+    firestore.remote.set("users/userA", {
+      progress: { "DP-700": { attempts: [attempt("remote", 1)] } },
+      examResults: [],
+    });
+
+    setActiveSyncUid("userA");
+    recordAttempt("DP-700", "before-pull", true);
+
+    // The user answers a question while the network read is still pending.
+    firestore.duringGetDoc = async () => {
+      recordAttempt("DP-700", "during-pull", true);
+    };
+
+    const merged = await pullAndMergeProgress("userA");
+
+    // Present locally, in the returned snapshot, and in what was written back.
+    expect(localAttemptIds("userA")).toEqual(["before-pull", "during-pull", "remote"]);
+    expect(merged.progress["DP-700"].attempts.map((a) => a.questionId).sort()).toEqual([
+      "before-pull",
+      "during-pull",
+      "remote",
+    ]);
+    expect(remoteAttemptIds("userA")).toEqual(["before-pull", "during-pull", "remote"]);
+  });
+
+  it("keeps a mock-exam result saved while the remote read was in flight", async () => {
+    firestore.remote.set("users/userA", { progress: {}, examResults: [] });
+
+    setActiveSyncUid("userA");
+    firestore.duringGetDoc = async () => {
+      saveExamResult("DP-700", { score: 7, total: 10, percentage: 70 });
+    };
+
+    await pullAndMergeProgress("userA");
+
+    expect(getExamResults()).toHaveLength(1);
+    expect(firestore.remote.get("users/userA").examResults).toHaveLength(1);
+  });
+
+  it("keeps a bookmark toggled on while the remote read was in flight", async () => {
+    firestore.remote.set("users/userA", {
+      progress: { "DP-700": { attempts: [attempt("remote", 1)], bookmarked: [] } },
+      examResults: [],
+    });
+
+    setActiveSyncUid("userA");
+    firestore.duringGetDoc = async () => {
+      const progress = scopedGet(PROGRESS_KEY, {}, SCOPE_A());
+      progress["DP-700"] = progress["DP-700"] || { attempts: [], correct: 0, total: 0, bookmarked: [] };
+      progress["DP-700"].bookmarked = ["fresh-bookmark"];
+      scopedSet(PROGRESS_KEY, progress, SCOPE_A());
+    };
+
+    await pullAndMergeProgress("userA");
+
+    expect(scopedGet(PROGRESS_KEY, {}, SCOPE_A())["DP-700"].bookmarked).toEqual(["fresh-bookmark"]);
+  });
+
+  it("does not let two overlapping pulls clobber each other", async () => {
+    // Real scenario: the login pull and a visibilitychange pull overlapping.
+    firestore.remote.set("users/userA", {
+      progress: { "DP-700": { attempts: [attempt("remote", 1)] } },
+      examResults: [],
+    });
+
+    setActiveSyncUid("userA");
+    recordAttempt("DP-700", "local", true);
+
+    // Each pull's read window sees a different answer recorded.
+    let gateCalls = 0;
+    firestore.duringGetDoc = async () => {
+      gateCalls += 1;
+      recordAttempt("DP-700", `during-${gateCalls}`, true);
+    };
+
+    await Promise.all([pullAndMergeProgress("userA"), pullAndMergeProgress("userA")]);
+
+    expect(gateCalls).toBe(2);
+    expect(localAttemptIds("userA")).toEqual(["during-1", "during-2", "local", "remote"]);
+    expect(remoteAttemptIds("userA")).toEqual(["during-1", "during-2", "local", "remote"]);
+  });
+});
+
+describe("pushProgress merges instead of overwriting", () => {
+  it("folds in remote data this device has never seen", async () => {
+    // Another device already pushed; its answer exists only in the cloud.
+    firestore.remote.set("users/userA", {
+      progress: { "DP-700": { attempts: [attempt("from-device-b", 2)] } },
+      examResults: [],
+    });
+
+    setActiveSyncUid("userA");
+    recordAttempt("DP-700", "from-device-a", true);
+
+    await pushProgress("userA");
+
+    expect(remoteAttemptIds("userA")).toEqual(["from-device-a", "from-device-b"]);
+    // This device converges on exactly the state a pull would have produced.
+    expect(localAttemptIds("userA")).toEqual(["from-device-a", "from-device-b"]);
+  });
+
+  it("does not let the second device's push erase the first device's", async () => {
+    setActiveSyncUid("userA");
+
+    // Device A pushes its own local state.
+    scopedSet(PROGRESS_KEY, deviceProgress("a", 1), SCOPE_A());
+    await pushProgress("userA");
+
+    // Device B is a different browser, so it starts from its own local state
+    // with no knowledge of A's answer. Model that by replacing this scope's
+    // contents wholesale, then pushing.
+    scopedSet(PROGRESS_KEY, deviceProgress("b", 2), SCOPE_A());
+    scopedSet(EXAM_RESULTS_KEY, [], SCOPE_A());
+    await pushProgress("userA");
+
+    expect(remoteAttemptIds("userA")).toEqual(["a", "b"]);
+    expect(localAttemptIds("userA")).toEqual(["a", "b"]);
+  });
+
+  it("preserves another device's write that lands during this push's read", async () => {
+    setActiveSyncUid("userA");
+    recordAttempt("DP-700", "device-a", true);
+
+    // Device B's push reaches the server while device A's getDoc is in flight.
+    firestore.duringGetDoc = async () => {
+      firestore.duringGetDoc = null;
+      firestore.remote.set("users/userA", {
+        progress: { "DP-700": { attempts: [attempt("device-b", 2)] } },
+        examResults: [],
+      });
+    };
+
+    await pushProgress("userA");
+
+    expect(remoteAttemptIds("userA")).toEqual(["device-a", "device-b"]);
+    expect(localAttemptIds("userA")).toEqual(["device-a", "device-b"]);
+  });
+
+  it("merges exam results from both devices rather than replacing the array", async () => {
+    firestore.remote.set("users/userA", {
+      progress: {},
+      examResults: [
+        { examCode: "DP-700", timestamp: "2026-01-01T00:00:00.000Z", score: 5, total: 10 },
+      ],
+    });
+
+    setActiveSyncUid("userA");
+    saveExamResult("DP-700", { score: 9, total: 10, percentage: 90 });
+
+    await pushProgress("userA");
+
+    expect(firestore.remote.get("users/userA").examResults).toHaveLength(2);
+    expect(getExamResults()).toHaveLength(2);
+  });
+
+  it("still creates the remote document when this device has nothing yet", async () => {
+    setActiveSyncUid("userA");
+
+    await pushProgress("userA");
+
+    expect(firestore.remote.has("users/userA")).toBe(true);
+  });
+
+  it("does not lose an answer recorded during the push's own read window", async () => {
+    firestore.remote.set("users/userA", { progress: {}, examResults: [] });
+
+    setActiveSyncUid("userA");
+    recordAttempt("DP-700", "before-push", true);
+    firestore.duringGetDoc = async () => {
+      recordAttempt("DP-700", "during-push", true);
+    };
+
+    await pushProgress("userA");
+
+    expect(localAttemptIds("userA")).toEqual(["before-push", "during-push"]);
+    expect(remoteAttemptIds("userA")).toEqual(["before-push", "during-push"]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Verification of the existing scope-token guards. `pushProgress` now has an
+// `await getDoc(...)` window it did not have before, so it needs the same
+// mid-flight re-check `pullAndMergeProgress` already had.
+// ---------------------------------------------------------------------------
+
+describe("identity guards hold across an account switch mid-flight", () => {
+  it("does not persist a push whose identity changed while it was in flight", async () => {
+    firestore.remote.set("users/userA", {
+      progress: { "DP-700": { attempts: [attempt("a-secret", 1)] } },
+      examResults: [],
+    });
+
+    setActiveSyncUid("userA");
+    recordAttempt("DP-700", "a-local", true);
+
+    // A logs out and B signs in while the push's read is still pending.
+    firestore.duringGetDoc = async () => {
+      setActiveSyncUid(null);
+      setActiveSyncUid("userB");
+    };
+
+    const result = await pushProgress("userA");
+
+    expect(result.stale).toBe(true);
+    expect(firestore.setDocCalls).toHaveLength(0);
+
+    // Nothing written under the new identity, the guest scope, or unscoped.
+    expect(scopedGet(PROGRESS_KEY, null, userScopeId("userB"))).toBeNull();
+    expect(scopedGet(PROGRESS_KEY, null, GUEST_SCOPE_ID)).toBeNull();
+    expect(localStorage.getItem(PROGRESS_KEY)).toBeNull();
+    // A's remote document was not rewritten, so A's own data is untouched.
+    expect(remoteAttemptIds("userA")).toEqual(["a-secret"]);
+    // ...and A's local scope still holds only what A actually recorded.
+    expect(localAttemptIds("userA")).toEqual(["a-local"]);
+  });
+
+  it("does not merge a previous account's remote data into the new account", async () => {
+    firestore.remote.set("users/userA", {
+      progress: { "DP-700": { attempts: [attempt("a-secret", 1)] } },
+      examResults: [],
+    });
+
+    setActiveSyncUid("userA");
+    firestore.duringGetDoc = async () => setActiveSyncUid("userB");
+
+    await pullAndMergeProgress("userA");
+
+    // userB is signed in now; nothing of A's may be visible to them.
+    expect(getProgress()).toEqual({});
+    expect(getBookmarks()).toEqual([]);
+    expect(firestore.remote.has("users/userB")).toBe(false);
+  });
+
+  it("does not push a previous identity's data after a switch during the debounce", async () => {
+    vi.useFakeTimers();
+    try {
+      setActiveSyncUid("userA");
+      recordAttempt("DP-700", "a-secret", true);
+      scheduleCloudSync("userA");
+
+      setActiveSyncUid("userB"); // switch inside the 2s debounce window
+
+      await vi.advanceTimersByTimeAsync(5000);
+
+      expect(firestore.setDocCalls).toHaveLength(0);
+      expect(firestore.remote.has("users/userA")).toBe(false);
+      expect(firestore.remote.has("users/userB")).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does push once the debounce elapses with the identity unchanged", async () => {
+    // Positive control: proves the test above is observing a real guard and
+    // not merely a debounce that never fires.
+    vi.useFakeTimers();
+    try {
+      setActiveSyncUid("userA");
+      recordAttempt("DP-700", "q1", true);
+      scheduleCloudSync("userA");
+
+      expect(firestore.setDocCalls).toHaveLength(0);
+      await vi.advanceTimersByTimeAsync(2000);
+
+      expect(firestore.setDocCalls).toHaveLength(1);
+      expect(remoteAttemptIds("userA")).toEqual(["q1"]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not push for an identity that was never the active one", async () => {
+    setActiveSyncUid("userB");
+    scheduleCloudSync("userA");
+
+    vi.useFakeTimers();
+    try {
+      await vi.advanceTimersByTimeAsync(5000);
+    } finally {
+      vi.useRealTimers();
+    }
+
+    expect(firestore.remote.has("users/userA")).toBe(false);
   });
 });
