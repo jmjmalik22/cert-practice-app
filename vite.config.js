@@ -7,4 +7,10 @@ export default defineConfig({
   ssgOptions: {
     includedRoutes: () => SSG_ROUTES,
   },
+  test: {
+    // Claude Code leaves isolated agent worktrees under .claude/worktrees/;
+    // without this, vitest's default recursive glob picks up their nested
+    // copies of every test file too.
+    exclude: ["**/node_modules/**", "**/.claude/**", "**/dist/**"],
+  },
 });
