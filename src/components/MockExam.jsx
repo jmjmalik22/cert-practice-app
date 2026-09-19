@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft, RotateCcw } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, markAttempted, shuffle } from "../lib/theme.jsx";
@@ -6,13 +6,20 @@ import { MOCK_CONFIG } from "../lib/examCatalog.js";
 import { QUESTION_BANK } from "../lib/questionBank/index.js";
 import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
 import { useExamExitGuard, EXAM_EXIT_WARNING } from "../lib/examGuard.js";
-import { Chip } from "./Shared.jsx";
+import {
+  SESSION_MODE,
+  loadPersistedSession,
+  savePersistedSession,
+  clearPersistedSession,
+} from "../lib/sessionPersistence.js";
+import { Chip, SessionResumePrompt } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
 export function MockExam({ exam, onExit, isAuthenticated, onStartPractice }) {
   const TOKENS = useTheme();
   const pool = QUESTION_BANK[exam].questions;
   const totalQuestions = Math.min(MOCK_CONFIG.totalQuestions, pool.length);
+  const questionsById = useMemo(() => new Map(pool.map((qq) => [qq.id, qq])), [pool]);
 
   const [order, setOrder] = useState(() => shuffle(pool).slice(0, totalQuestions));
   const [idx, setIdx] = useState(0);
@@ -20,6 +27,9 @@ export function MockExam({ exam, onExit, isAuthenticated, onStartPractice }) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [finished, setFinished] = useState(false);
   const [showSetup, setShowSetup] = useState(true);
+  // A persisted session found for this exam on mount, awaiting the learner's
+  // resume-or-discard choice.
+  const [resumePrompt, setResumePrompt] = useState(null);
   const timerRef = useRef(null);
   const answersRef = useRef(answers);
   const elapsedRef = useRef(0);
@@ -36,6 +46,50 @@ export function MockExam({ exam, onExit, isAuthenticated, onStartPractice }) {
   // Only guard the active question screen — nothing is at stake yet on the
   // setup screen, and the attempt is already saved once results are shown.
   useExamExitGuard(!showSetup && !finished);
+
+  // Check once, on mount, for a persisted session for this exam. Since
+  // `showSetup` starts true and nothing here flips it, this always takes
+  // precedence over the setup screen.
+  useEffect(() => {
+    setResumePrompt(loadPersistedSession(SESSION_MODE.MOCK, exam));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Autosave the in-progress sitting (question order, position, answers,
+  // elapsed time) so a refresh/crash/accidental nav can recover it.
+  useEffect(() => {
+    if (showSetup || finished || resumePrompt) return;
+    savePersistedSession(SESSION_MODE.MOCK, exam, {
+      orderIds: order.map((qq) => qq.id),
+      idx,
+      answers,
+      elapsedSeconds,
+    });
+  }, [showSetup, finished, resumePrompt, exam, order, idx, answers, elapsedSeconds]);
+
+  function handleResumeSession() {
+    const persisted = resumePrompt;
+    const restoredOrder = (persisted.orderIds || [])
+      .map((id) => questionsById.get(id))
+      .filter(Boolean);
+    if (restoredOrder.length === 0) {
+      // Nothing left to resume (e.g. the question bank changed under it).
+      handleDiscardSession();
+      return;
+    }
+    setOrder(restoredOrder);
+    setIdx(Math.min(persisted.idx || 0, restoredOrder.length - 1));
+    setAnswers(persisted.answers || {});
+    setElapsedSeconds(persisted.elapsedSeconds || 0);
+    elapsedRef.current = persisted.elapsedSeconds || 0;
+    setShowSetup(false);
+    setResumePrompt(null);
+  }
+
+  function handleDiscardSession() {
+    clearPersistedSession(SESSION_MODE.MOCK, exam);
+    setResumePrompt(null);
+  }
 
   function finishExam() {
     if (finishedRef.current) return;
@@ -63,15 +117,17 @@ export function MockExam({ exam, onExit, isAuthenticated, onStartPractice }) {
       timeSpent: elapsedRef.current,
     });
 
+    // Session finished normally — nothing left to resume next time.
+    clearPersistedSession(SESSION_MODE.MOCK, exam);
     setFinished(true);
   }
 
   // Untimed — the clock counts up for reference only and never ends the exam.
   useEffect(() => {
-    if (finished || showSetup) return undefined;
+    if (finished || showSetup || resumePrompt) return undefined;
     timerRef.current = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
     return () => clearInterval(timerRef.current);
-  }, [finished, showSetup]);
+  }, [finished, showSetup, resumePrompt]);
 
   const q = order[idx];
   const mm = String(Math.floor(elapsedSeconds / 60)).padStart(2, "0");
@@ -107,6 +163,29 @@ export function MockExam({ exam, onExit, isAuthenticated, onStartPractice }) {
     finishedRef.current = false;
     setFinished(false);
     setShowSetup(false);
+  }
+
+  if (resumePrompt) {
+    const answeredCountResume = Object.keys(resumePrompt.answers || {}).length;
+    const totalResume = resumePrompt.orderIds?.length || 0;
+    return (
+      <div className="min-h-full flex flex-col px-6 py-8 max-w-2xl mx-auto w-full">
+        <TopBar
+          left={
+            <button onClick={onExit} className="flex items-center gap-1 text-sm" style={{ color: TOKENS.inkMuted }}>
+              <ChevronLeft size={16} /> Back to exam hub
+            </button>
+          }
+          right={<Chip tone="amber">{exam} · Mock exam</Chip>}
+        />
+        <SessionResumePrompt
+          examLabel={`${exam} mock exam`}
+          detail={`${answeredCountResume} of ${totalResume} answered`}
+          onResume={handleResumeSession}
+          onDiscard={handleDiscardSession}
+        />
+      </div>
+    );
   }
 
   if (finished) {

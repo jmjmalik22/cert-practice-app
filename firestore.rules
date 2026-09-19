@@ -2,15 +2,78 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // NOTE: this document is fully client-writable, which is why the badge
+    // rules below deliberately do NOT cross-check a badge against it with
+    // get(). A user who can forge a badge can equally forge the progress
+    // history that "justifies" it, so reading it here would buy zero trust
+    // while looking like validation. See the blocker note in badges.js.
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
     match /badges/{badgeId} {
+      // Badges are publicly readable and are presented at /verify/:badgeId as
+      // an earned credential, so the schema below is enforced as tightly as
+      // rules allow: a real exam code, a real tier, a score that actually
+      // clears that tier's threshold for that source, a server-set issue
+      // date, and no silent downgrade of a tier already on record.
+      //
+      // IMPORTANT: knownExamCodes(), tierFloor() and tierRank() duplicate
+      // EXAM_CODES (src/lib/examCatalog.js) and BADGE_TIERS / SHIELD_TIERS
+      // (src/lib/badges.js). src/lib/badges.test.js parses THIS FILE and
+      // fails if they drift, so update both sides together.
+
+      function knownExamCodes() {
+        return ['DP-700', 'DP-600', 'AZ-900', 'DP-900', 'AZ-104', 'AI-901',
+                'PL-300', 'AI-103', 'AI-200', 'AI-300', 'DP-800', 'SC-900'];
+      }
+
+      // 0 means "not a tier at all", so this doubles as the tier enum check.
+      function tierRank(tier) {
+        return tier == 'elite' ? 3 : (tier == 'mastery' ? 2 : (tier == 'proven' ? 1 : 0));
+      }
+
+      // Lowest score that genuinely earns `tier` from `source`. The Shield is
+      // a single scored sitting and reaches each tier at a lower score than
+      // cumulative practice accuracy does.
+      function tierFloor(source, tier) {
+        return source == 'shield'
+          ? (tier == 'elite' ? 90 : (tier == 'mastery' ? 80 : 70))
+          : (tier == 'elite' ? 95 : (tier == 'mastery' ? 90 : 80));
+      }
+
+      function wellFormed(data) {
+        return data.keys().hasOnly(['uid', 'examCode', 'tier', 'score', 'source', 'issuedAt'])
+          && data.keys().hasAll(['uid', 'examCode', 'tier', 'score', 'source', 'issuedAt'])
+          && data.uid is string
+          && data.examCode is string
+          && data.examCode in knownExamCodes()
+          && data.source in ['practice', 'shield']
+          && tierRank(data.tier) > 0
+          && data.score is number
+          && data.score >= 0
+          && data.score <= 100
+          && data.score >= tierFloor(data.source, data.tier)
+          && data.issuedAt == request.time;
+      }
+
+      function ownedByCaller(data) {
+        return request.auth != null
+          && data.uid == request.auth.uid
+          && badgeId == request.auth.uid + '_' + data.examCode;
+      }
+
       allow read: if true;
-      allow create, update: if request.auth != null
-        && request.resource.data.uid == request.auth.uid
-        && badgeId == request.auth.uid + '_' + request.resource.data.examCode;
+
+      allow create: if ownedByCaller(request.resource.data)
+        && wellFormed(request.resource.data);
+
+      // A badge, once earned, is kept: an update may re-mint the same tier or
+      // raise it, never lower it.
+      allow update: if ownedByCaller(request.resource.data)
+        && wellFormed(request.resource.data)
+        && tierRank(request.resource.data.tier) >= tierRank(resource.data.tier);
+
       allow delete: if false;
     }
 

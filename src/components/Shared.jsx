@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, FileText, BookOpen, Info, Menu, X, Lock, Heart, Linkedin, Home } from "lucide-react";
+import { LayoutDashboard, FileText, BookOpen, Info, Menu, X, Lock, Heart, Linkedin, Home, RotateCcw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getCookieConsent, setCookieConsent } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
@@ -67,6 +67,55 @@ export function SponsorButton({ compact = false }) {
       <Heart size={compact ? 18 : 14} fill={TOKENS.red} />
       Support
     </a>
+  );
+}
+
+// Shown when Practice/Mock/Shield finds a persisted in-progress session for
+// the current exam+mode on mount. Follows the same fixed-overlay + rounded
+// panel pattern as the Header's "Sign In Required" modal below, rather than
+// inventing a new dialog style. No backdrop-dismiss: resuming vs. discarding
+// is a real decision, not something to lose to a stray click.
+export function SessionResumePrompt({ examLabel, detail, onResume, onDiscard }) {
+  const TOKENS = useTheme();
+  return (
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50 px-4"
+      style={{ background: `${TOKENS.bg}80` }}
+    >
+      <div
+        className="rounded-2xl p-6 max-w-sm w-full"
+        style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}` }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <RotateCcw size={20} color={TOKENS.azure} />
+          <h3 className="text-lg font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
+            Resume your session?
+          </h3>
+        </div>
+        <p className="text-sm mb-6" style={{ color: TOKENS.inkMuted }}>
+          You have an in-progress {examLabel}
+          {detail ? ` — ${detail}` : ""}. Pick up where you left off, or discard it and start fresh.
+        </p>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={onResume}
+            className="flex-1 py-2.5 rounded-full text-sm font-medium"
+            style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
+          >
+            Resume
+          </button>
+          <button
+            type="button"
+            onClick={onDiscard}
+            className="flex-1 py-2.5 rounded-full text-sm font-medium"
+            style={{ background: TOKENS.panel, border: `1px solid ${TOKENS.panelBorder}`, color: TOKENS.ink }}
+          >
+            Discard
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

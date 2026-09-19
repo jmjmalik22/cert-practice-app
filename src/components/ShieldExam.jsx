@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Clock, CheckCircle2, XCircle, ArrowRight, Flag, ChevronLeft, Shield } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, markAttempted, shuffle } from "../lib/theme.jsx";
 import { SHIELD_CONFIG } from "../lib/examCatalog.js";
@@ -6,7 +6,16 @@ import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
 import { saveExamResult, recordAttempt } from "../lib/progress.jsx";
 import { SHIELD_TIERS, recordShieldResult } from "../lib/badges.js";
 import { useExamExitGuard, EXAM_EXIT_WARNING } from "../lib/examGuard.js";
-import { Chip } from "./Shared.jsx";
+import {
+  SESSION_MODE,
+  loadPersistedSession,
+  savePersistedSession,
+  clearPersistedSession,
+  createDeadline,
+  computeRemainingSeconds,
+  isSessionExpired,
+} from "../lib/sessionPersistence.js";
+import { Chip, SessionResumePrompt } from "./Shared.jsx";
 import { BadgeShield } from "./BadgeShield.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
@@ -14,14 +23,25 @@ export function ShieldExam({ exam, onExit }) {
   const TOKENS = useTheme();
   const pool = QUESTION_BANK[exam].questions;
   const totalSeconds = SHIELD_CONFIG.timeMinutes * 60;
+  const questionsById = useMemo(() => new Map(pool.map((qq) => [qq.id, qq])), [pool]);
 
-  const [order] = useState(() => shuffle(pool).slice(0, SHIELD_CONFIG.totalQuestions));
+  const [order, setOrder] = useState(() => shuffle(pool).slice(0, SHIELD_CONFIG.totalQuestions));
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
+  // The countdown is always derived from this absolute end timestamp (see
+  // computeRemainingSeconds), never from a plain decrementing counter — a
+  // refresh must never grant extra time. Null until the sitting actually
+  // starts (or a persisted one is resumed).
+  const [deadline, setDeadline] = useState(null);
   const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
   const [finished, setFinished] = useState(false);
   const [showSetup, setShowSetup] = useState(true);
   const [awardedTier, setAwardedTier] = useState(null);
+  // A persisted session found for this exam on mount, awaiting the learner's
+  // resume-or-discard choice. Never set when the persisted deadline has
+  // already passed — that case is auto-finalized instead (see the mount
+  // effect below).
+  const [resumePrompt, setResumePrompt] = useState(null);
   const timerRef = useRef(null);
   const answersRef = useRef(answers);
   const secondsLeftRef = useRef(secondsLeft);
@@ -64,23 +84,135 @@ export function ShieldExam({ exam, onExit }) {
     });
 
     setAwardedTier(recordShieldResult(exam, percentage));
+    // Sitting finished normally (submitted or auto-submitted) — nothing left
+    // to resume next time.
+    clearPersistedSession(SESSION_MODE.SHIELD, exam);
     setFinished(true);
   }
 
+  // Score and save a sitting whose stored deadline had already passed by the
+  // time the learner came back (tab closed/crashed past time-up). Reuses the
+  // exact same scoring/save path as a normal auto-submit-at-time-up, just
+  // computed from the restored order/answers instead of live state, since
+  // finishExam relies on `order`/`answersRef` reflecting the in-progress
+  // render, which a just-restored session hasn't populated yet.
+  function finalizeExpiredSession(persisted) {
+    const restoredOrder = (persisted.orderIds || [])
+      .map((id) => questionsById.get(id))
+      .filter(Boolean);
+    if (restoredOrder.length === 0) {
+      // Nothing left to score (e.g. the question bank changed under it).
+      clearPersistedSession(SESSION_MODE.SHIELD, exam);
+      return;
+    }
+    const restoredAnswers = persisted.answers || {};
+    finishedRef.current = true;
+
+    const correctCount = restoredOrder.filter((qq) => restoredAnswers[qq.id] === qq.correct).length;
+    const percentage = Math.round((correctCount / restoredOrder.length) * 100);
+
+    restoredOrder.forEach((qq) => {
+      markAttempted(exam, qq.id);
+      recordAttempt(exam, qq.id, restoredAnswers[qq.id] === qq.correct, 0, true);
+    });
+
+    saveExamResult(exam, {
+      score: correctCount,
+      total: restoredOrder.length,
+      percentage,
+      correct: correctCount,
+      incorrect: restoredOrder.length - correctCount,
+      timeSpent: totalSeconds,
+    });
+
+    const tier = recordShieldResult(exam, percentage);
+    clearPersistedSession(SESSION_MODE.SHIELD, exam);
+
+    setOrder(restoredOrder);
+    setAnswers(restoredAnswers);
+    setAwardedTier(tier);
+    setSecondsLeft(0);
+    setShowSetup(false);
+    setFinished(true);
+  }
+
+  // Check once, on mount, for a persisted sitting for this exam. A sitting
+  // whose wall-clock deadline already passed is auto-finalized (matches the
+  // existing "auto-submit at time-up" behaviour) rather than offered as
+  // resumable; anything else waits for the learner's resume-or-discard
+  // choice.
   useEffect(() => {
-    if (finished || showSetup) return undefined;
-    timerRef.current = setInterval(() => {
-      setSecondsLeft((s) => {
-        if (s <= 1) {
-          clearInterval(timerRef.current);
-          finishExam(0);
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
+    const persisted = loadPersistedSession(SESSION_MODE.SHIELD, exam);
+    if (!persisted) return;
+    if (isSessionExpired(persisted.deadline)) {
+      finalizeExpiredSession(persisted);
+    } else {
+      setResumePrompt(persisted);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Autosave the in-progress sitting (question order, position, answers, and
+  // the wall-clock deadline) so a refresh/crash/accidental nav can recover
+  // it without granting extra time.
+  useEffect(() => {
+    if (showSetup || finished || resumePrompt || !deadline) return;
+    savePersistedSession(SESSION_MODE.SHIELD, exam, {
+      orderIds: order.map((qq) => qq.id),
+      idx,
+      answers,
+      deadline,
+    });
+  }, [showSetup, finished, resumePrompt, deadline, exam, order, idx, answers]);
+
+  function startNewSession() {
+    setDeadline(createDeadline(totalSeconds));
+    setShowSetup(false);
+  }
+
+  function handleResumeSession() {
+    const persisted = resumePrompt;
+    const restoredOrder = (persisted.orderIds || [])
+      .map((id) => questionsById.get(id))
+      .filter(Boolean);
+    if (restoredOrder.length === 0) {
+      // Nothing left to resume (e.g. the question bank changed under it).
+      handleDiscardSession();
+      return;
+    }
+    setOrder(restoredOrder);
+    setIdx(Math.min(persisted.idx || 0, restoredOrder.length - 1));
+    setAnswers(persisted.answers || {});
+    setDeadline(persisted.deadline);
+    setResumePrompt(null);
+    setShowSetup(false);
+  }
+
+  function handleDiscardSession() {
+    clearPersistedSession(SESSION_MODE.SHIELD, exam);
+    setResumePrompt(null);
+  }
+
+  // Countdown is derived from the wall-clock deadline on every tick (and
+  // immediately on start/resume), rather than decrementing a plain counter —
+  // so a refresh recomputes the true remaining time instead of resetting it.
+  useEffect(() => {
+    if (finished || showSetup || resumePrompt || !deadline) return undefined;
+
+    function tick() {
+      const remaining = computeRemainingSeconds(deadline);
+      setSecondsLeft(remaining);
+      if (remaining <= 0) {
+        clearInterval(timerRef.current);
+        finishExam(0);
+      }
+    }
+
+    tick();
+    timerRef.current = setInterval(tick, 1000);
     return () => clearInterval(timerRef.current);
-  }, [finished, showSetup]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished, showSetup, resumePrompt, deadline]);
 
   const q = order[idx];
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
@@ -105,6 +237,32 @@ export function ShieldExam({ exam, onExit }) {
       if (!window.confirm(`You have ${unanswered} unanswered ${noun}. Submit anyway?`)) return;
     }
     finishExam();
+  }
+
+  if (resumePrompt) {
+    const remaining = computeRemainingSeconds(resumePrompt.deadline);
+    const mmResume = String(Math.floor(remaining / 60)).padStart(2, "0");
+    const ssResume = String(remaining % 60).padStart(2, "0");
+    const answeredCountResume = Object.keys(resumePrompt.answers || {}).length;
+    const totalResume = resumePrompt.orderIds?.length || 0;
+    return (
+      <div className="min-h-full flex flex-col px-6 py-8 max-w-2xl mx-auto w-full">
+        <TopBar
+          left={
+            <button onClick={onExit} className="flex items-center gap-1 text-sm" style={{ color: TOKENS.inkMuted }}>
+              <ChevronLeft size={16} /> Back to exam hub
+            </button>
+          }
+          right={<Chip tone="amber">{exam} · Shield exam</Chip>}
+        />
+        <SessionResumePrompt
+          examLabel={`${exam} Shield exam`}
+          detail={`${mmResume}:${ssResume} remaining · ${answeredCountResume} of ${totalResume} answered`}
+          onResume={handleResumeSession}
+          onDiscard={handleDiscardSession}
+        />
+      </div>
+    );
   }
 
   if (finished) {
@@ -294,7 +452,7 @@ export function ShieldExam({ exam, onExit }) {
           </div>
 
           <button
-            onClick={() => setShowSetup(false)}
+            onClick={startNewSession}
             className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full font-medium text-sm"
             style={{ background: TOKENS.azure, color: TOKENS.bgDeep }}
           >
