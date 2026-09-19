@@ -5,7 +5,13 @@ import { getPracticeConfig, getProductIcon } from "../lib/examCatalog.js";
 import { QUESTION_BANK } from "../lib/questionBank/index.js";
 import { recordAttempt, toggleBookmark } from "../lib/progress.jsx";
 import { getWrongQuestionIds } from "../lib/progress.jsx";
-import { Chip } from "./Shared.jsx";
+import {
+  SESSION_MODE,
+  loadPersistedSession,
+  savePersistedSession,
+  clearPersistedSession,
+} from "../lib/sessionPersistence.js";
+import { Chip, SessionResumePrompt } from "./Shared.jsx";
 import { TopBar, QuestionCard } from "./QuestionUI.jsx";
 
 function FilterToggle({ label, hint, checked, onChange }) {
@@ -31,6 +37,11 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
   const TOKENS = useTheme();
   const productIcon = getProductIcon(exam);
   const allQuestions = QUESTION_BANK[exam].questions;
+  // Review-wrong-answers sessions draw from a different pool than a normal
+  // practice run, so they get their own persistence key and never offer to
+  // resume/overwrite each other.
+  const sessionExamKey = reviewWrongAnswers ? `${exam}:review` : exam;
+  const questionsById = useMemo(() => new Map(allQuestions.map((qq) => [qq.id, qq])), [allQuestions]);
   const wrongQuestionIds = useMemo(() => new Set(getWrongQuestionIds(exam)), [exam]);
   const pool = useMemo(
     () => reviewWrongAnswers
@@ -94,6 +105,10 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
   const [showResults, setShowResults] = useState(false);
   const [reviewMode, setReviewMode] = useState(false);
   const [reviewIdx, setReviewIdx] = useState(0);
+  // A persisted session found for this exam+mode on mount, awaiting the
+  // learner's resume-or-discard choice. Null once that choice has been made
+  // (or there was nothing to resume).
+  const [resumePrompt, setResumePrompt] = useState(null);
 
   useEffect(() => {
     setSelectedQuestionCount((count) => Math.min(count, filteredPool.length));
@@ -103,16 +118,81 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
     setRevealed(false);
   }, [filteredPool, questionCount]);
 
+  // Check once, on mount, for a persisted session for this exam+mode. Runs
+  // before the learner can interact with anything, so a resume choice (if
+  // any) always takes precedence over the setup screen or a deep-linked
+  // domain that would otherwise start a fresh session immediately.
+  useEffect(() => {
+    setResumePrompt(loadPersistedSession(SESSION_MODE.PRACTICE, sessionExamKey));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Autosave the in-progress session (question order, position, answers,
+  // flags, elapsed time) so a refresh/crash/accidental nav can recover it.
+  // Only once a real session exists — never the setup screen's transient
+  // filter selections.
+  useEffect(() => {
+    if (showSetup || showResults || resumePrompt || order.length === 0) return;
+    savePersistedSession(SESSION_MODE.PRACTICE, sessionExamKey, {
+      orderIds: order.map((qq) => qq.id),
+      idx,
+      answers,
+      flaggedQuestionIds: Array.from(flaggedQuestions),
+      elapsedSeconds,
+    });
+  }, [showSetup, showResults, resumePrompt, sessionExamKey, order, idx, answers, flaggedQuestions, elapsedSeconds]);
+
+  function handleResumeSession() {
+    const persisted = resumePrompt;
+    const restoredOrder = (persisted.orderIds || [])
+      .map((id) => questionsById.get(id))
+      .filter(Boolean);
+    if (restoredOrder.length === 0) {
+      // Nothing left to resume (e.g. the question bank changed under it).
+      handleDiscardSession();
+      return;
+    }
+    const restoredAnswers = persisted.answers || {};
+    const restoredIdx = Math.min(persisted.idx || 0, restoredOrder.length - 1);
+    // The resumed question itself may already have an answer recorded (a
+    // crash/refresh landing between "choose" and "next" saves both), so
+    // reflect that as already revealed rather than presenting it blank and
+    // risking a second, double-counted answer.
+    const currentQuestion = restoredOrder[restoredIdx];
+    const currentAnswer = currentQuestion ? restoredAnswers[currentQuestion.id] : undefined;
+    // Recompute score from the restored answers rather than resetting it —
+    // `score` otherwise only grows via `choose()` and would silently
+    // undercount everything answered before the refresh/crash.
+    const restoredSeen = restoredOrder.filter((qq) => restoredAnswers[qq.id] !== undefined).length;
+    const restoredCorrect = restoredOrder.filter((qq) => restoredAnswers[qq.id] === qq.correct).length;
+
+    setOrder(restoredOrder);
+    setIdx(restoredIdx);
+    setAnswers(restoredAnswers);
+    setFlaggedQuestions(new Set(persisted.flaggedQuestionIds || []));
+    setElapsedSeconds(persisted.elapsedSeconds || 0);
+    setScore({ correct: restoredCorrect, seen: restoredSeen });
+    setSelected(currentAnswer ?? null);
+    setRevealed(currentAnswer !== undefined);
+    setShowSetup(false);
+    setResumePrompt(null);
+  }
+
+  function handleDiscardSession() {
+    clearPersistedSession(SESSION_MODE.PRACTICE, sessionExamKey);
+    setResumePrompt(null);
+  }
+
   // Start timer when entering practice mode
   useEffect(() => {
-    if (!showSetup && !showResults) {
+    if (!showSetup && !showResults && !resumePrompt) {
       timerRef.current = setInterval(() => {
         setElapsedSeconds((s) => s + 1);
       }, 1000);
       return () => clearInterval(timerRef.current);
     }
     return () => {};
-  }, [showSetup, showResults]);
+  }, [showSetup, showResults, resumePrompt]);
 
   // Clear timer when component unmounts
   useEffect(() => {
@@ -162,6 +242,8 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
     const nextIndex = idx + 1;
     // Check if we've completed all questions
     if (nextIndex >= order.length) {
+      // Session finished normally — nothing left to resume next time.
+      clearPersistedSession(SESSION_MODE.PRACTICE, sessionExamKey);
       setShowResults(true);
     } else {
       setSelected(null);
@@ -189,6 +271,29 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
     setBookmarks(new Set(arr));
     // Also record in progress tracking
     toggleBookmark(exam, q.id);
+  }
+
+  if (resumePrompt) {
+    const answeredCountResume = Object.keys(resumePrompt.answers || {}).length;
+    const totalResume = resumePrompt.orderIds?.length || 0;
+    return (
+      <div className="min-h-full flex flex-col px-6 py-8 max-w-2xl mx-auto w-full">
+        <TopBar
+          left={
+            <button onClick={onExit} className="flex items-center gap-1 text-sm" style={{ color: TOKENS.inkMuted }}>
+              <ChevronLeft size={16} /> Back to exam hub
+            </button>
+          }
+          right={<Chip tone="azure">{exam} · Practice</Chip>}
+        />
+        <SessionResumePrompt
+          examLabel={reviewWrongAnswers ? `${exam} wrong-answers review` : `${exam} practice session`}
+          detail={`${answeredCountResume} of ${totalResume} answered · ${formatTime(resumePrompt.elapsedSeconds || 0)} elapsed`}
+          onResume={handleResumeSession}
+          onDiscard={handleDiscardSession}
+        />
+      </div>
+    );
   }
 
   if (showSetup) {
