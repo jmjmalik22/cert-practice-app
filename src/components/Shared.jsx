@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LayoutDashboard, FileText, BookOpen, Info, Menu, X, Lock, Heart, Linkedin } from "lucide-react";
+import { LayoutDashboard, FileText, BookOpen, Info, Menu, X, Lock, Heart, Linkedin, Home } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme, FONT_DISPLAY, FONT_MONO, getCookieConsent, setCookieConsent } from "../lib/theme.jsx";
 import { UserBadge } from "./UserProfile.jsx";
@@ -77,10 +77,10 @@ export function Header({ theme, onToggleTheme, streak, onLogoClick, user, onLogo
   const [pendingRoute, setPendingRoute] = useState(null);
   const hasFullAccess = isAuthenticated ?? !!user;
 
-  // "Home" is gone from the list because the wordmark already goes there.
   // "Exams" is an anchor rather than a route: the exam picker lives in the
   // landing page, so there is no /exams page to send people to.
   const navItems = [
+    { to: "/", label: "Home", icon: Home, public: true },
     { to: "/study-guides", label: "Study Guides", icon: BookOpen, public: true },
     { to: "/#choose-exam", label: "Exams", icon: FileText, public: true, anchor: true },
     { to: "/about", label: "About", icon: Info, public: true },

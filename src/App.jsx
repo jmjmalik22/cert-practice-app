@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   ThemeContext,
   DARK_TOKENS,
@@ -31,6 +31,7 @@ export default function App() {
   // when /login or another route is loaded directly.
   const [theme, setTheme] = useState("light");
   const [streak, setStreak] = useState(0);
+  const navigate = useNavigate();
   const { user, logout, isAuthenticated, isEmailVerified, loading: authLoading } = useAuth();
   const { syncing: progressSyncing } = useProgressSync();
 
@@ -64,13 +65,14 @@ export default function App() {
     <ThemeContext.Provider value={tokens}>
       <div className="min-h-screen w-full flex flex-col" style={{ background: tokens.bg, fontFamily: FONT_BODY }}>
         <ScrollToTop />
-        <Header 
-          theme={theme} 
-          onToggleTheme={toggleTheme} 
-          streak={streak} 
+        <Header
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          streak={streak}
           user={user}
           onLogout={logout}
           isAuthenticated={isAuthenticated}
+          onLogoClick={() => navigate("/")}
         />
         <div className="flex-1 flex flex-col min-w-0">
           <Outlet context={{ theme, onToggleTheme: toggleTheme, streak, user, isAuthenticated, isEmailVerified }} />
