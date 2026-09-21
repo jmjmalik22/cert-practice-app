@@ -453,7 +453,7 @@ export function Landing() {
                 className="text-4xl sm:text-[2.7rem] lg:text-[2.95rem] font-bold leading-[1.07] tracking-tight"
                 style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
               >
-                Pass your Microsoft certification exam with confidence.
+                FabricPrep — pass your Microsoft certification exam with confidence.
               </h1>
 
               <p className="mt-5 text-base sm:text-lg max-w-lg" style={{ color: TOKENS.inkMuted }}>
