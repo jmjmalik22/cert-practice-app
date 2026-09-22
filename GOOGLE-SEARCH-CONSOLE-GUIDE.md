@@ -13,7 +13,7 @@ Google Search Console helps you:
 ### Method A: HTML Tag (Recommended)
 1. Go to [Google Search Console](https://search.google.com/search-console)
 2. Click "Add Property"
-3. Enter your URL: `https://fabricprep-5vsnekusk-certprep.vercel.app/`
+3. Enter your URL: `https://fabricprep.com/`
 4. Choose "HTML tag" verification method
 5. Copy the meta tag provided (looks like: `<meta name="google-site-verification" content="...">`)
 6. Add it to your `index.html` in the `<head>` section
@@ -26,7 +26,7 @@ Google Search Console helps you:
 
 ## Step 2: Submit Sitemap
 1. After verification, go to "Sitemaps" in left menu
-2. Enter: `https://fabricprep-5vsnekusk-certprep.vercel.app/sitemap.xml`
+2. Enter: `https://fabricprep.com/sitemap.xml`
 3. Click "Submit"
 4. Google will start crawling your pages
 
@@ -67,9 +67,9 @@ Choose whether to use `www` or non-www version (if using custom domain)
 
 ## Quick Links
 - **Google Search Console**: https://search.google.com/search-console
-- **Your Sitemap**: https://fabricprep-5vsnekusk-certprep.vercel.app/sitemap.xml
-- **Robots.txt**: https://fabricprep-5vsnekusk-certprep.vercel.app/robots.txt
-- **Live Site**: https://fabricprep-5vsnekusk-certprep.vercel.app/
+- **Your Sitemap**: https://fabricprep.com/sitemap.xml
+- **Robots.txt**: https://fabricprep.com/robots.txt
+- **Live Site**: https://fabricprep.com/
 
 ## Tips for Better Ranking
 1. **Content Quality**: Keep adding high-quality practice questions
