@@ -443,7 +443,12 @@ export function getStudyStreak() {
   };
 }
 
-// Save a mock exam result
+// Save a Mock or Shield exam result. `result.mode` distinguishes the two —
+// callers must pass it explicitly. This used to hardcode `isMockExam: true`
+// for every caller, which mislabeled every Shield sitting as a mock attempt:
+// the Dashboard's "Mock Exam Results" section showed real 50-question Shield
+// scores mixed into the same exam's best/latest stats as its 5-question mock
+// attempts, comparing two different scales as if they were one.
 export function saveExamResult(examCode, result) {
   const results = scopedGet(EXAM_RESULTS_KEY, []);
   results.push({
@@ -455,7 +460,7 @@ export function saveExamResult(examCode, result) {
     incorrect: result.incorrect,
     timeSpent: result.timeSpent,
     timestamp: new Date().toISOString(),
-    isMockExam: true, // Flag to identify mock exam attempts
+    mode: result.mode,
   });
   scopedSet(EXAM_RESULTS_KEY, results);
   notifyProgressChanged();

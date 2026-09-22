@@ -81,6 +81,7 @@ export function ShieldExam({ exam, onExit }) {
       correct: correctCount,
       incorrect: order.length - correctCount,
       timeSpent: totalSeconds - remainingSeconds,
+      mode: "shield",
     });
 
     setAwardedTier(recordShieldResult(exam, percentage));
@@ -123,6 +124,7 @@ export function ShieldExam({ exam, onExit }) {
       correct: correctCount,
       incorrect: restoredOrder.length - correctCount,
       timeSpent: totalSeconds,
+      mode: "shield",
     });
 
     const tier = recordShieldResult(exam, percentage);

@@ -115,6 +115,7 @@ export function MockExam({ exam, onExit, isAuthenticated, onStartPractice }) {
       correct: correctCount,
       incorrect: incorrectCount,
       timeSpent: elapsedRef.current,
+      mode: "mock",
     });
 
     // Session finished normally — nothing left to resume next time.
