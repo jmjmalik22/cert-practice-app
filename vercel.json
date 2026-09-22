@@ -3,6 +3,12 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.fabricprep.com" }],
+      "destination": "https://fabricprep.com/:path*",
+      "permanent": true
+    },
+    {
       "source": "/ai-900",
       "destination": "/ai-901",
       "permanent": true
