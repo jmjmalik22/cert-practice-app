@@ -47,7 +47,7 @@ function renderMetaPage({ title, description, url, image = FALLBACK_OG_IMAGE }) 
 
 function metaResponse(fields) {
   return new Response(renderMetaPage(fields), {
-    headers: { "content-type": "text/html; charset=utf-8" },
+    headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex" },
   });
 }
 
@@ -101,7 +101,8 @@ export default async function middleware(request) {
     });
   } catch {
     // Firestore lookup failed for some other reason — fall through to the
-    // normal SPA response rather than serve a broken crawler page.
-    return rewrite(new URL("/", request.url));
+    // neutral shell rather than serve a broken crawler page or the
+    // unrelated Home page markup at this badge URL.
+    return rewrite(new URL("/app-shell", request.url));
   }
 }

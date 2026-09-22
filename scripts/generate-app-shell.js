@@ -16,6 +16,7 @@
 // these routes instead of a mismatched hydration — no wrong content, no
 // console errors, no flash of the Home page.
 import { readFileSync, writeFileSync } from "fs";
+import { JSDOM } from "jsdom";
 
 const distIndexPath = "dist/index.html";
 const distShellPath = "dist/app-shell.html";
@@ -32,11 +33,37 @@ if (rootStart === -1 || hydrationScriptIdx === -1) {
 }
 const closeDivIdx = html.lastIndexOf("</div>", hydrationScriptIdx);
 
-const shellHtml =
+const strippedRootHtml =
   html.slice(0, rootOpenEnd) +
   html
     .slice(closeDivIdx)
     .replace(/<script>window\.__staticRouterHydrationData[^<]*<\/script>/, "");
 
+// The homepage's own identity — title, canonical, descriptions, OG/Twitter
+// fields and JSON-LD — is scoped to "/" and must not be inherited by the
+// shell, which stands in for unrelated routes (badge pages, genuinely-
+// unmatched paths). Parsed with jsdom (`runScripts` left unset, so nothing
+// executes) rather than string-patched, since the set of per-page tags is
+// open-ended and defined by src/components/PageSeo.jsx, not by this script.
+const dom = new JSDOM(strippedRootHtml);
+const { document } = dom.window;
+
+for (const el of Array.from(document.head.querySelectorAll("[data-rh]"))) {
+  el.remove();
+}
+for (const el of Array.from(document.head.querySelectorAll('meta[name="robots"], meta[name="googlebot"], meta[name="bingbot"]'))) {
+  el.remove();
+}
+
+const title = document.createElement("title");
+title.textContent = "FabricPrep";
+document.head.appendChild(title);
+
+const robotsMeta = document.createElement("meta");
+robotsMeta.setAttribute("name", "robots");
+robotsMeta.setAttribute("content", "noindex, follow");
+document.head.appendChild(robotsMeta);
+
+const shellHtml = dom.serialize();
 writeFileSync(distShellPath, shellHtml);
 console.log(`Generated ${distShellPath} (${shellHtml.length} bytes, was ${html.length} bytes as index.html)`);

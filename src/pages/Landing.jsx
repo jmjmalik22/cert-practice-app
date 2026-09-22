@@ -308,7 +308,7 @@ export function Landing() {
   // The three things the product actually does, as the design frames them.
   const pillars = [
     { icon: FileText, tone: "azure", title: "Practice", body: "Tackle realistic questions with clear explanations." },
-    { icon: Clock, tone: "green", title: "Mock Exam", body: "Simulate the real exam experience with timed tests." },
+    { icon: Clock, tone: "green", title: "Mock Exam", body: "Try a quick, untimed five-question check." },
     { icon: BookOpen, tone: "violet", title: "Study Guides", body: "Review key concepts from Microsoft Learn, all in one place." },
   ];
 
@@ -457,7 +457,7 @@ export function Landing() {
               </h1>
 
               <p className="mt-5 text-base sm:text-lg max-w-lg" style={{ color: TOKENS.inkMuted }}>
-                Realistic practice questions, clear explanations, and timed mock exams — built from Microsoft Learn.
+                Realistic practice questions, clear explanations, and timed Shield exams — built from Microsoft Learn.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">

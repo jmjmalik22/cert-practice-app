@@ -6,10 +6,12 @@
     <meta name="author" content="Jitendra Singh Malik" />
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="iu2qKtE0HgiLy5KqXLduqEjYwNyHTdII24nNgrU6EL4" />
-    <!-- Generic crawl directives — safe to be global -->
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <!-- Generic crawl directives — safe to be global. Index/follow is the
+         default, so this only needs to declare non-default preview
+         extensions; per-route noindex (Login, Dashboard, VerifyBadge,
+         NotFound) is set individually via PageSeo/<Head> and must not be
+         overridden by an explicit global index/googlebot/bingbot directive. -->
+    <meta name="robots" content="max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@fabricprep" />
     <!--
