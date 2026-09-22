@@ -11,6 +11,7 @@ import {
   setActiveScope,
   userScopeId,
 } from "./storageScope.js";
+import { SHIELD_RESULTS_KEY } from "./badges.js";
 
 export const PROGRESS_KEY = "fp_progress";
 export const EXAM_RESULTS_KEY = "fp_exam_results";
@@ -63,6 +64,14 @@ function getLocalSnapshot(scopeId = getActiveScopeId()) {
   return {
     progress: scopedGet(PROGRESS_KEY, {}, scopeId),
     examResults: scopedGet(EXAM_RESULTS_KEY, [], scopeId),
+    // Shield-exam pass/tier records. Historically local-only — never part of
+    // this snapshot — so losing this browser's storage (a cleared cache, a
+    // new device, an incognito session) silently dropped a genuinely-earned
+    // shield from the Achievements section even though the minted badge
+    // document in Firestore's `badges` collection was untouched and still
+    // publicly verifiable. Syncing it here the same way examResults already
+    // is closes that gap.
+    shieldResults: scopedGet(SHIELD_RESULTS_KEY, {}, scopeId),
   };
 }
 
@@ -88,9 +97,10 @@ function syncDerivedLocalKeys(progress, scopeId = getActiveScopeId()) {
   scopedSet(BOOKMARKS_KEY, allBookmarks, scopeId);
 }
 
-function applyLocalSnapshot({ progress, examResults }, scopeId = getActiveScopeId()) {
+function applyLocalSnapshot({ progress, examResults, shieldResults }, scopeId = getActiveScopeId()) {
   scopedSet(PROGRESS_KEY, progress || {}, scopeId);
   scopedSet(EXAM_RESULTS_KEY, examResults || [], scopeId);
+  scopedSet(SHIELD_RESULTS_KEY, shieldResults || {}, scopeId);
   syncDerivedLocalKeys(progress || {}, scopeId);
 }
 
@@ -238,10 +248,27 @@ export function mergeExamResults(localResults, remoteResults) {
   );
 }
 
+// Keeps, per exam, whichever side recorded the higher score — mirrors
+// recordShieldResult's own "best sitting wins" rule, so merging can never
+// downgrade a shield either side already holds.
+export function mergeShieldResults(localResults, remoteResults) {
+  const merged = { ...(remoteResults || {}) };
+
+  Object.entries(localResults || {}).forEach(([examCode, localEntry]) => {
+    const remoteEntry = merged[examCode];
+    if (!remoteEntry || localEntry.score > remoteEntry.score) {
+      merged[examCode] = localEntry;
+    }
+  });
+
+  return merged;
+}
+
 function mergeSnapshots(localSnapshot, remoteSnapshot) {
   return {
     progress: mergeProgressData(localSnapshot.progress, remoteSnapshot.progress),
     examResults: mergeExamResults(localSnapshot.examResults, remoteSnapshot.examResults),
+    shieldResults: mergeShieldResults(localSnapshot.shieldResults, remoteSnapshot.shieldResults),
   };
 }
 
@@ -251,6 +278,7 @@ async function writeRemoteSnapshot(uid, snapshot) {
     {
       progress: snapshot.progress,
       examResults: snapshot.examResults,
+      shieldResults: snapshot.shieldResults,
       updatedAt: serverTimestamp(),
       clientUpdatedAt: new Date().toISOString(),
     },
@@ -332,6 +360,7 @@ async function reconcileWithRemote(uid, { createRemoteWhenEmpty = false } = {}) 
     ? {
         progress: remoteSnap.data().progress || {},
         examResults: remoteSnap.data().examResults || [],
+        shieldResults: remoteSnap.data().shieldResults || {},
       }
     : null;
 
