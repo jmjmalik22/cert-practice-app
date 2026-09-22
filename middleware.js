@@ -57,11 +57,15 @@ export default async function middleware(request) {
     // next() doesn't reliably fall through to the vercel.json rewrite for a
     // path this same middleware matches, and 404s on Vercel — rewrite to the
     // SPA shell directly instead so real visitors reach the React app.
-    // Target "/" rather than "/index.html": with cleanUrls on, a request for
-    // the literal ".html" path 308-redirects, and a middleware rewrite
-    // destination goes through that same normalization, turning into a 404
-    // instead of served content.
-    return rewrite(new URL("/", request.url));
+    // Target the extensionless "/app-shell" rather than "/app-shell.html":
+    // with cleanUrls on, a request for the literal ".html" path 308-redirects,
+    // and a middleware rewrite destination goes through that same
+    // normalization, turning into a 404 instead of served content. Serving
+    // the neutral shell (empty #root, no pre-rendered page content) rather
+    // than "/" avoids hydrating a real badge/topic page on top of the Home
+    // page's markup — a genuine content mismatch that logged React hydration
+    // errors and flashed the wrong page before the client corrected it.
+    return rewrite(new URL("/app-shell", request.url));
   }
 
   const url = new URL(request.url);

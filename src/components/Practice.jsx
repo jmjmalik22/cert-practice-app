@@ -116,6 +116,14 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
     setIdx(0);
     setSelected(null);
     setRevealed(false);
+    // The pool itself just changed (a domain/bookmark/unseen filter was
+    // toggled), so answers/score/flags from the previous pool no longer
+    // describe this session — carrying them forward let a stale answer
+    // count toward a session with a different, smaller set of questions
+    // and inflated the final score/accuracy shown on the results screen.
+    setAnswers({});
+    setScore({ correct: 0, seen: 0 });
+    setFlaggedQuestions(new Set());
   }, [filteredPool, questionCount]);
 
   // Check once, on mount, for a persisted session for this exam+mode. Runs
@@ -505,8 +513,6 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
   }
 
   const answeredCount = Object.keys(answers).length;
-  const currentQuestionType = idx < (config.caseStudyCount || 0) ? "CASE STUDY" : "STANDALONE";
-  const caseStudyCount = config.caseStudyCount || 0;
 
   return (
     <div className="min-h-full flex flex-col px-6 py-8 max-w-2xl mx-auto w-full">
@@ -519,7 +525,7 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
           <span className="text-xs font-medium" style={{ color: TOKENS.inkMuted }}>{exam} PRACTICE</span>
         </div>
         <h1 className="text-lg font-semibold" style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}>
-          {caseStudyCount > 0 ? `${caseStudyCount} case study · ` : ""}{order.length} questions · Untimed
+          {order.length} questions · Untimed
         </h1>
       </div>
 
@@ -782,7 +788,7 @@ export function Practice({ exam, onExit, initialDomain = null, reviewWrongAnswer
           {/* Question Header */}
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-medium tracking-wide" style={{ color: TOKENS.inkMuted }}>
-              QUESTION {(idx % order.length) + 1} OF {order.length} · {currentQuestionType}
+              QUESTION {(idx % order.length) + 1} OF {order.length}
             </span>
             <button
               onClick={() => toggleFlag(q.id)}
