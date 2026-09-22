@@ -4,7 +4,7 @@ import { Link, Navigate, useOutletContext } from "react-router-dom";
 import { Trophy, Target, BookOpen, Calendar, Flame, Award, ChevronRight, AlertCircle, Copy, Linkedin } from "lucide-react";
 import { useTheme, FONT_DISPLAY, FONT_MONO } from "../lib/theme.jsx";
 import { QUESTION_BANK, EXAM_META } from "../lib/questionBank/index.js";
-import { SITE_ORIGIN, SHIELD_CONFIG } from "../lib/examCatalog.js";
+import { SITE_ORIGIN, SHIELD_CONFIG, MOCK_CONFIG } from "../lib/examCatalog.js";
 import { Footer } from "../components/Shared.jsx";
 import { BadgeShield } from "../components/BadgeShield.jsx";
 import { getOverallStats, getExamStats, getUser, getExamResults, getWeakDomainRecommendations, getWrongAnswerSummary, getPracticeMastery } from "../lib/progress.jsx";
@@ -166,23 +166,18 @@ function ExamProgressCard({ examCode, stats }) {
   );
 }
 
-function ExamResultsSection() {
+// A result saved before `saveExamResult` tracked `mode` explicitly has none.
+// Mock is always exactly MOCK_CONFIG.totalQuestions questions (a fixed
+// constant that never changes per sitting), so any legacy result with a
+// different total cannot be a mock attempt — inferring "shield" for those is
+// a deterministic read of the existing data, not a guess.
+function resultMode(result) {
+  return result.mode || (result.total === MOCK_CONFIG.totalQuestions ? "mock" : "shield");
+}
+
+function ExamResultsGroup({ title, results }) {
   const TOKENS = useTheme();
-  const [results, setResults] = useState([]);
 
-  useEffect(() => {
-    function loadResults() {
-      setResults(getExamResults());
-    }
-
-    loadResults();
-    window.addEventListener("fp-progress-synced", loadResults);
-    return () => window.removeEventListener("fp-progress-synced", loadResults);
-  }, []);
-
-  if (results.length === 0) return null;
-
-  // Group by exam
   const byExam = results.reduce((acc, r) => {
     if (!acc[r.examCode]) acc[r.examCode] = [];
     acc[r.examCode].push(r);
@@ -196,13 +191,12 @@ function ExamResultsSection() {
         style={{ color: TOKENS.ink, fontFamily: FONT_DISPLAY }}
       >
         <Trophy size={20} style={{ color: TOKENS.amber }} />
-        Mock Exam Results
+        {title}
       </h2>
       <div className="space-y-4">
         {Object.entries(byExam).map(([examCode, examResults]) => {
           const best = examResults.reduce((b, c) => (c.percentage > b.percentage ? c : b));
           const latest = examResults[examResults.length - 1];
-          const meta = EXAM_META[examCode];
 
           return (
             <div
@@ -280,6 +274,32 @@ function ExamResultsSection() {
         })}
       </div>
     </div>
+  );
+}
+
+function ExamResultsSection() {
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    function loadResults() {
+      setResults(getExamResults());
+    }
+
+    loadResults();
+    window.addEventListener("fp-progress-synced", loadResults);
+    return () => window.removeEventListener("fp-progress-synced", loadResults);
+  }, []);
+
+  if (results.length === 0) return null;
+
+  const mockResults = results.filter((r) => resultMode(r) === "mock");
+  const shieldResults = results.filter((r) => resultMode(r) === "shield");
+
+  return (
+    <>
+      {mockResults.length > 0 && <ExamResultsGroup title="Mock Exam Results" results={mockResults} />}
+      {shieldResults.length > 0 && <ExamResultsGroup title="Shield Exam Results" results={shieldResults} />}
+    </>
   );
 }
 
