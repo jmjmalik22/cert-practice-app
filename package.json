@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "validate:questions": "node scripts/validate-question-bank.js",
     "generate:badges": "node scripts/generate-badge-images.mjs",
+    "sitemap:dates": "node scripts/generate-sitemap.js --write-dates",
     "generate:og": "node scripts/generate-og-image.mjs"
   },
   "dependencies": {
