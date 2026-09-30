@@ -1,7 +1,7 @@
 // Generates sitemap.xml and robots.txt after the SSG build.
 // Keep the sitemap limited to canonical, indexable routes.
 import { execFileSync } from "child_process";
-import { existsSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import {
   SITEMAP_ROUTES,
   SITE_ORIGIN,
@@ -81,26 +81,20 @@ function git(args) {
   return execFileSync("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
 }
 
-// A shallow clone (the default on several deploy platforms) only has one
-// commit, so every file would report the same date — silently turning
-// per-page lastmod back into "the deploy date". Better to emit no lastmod at
-// all than to lie to the crawler about which pages changed.
+// A shallow clone (Vercel's default) only has one commit, so every file would
+// report the same date — silently turning per-page lastmod back into "the
+// deploy date". So on a shallow clone we fall back to dates committed in
+// scripts/sitemap-lastmod.json, which `npm run sitemap:dates` regenerates from
+// full local history. If that file is missing too, emit no lastmod at all.
+const DATES_FILE = "scripts/sitemap-lastmod.json";
 let gitAvailable = true;
 try {
-  if (git(["rev-parse", "--is-shallow-repository"]) === "true") {
-    gitAvailable = false;
-    console.warn(
-      "[sitemap] Shallow git clone detected — omitting <lastmod>. " +
-        "Set the deploy's fetch depth to 0 for accurate per-page dates."
-    );
-  }
+  if (git(["rev-parse", "--is-shallow-repository"]) === "true") gitAvailable = false;
 } catch {
   gitAvailable = false;
-  console.warn("[sitemap] git unavailable — omitting <lastmod>.");
 }
 
-function lastModified(routePath) {
-  if (!gitAvailable) return null;
+function gitLastModified(routePath) {
   const files = sourcesForRoute(routePath).filter((f) => existsSync(f));
   if (!files.length) return null;
   try {
@@ -109,6 +103,32 @@ function lastModified(routePath) {
   } catch {
     return null;
   }
+}
+
+if (process.argv.includes("--write-dates")) {
+  if (!gitAvailable) {
+    console.error("[sitemap] Needs a full git clone (run `git fetch --unshallow`).");
+    process.exit(1);
+  }
+  const dates = {};
+  for (const r of SITEMAP_ROUTES) dates[r.path] = gitLastModified(r.path);
+  writeFileSync(DATES_FILE, JSON.stringify(dates, null, 2) + "\n");
+  console.log(`Wrote ${DATES_FILE} for ${SITEMAP_ROUTES.length} routes.`);
+  process.exit(0);
+}
+
+let committedDates = {};
+if (!gitAvailable) {
+  try {
+    committedDates = JSON.parse(readFileSync(DATES_FILE, "utf8"));
+    console.warn(`[sitemap] Shallow clone/no git — using dates from ${DATES_FILE}.`);
+  } catch {
+    console.warn("[sitemap] Shallow clone/no git and no dates file — omitting <lastmod>.");
+  }
+}
+
+function lastModified(routePath) {
+  return gitAvailable ? gitLastModified(routePath) : committedDates[routePath] || null;
 }
 
 const entries = SITEMAP_ROUTES.map((r) => {

@@ -4,7 +4,12 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.fabricprep.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.fabricprep.com"
+        }
+      ],
       "destination": "https://fabricprep.com/:path*",
       "permanent": true
     },
@@ -16,6 +21,21 @@
     {
       "source": "/study-guides/ai-900",
       "destination": "/study-guides/ai-901",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap-index.xml",
+      "destination": "/sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap-pages.xml",
+      "destination": "/sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap-fabricprep.xml",
+      "destination": "/sitemap.xml",
       "permanent": true
     }
   ],
