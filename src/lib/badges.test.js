@@ -117,7 +117,7 @@ describe("isValidBadgeClaim", () => {
 
   it("rejects an unknown exam code", () => {
     expect(isValidBadgeClaim({ ...validShield, examCode: "XX-999" })).toBe(false);
-    expect(isValidBadgeClaim({ ...validShield, examCode: "AZ-305" })).toBe(false); // coming soon, no bank
+    expect(isValidBadgeClaim({ ...validShield, examCode: "AZ-400" })).toBe(false); // coming soon, no bank
   });
 
   it("rejects an invented tier or source", () => {
