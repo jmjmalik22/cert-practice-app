@@ -19,6 +19,7 @@ const EXAMS = [
   ["DP-600", "Fabric Analytics Engineer Associate"],
   ["AZ-900", "Azure Fundamentals"],
   ["AZ-104", "Azure Administrator Associate"],
+  ["AZ-305", "Azure Solutions Architect Expert"],
   ["AI-901", "Azure AI Fundamentals"],
   ["DP-900", "Azure Data Fundamentals"],
   ["DP-800", "SQL AI Developer Associate"],

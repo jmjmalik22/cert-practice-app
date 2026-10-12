@@ -24,7 +24,7 @@ service cloud.firestore {
       // fails if they drift, so update both sides together.
 
       function knownExamCodes() {
-        return ['DP-700', 'DP-600', 'AZ-900', 'DP-900', 'AZ-104', 'AI-901',
+        return ['DP-700', 'DP-600', 'AZ-900', 'DP-900', 'AZ-104', 'AZ-305', 'AI-901',
                 'PL-300', 'AI-103', 'AI-200', 'AI-300', 'DP-800', 'SC-900'];
       }
 
